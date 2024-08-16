@@ -1,4 +1,4 @@
-package com.example.jikimi
+package com.example.jikimi.presentation.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.jikimi.databinding.FragmentCommonsenseBinding
-import com.example.jikimi.databinding.FragmentEvacuateBinding
 
 
 class CommonsenseFragment : Fragment() {
