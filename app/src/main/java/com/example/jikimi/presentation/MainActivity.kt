@@ -1,4 +1,4 @@
-package com.example.jikimi
+package com.example.jikimi.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.example.jikimi.R
 import com.example.jikimi.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
