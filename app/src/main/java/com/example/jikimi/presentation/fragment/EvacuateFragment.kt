@@ -1,4 +1,4 @@
-package com.example.jikimi
+package com.example.jikimi.presentation.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
