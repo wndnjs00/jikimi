@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/evacuateFragment"
+        android:icon="@drawable/ic_nav_evacuate"
+        android:title="대피"/>
+    <item
+        android:id="@+id/commonsenseFragment"
+        android:icon="@drawable/ic_nav_commonsense"
+        android:title="재난상식"/>
+</menu>

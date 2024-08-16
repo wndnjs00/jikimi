@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/evacuateFragment">
+
+    <fragment
+        android:id="@+id/evacuateFragment"
+        android:name="com.example.jikimi.EvacuateFragment"
+        android:label="fragment_evacuate"
+        tools:layout="@layout/fragment_evacuate" />
+
+    <fragment
+        android:id="@+id/commonsenseFragment"
+        android:name="com.example.jikimi.CommonsenseFragment"
+        android:label="fragment_commonsense"
+        tools:layout="@layout/fragment_commonsense" />
+</navigation>
