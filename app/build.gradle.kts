@@ -65,5 +65,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
     // Naver Map
-    implementation("com.naver.maps:map-sdk:3.19.1")
+    implementation(libs.map.sdk)
+    // Naver Map 위치
+    implementation(libs.play.services.location)
 }
