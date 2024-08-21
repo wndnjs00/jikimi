@@ -1,15 +1,23 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)    //hilt
+    id ("kotlin-parcelize")
 }
 
-val properties = Properties().apply {
-    load(FileInputStream(rootProject.file("local.properties")))
+//val properties = Properties().apply {
+//    load(FileInputStream(rootProject.file("local.properties")))
+//}
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir,providers).getProperty(propertyKey)
 }
+
 
 android {
     namespace = "com.example.jikimi"
@@ -22,9 +30,23 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        multiDexEnabled = true
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        addManifestPlaceholders(mapOf("NAVERMAP_CLIENT_ID" to properties.getProperty("NAVERMAP_CLIENT_ID")))
+//        addManifestPlaceholders(mapOf("NAVERMAP_CLIENT_ID" to properties.getProperty("NAVERMAP_CLIENT_ID")))
+//        buildConfigField("String", "OUTDOOR_EVACUATION_API_BASE", properties.getProperty("OUTDOOR_EVACUATION_API_BASE"))
+//        buildConfigField("String", "OUTDOOR_EVACUATION_API", properties.getProperty("OUTDOOR_EVACUATION_API"))
+//        buildConfigField("String", "OUTDOOR_EVACUATION_SERVICE_KEY", properties.getProperty("OUTDOOR_EVACUATION_SERVICE_KEY"))
+
+        addManifestPlaceholders(mapOf("NAVERMAP_CLIENT_ID" to getApiKey("NAVERMAP_CLIENT_ID")))
+        buildConfigField("String", "OUTDOOR_EVACUATION_API_BASE", getApiKey("OUTDOOR_EVACUATION_API_BASE"))
+        buildConfigField("String", "OUTDOOR_EVACUATION_API", getApiKey("OUTDOOR_EVACUATION_API"))
+        buildConfigField("String", "OUTDOOR_EVACUATION_SERVICE_KEY", getApiKey("OUTDOOR_EVACUATION_SERVICE_KEY"))
+    }
+
+    packaging {
+        resources.excludes += "META-INF/DEPENDENCIES"
     }
 
     buildTypes {
@@ -51,7 +73,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    implementation (libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
@@ -66,6 +88,22 @@ dependencies {
 
     // Naver Map
     implementation(libs.map.sdk)
-    // Naver Map 위치
+    // Naver Map 현재위치
     implementation(libs.play.services.location)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+
+    // retrofit2
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    // okhttp
+    implementation (libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    // viewModels
+    implementation (libs.androidx.activity.ktx)
+    implementation (libs.androidx.fragment.ktx)
 }
