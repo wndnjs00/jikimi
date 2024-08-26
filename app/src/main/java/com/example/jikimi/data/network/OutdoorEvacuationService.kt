@@ -11,11 +11,11 @@ interface OutdoorEvacuationService {
     suspend fun getOutdoorEvacuation(
         @Query("ServiceKey") serviceKey : String = OUTDOOR_EVACUATION_SERVICE_KEY,
         @Query("pageNo") pageNo : String = "1",             // 페이지번호
-        @Query("numOfRows") numOfRows : String = "10",      // 한페이지 결과수
-        @Query("type") type : String = "json", // 호출문서형식
-        @Query("arcd") arcd : String, // 지역코드
-        @Query("ctprvn_nm") ctprvnNm : String, // 시도명
-        @Query("sgg_nm") sggNm : String, // 시군구명
+        @Query("numOfRows") numOfRows : String = "5",      // 한페이지 결과수
+        @Query("type") type : String = "JSON", // 호출문서형식
+        @Query("arcd") arcd : String = "4380000000", // 지역코드
+        @Query("ctprvn_nm") ctprvnNm : String = "충청북도", // 시도명
+        @Query("sgg_nm") sggNm : String = "단양군", // 시군구명
     ) : EarthquakeOutdoorsShelterResponse
 
 }

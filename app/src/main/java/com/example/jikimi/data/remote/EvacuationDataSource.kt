@@ -9,10 +9,10 @@ class EvacuationDataSource @Inject constructor(
 ) {
     suspend fun getOutdoorEvacuation(
         pageNo : String = "1",
-        numOfRows : String = "10",
-        arcd : String = "",
-        ctprvnNm : String = "",
-        sggNm : String = ""
+        numOfRows : String = "5",
+        arcd : String = "4380000000",
+        ctprvnNm : String = "충청북도",
+        sggNm : String = "단양군"
     ) = outdoorEvacuationService.getOutdoorEvacuation(
         pageNo = pageNo,
         numOfRows = numOfRows,
