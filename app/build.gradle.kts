@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)    //hilt
+//    id("com.google.gms.google-services")
     id ("kotlin-parcelize")
 }
 
@@ -106,4 +107,6 @@ dependencies {
     // viewModels
     implementation (libs.androidx.activity.ktx)
     implementation (libs.androidx.fragment.ktx)
+
+    implementation (libs.androidx.core)
 }
