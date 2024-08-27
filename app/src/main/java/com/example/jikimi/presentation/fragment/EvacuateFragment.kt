@@ -98,11 +98,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         naverMap.locationSource = locationSource   //현재위치
         naverMap.uiSettings.isLocationButtonEnabled = true  //현재위치 버튼 활성화
         naverMap.locationTrackingMode = LocationTrackingMode.Follow //현재위치를 따라 움직임
-
-        // 임시 마커 1개표시(마커잘되는지 확인위해)
-        val marker = Marker()
-        marker.position = LatLng(37.5670135, 126.9783740)
-        marker.map = naverMap
     }
 
 
