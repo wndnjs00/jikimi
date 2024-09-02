@@ -3,5 +3,5 @@ package com.example.jikimi.data.repository
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 
 interface OutdoorEvacuationRepository {
-    suspend fun requestOutdoorEvacuation(pageNo :String, numOfRows : String, type : String) : EarthquakeOutdoorsShelterResponse
+    suspend fun requestOutdoorEvacuation(arcd :String, ctprvnNm : String, sggNm : String) : EarthquakeOutdoorsShelterResponse
 }

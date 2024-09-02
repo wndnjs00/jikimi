@@ -12,17 +12,14 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
 ) : OutdoorEvacuationRepository{
 
     override suspend fun requestOutdoorEvacuation(
-        pageNo: String,
-        numOfRows: String,
-        type: String
+        arcd: String,
+        ctprvnNm: String,
+        sggNm: String
     ): EarthquakeOutdoorsShelterResponse {
         return outdoorEvacuationService.getOutdoorEvacuation(
-            pageNo = "1",
-            numOfRows = "10",
-            type = "JSON",
-            arcd = "4380000000",
-            ctprvnNm = "충청북도",
-            sggNm = "단양군",
+            arcd = arcd,
+            ctprvnNm = ctprvnNm,
+            sggNm = sggNm
         )
     }
 }
