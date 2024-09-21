@@ -3,6 +3,8 @@ package com.example.jikimi.data.network.di
 import com.example.jikimi.BuildConfig
 import com.example.jikimi.data.network.OUTDOOR_EVACUATION_API_BASE
 import com.example.jikimi.data.network.OutdoorEvacuationService
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,8 +36,10 @@ object RetrofitModule {
     @Provides
     @Named("OutdoorEvacuation")
     fun evacuationRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val gson = GsonBuilder().setLenient().create()
+
         return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .baseUrl(OUTDOOR_EVACUATION_API_BASE)
             .build()

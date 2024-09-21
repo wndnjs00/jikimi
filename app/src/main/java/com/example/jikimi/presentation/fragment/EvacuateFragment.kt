@@ -12,7 +12,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
-import com.example.jikimi.data.model.dto.Row
 import com.example.jikimi.databinding.FragmentEvacuateBinding
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
 import com.naver.maps.geometry.LatLng
@@ -109,7 +108,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
 
     // 반경 내 대피소에 마커를 지도에 표시
-    private fun updateMapWithShelters(shelters: List<Row>){
+    private fun updateMapWithShelters(shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>){
         // 기존 마커제거
         val marker = Marker()
         marker.map = null
