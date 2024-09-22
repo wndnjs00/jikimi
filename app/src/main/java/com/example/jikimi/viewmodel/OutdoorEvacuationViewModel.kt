@@ -19,30 +19,50 @@ class OutdoorEvacuationViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _shelters = MutableStateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>>(emptyList())
-    val shelters : StateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>> = _shelters
+    val shelters: StateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>> = _shelters
 
 
-    // 특정 반경 내에 있는 대피소 데이터 가져오기
-    fun getNearbyShelters(currentLocation: LatLng, radius: Double, arcd: String, ctprvnNm: String, sggNm: String) {
+    // 전체 데이터를 호출하고 사용자의 현재 위치를 기준으로 반경 내 대피소만 필터링
+    fun fetchAllSheltersAndFilterByLocation(currentLocation: LatLng, radius: Double) {
         viewModelScope.launch {
-            try{
-                val response = outdoorEvacuationRepository.requestOutdoorEvacuation(arcd,ctprvnNm,sggNm)
-                val nearbyShelters = response?.earthquakeOutdoorsShelter2?.flatMap { it.row }?.filter{ shelter ->
-                        // ycord와 xcord를 소숫점 7자리까지만 포맷팅
-                        val latitude = shelter.ycord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-                        val longitude = shelter.xcord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-                        val shelterLocation = LatLng(latitude, longitude)
-                        isWithinRadius(currentLocation, shelterLocation, radius)
-                    } ?: emptyList()    // null인경우 빈 리스트로 처리
+            try {
+                // API 호출
+                val response = outdoorEvacuationRepository.requestOutdoorEvacuation()
 
+                // API 응답결과 로그
+                Log.d("OutdoorEvacuationViewModel_response", "Response received: $response")
+
+                // earthquakeOutdoorsShelter2, row가 null일 경우에 emptyList로 처리하여 null값 받지않도록 수정
+                val nearbyShelters = response?.earthquakeOutdoorsShelter2?.flatMap { it.row ?: emptyList() }?.filter { shelter ->
+                    val latitude = shelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() }
+                    val longitude = shelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() }
+
+                    // 좌표가 null인 경우 필터링
+                    if (latitude != null && longitude != null) {
+                        val shelterLocation = LatLng(latitude, longitude)
+
+                        // 좌표 로그 확인
+                        Log.d("ShelterLocation", "Latitude: $latitude, Longitude: $longitude")
+
+                        // 반경 내에 있는지 확인
+                        isWithinRadius(currentLocation, shelterLocation, radius)
+                    } else {
+                        Log.e("InvalidCoordinates", "Shelter has invalid or missing coordinates: $shelter")
+                        false
+                    }
+                } ?: emptyList() // null인 경우 빈 리스트로 처리
+
+                // 유효한 대피소가 있을 때만 shelters 업데이트
                 _shelters.value = nearbyShelters
-            }catch(e: Exception){
-                // 에러처리
-                Log.e("OutdoorEvacuationViewModel", "API 받아오기 실패: ${e.message}", e)
+
+                // 마커가 업데이트되었음을 로그로 표시
+                Log.d("OutdoorEvacuationViewModel_marker", "Nearby shelters found: ${nearbyShelters.size}")
+            } catch (e: Exception) {
+                // 에러 발생 시 로그로 출력
+                Log.e("OutdoorEvacuationViewModel_error", "API 받아오기 실패: ${e.message}", e)
             }
         }
     }
-
 
     // 반경 내에 있는지 여부를 판단하는 함수
     private fun isWithinRadius(currentLocation: LatLng, shelterLocation: LatLng, radius: Double): Boolean {
