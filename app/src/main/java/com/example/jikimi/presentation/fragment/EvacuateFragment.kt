@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -87,13 +88,23 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
 
     // 대피소 데이터 관찰하여 대피소 마커표시
-    private fun observeViewModel(){
+    private fun observeViewModel() {
         lifecycleScope.launchWhenCreated {
-            viewModel.shelters.collect{
-                updateMapWithShelters(it)
+            viewModel.shelters.collect { shelters ->
+                if (shelters.isNotEmpty()) {
+                    // 대피소 데이터를 지도에 업데이트
+                    updateMapWithShelters(shelters)
+
+                    // UI에서 대피소 수를 토스트로 표시
+                    Toast.makeText(requireContext(), "${shelters.size} 개의 대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    // 데이터가 없을 때
+                    Toast.makeText(requireContext(), "대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
+
 
 
 //    private fun observeViewModel(){
@@ -111,11 +122,11 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private fun updateMapWithShelters(shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>){
         // 기존 마커제거
         val marker = Marker()
-        marker.map = null
+//        marker.map = null
 
         shelters.forEach{ shelter ->
-            val latitude = shelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-            val longitude = shelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val latitude = shelter.ycord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val longitude = shelter.xcord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
             val shelterLocation = LatLng(latitude, longitude)
 
             marker.position = shelterLocation
@@ -134,7 +145,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         naverMap.addOnLocationChangeListener { location ->
             val currentLocation = LatLng(location.latitude, location.longitude)
 
-            viewModel.getNearbyShelters(currentLocation, 1000.0,"arcd","ctprvnNm","sggNm")
+            viewModel.fetchAllSheltersAndFilterByLocation(currentLocation, 1000.0)
         }
     }
 
