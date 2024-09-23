@@ -3,4 +3,6 @@
 <!--    <dimen name="design_bottom_navigation_text_size" tools:override="true">16sp</dimen>dimen-->
 <!--    <dimen name="design_bottom_navigation_active_text_size" tools:override="true">20sp</dimen>-->
     <dimen name="design_bottom_navigation_height" tools:override="true">70dp</dimen>
+
+    <dimen name="fragment_horizontal_margin">20dp</dimen>
 </resources>
