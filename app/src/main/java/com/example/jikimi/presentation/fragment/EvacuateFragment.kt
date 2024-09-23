@@ -1,7 +1,9 @@
 package com.example.jikimi.presentation.fragment
 
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,10 +23,13 @@ import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.util.Locale
 
 @AndroidEntryPoint
 class EvacuateFragment : Fragment(), OnMapReadyCallback {
@@ -49,9 +54,8 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
         initializeMap()
         initializeLocationSource()
-        observeViewModel()
+//        observeViewModel()
     }
-
 
     // 지도 초기화
     private fun initializeMap() {
@@ -59,16 +63,13 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             ?: MapFragment.newInstance().also {
                 childFragmentManager.beginTransaction().add(R.id.map, it).commit()
             }
-        // 지도가 준비되었을 때 onMapReady 콜백 받도록
         mapFragment.getMapAsync(this)
     }
-
 
     // FusedLocationSource 초기화
     private fun initializeLocationSource() {
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
     }
-
 
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
@@ -77,9 +78,8 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         grantResults: IntArray
     ) {
         if (locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
-            // 권한 거부한경우
             if (!locationSource.isActivated) {
-                naverMap.locationTrackingMode = LocationTrackingMode.None //위치추적 비활성화
+                naverMap.locationTrackingMode = LocationTrackingMode.None
             }
             return
         }
@@ -87,7 +87,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     }
 
 
-    // 대피소 데이터 관찰하여 대피소 마커표시
+    // ViewModel의 데이터를 관찰하고 대피소 마커 표시
     private fun observeViewModel() {
         lifecycleScope.launchWhenCreated {
             viewModel.shelters.collect { shelters ->
@@ -95,57 +95,58 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     // 대피소 데이터를 지도에 업데이트
                     updateMapWithShelters(shelters)
 
-                    // UI에서 대피소 수를 토스트로 표시
                     Toast.makeText(requireContext(), "${shelters.size} 개의 대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
                 } else {
-                    // 데이터가 없을 때
                     Toast.makeText(requireContext(), "대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
+    // 모든 대피소에 마커를 지도에 표시
+    private fun updateMapWithShelters(shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>) {
+        shelters.forEach { shelter ->
+            val latitude = shelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val longitude = shelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
 
-
-//    private fun observeViewModel(){
-//        viewLifecycleOwner.lifecycleScope.launch {
-//
-//            viewModel.shelters.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).collectLatest {
-//                updateMapWithShelters(it)
-//            }
-//        }
-//    }
-
-
-
-    // 반경 내 대피소에 마커를 지도에 표시
-    private fun updateMapWithShelters(shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>){
-        // 기존 마커제거
-        val marker = Marker()
-//        marker.map = null
-
-        shelters.forEach{ shelter ->
-            val latitude = shelter.ycord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-            val longitude = shelter.xcord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-            val shelterLocation = LatLng(latitude, longitude)
-
-            marker.position = shelterLocation
-            marker.map = naverMap
+            // 좌표가 유효한 경우에만 마커 생성
+            if (latitude != 0.0 && longitude != 0.0) {
+                val marker = Marker().apply {
+                    position = LatLng(latitude, longitude)
+                    map = naverMap
+                    icon = OverlayImage.fromResource(R.drawable.marker_red)
+                    captionText = "${shelter.vtAcmdfcltyNm}"
+                    captionRequestedWidth = 150
+                }
+            }
         }
     }
 
-
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
-        naverMap.locationSource = locationSource   //현재위치
-        naverMap.uiSettings.isLocationButtonEnabled = true  //현재위치 버튼 활성화
-        naverMap.locationTrackingMode = LocationTrackingMode.Follow //현재위치를 따라 움직임
+        naverMap.locationSource = locationSource
+        naverMap.uiSettings.isLocationButtonEnabled = true
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
-        // 내위치 좌표를 받아와서 대피소 데이터 요청
+        // 위치가 변경될때마다 데이터 요청
         naverMap.addOnLocationChangeListener { location ->
-            val currentLocation = LatLng(location.latitude, location.longitude)
+            // 현재위치 받아옴
+            val latitude = location.latitude
+            val longitude = location.longitude
 
-            viewModel.fetchAllSheltersAndFilterByLocation(currentLocation, 1000.0)
+            // Geocoder로 위경도를 주소로 변환
+            val geocoder = Geocoder(requireContext(), Locale.KOREA)
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            if (addresses?.isNotEmpty() == true) {
+                val address = addresses[0]
+                val ctprvnNm = address.adminArea ?: ""
+//                val sggNm = address.locality ?: ""
+                Log.d("현재주소","${ctprvnNm}")
+
+                // API 호출
+                viewModel.fetchAllShelters(ctprvnNm)
+                observeViewModel()
+            }
         }
     }
 
@@ -154,10 +155,14 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
 
+        // naverMap 관련 리소스를 해제
+        naverMap.locationSource = null // LocationSource 해제
+        val marker = Marker()
+        marker.map = null
+    }
 }
+
