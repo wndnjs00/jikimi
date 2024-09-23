@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.jikimi.databinding.FragmentCommonsenseBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class CommonsenseFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentCommonsenseBinding? = null
