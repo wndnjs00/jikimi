@@ -11,7 +11,7 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
     @Named("OutdoorEvacuationService") private val outdoorEvacuationService : OutdoorEvacuationService
 ) : OutdoorEvacuationRepository{
 
-    override suspend fun requestOutdoorEvacuation(): EarthquakeOutdoorsShelterResponse {
-        return outdoorEvacuationService.getOutdoorEvacuation()
+    override suspend fun requestOutdoorEvacuation(ctprvnNm: String): EarthquakeOutdoorsShelterResponse {
+        return outdoorEvacuationService.getOutdoorEvacuation(ctprvnNm = ctprvnNm)
     }
 }
