@@ -21,7 +21,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
     private val _shelters = MutableStateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>>(emptyList())
     val shelters: StateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>> = _shelters
 
-    // API로 ctprvnNm,sggNm데이터를 가져오고 업데이트
+    // API로 ctprvnNm데이터를 가져오고 업데이트
     fun fetchAllShelters(ctprvnNm: String) {
         viewModelScope.launch {
             try {
