@@ -1,5 +1,6 @@
 package com.example.jikimi.presentation.fragment
 
+import android.graphics.Color
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.CircleOverlay
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
@@ -88,12 +90,12 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
 
     // ViewModel의 데이터를 관찰하고 대피소 마커 표시
-    private fun observeViewModel() {
+    private fun observeViewModel(currentLocation: LatLng) {
         lifecycleScope.launchWhenCreated {
             viewModel.shelters.collect { shelters ->
                 if (shelters.isNotEmpty()) {
                     // 대피소 데이터를 지도에 업데이트
-                    updateMapWithShelters(shelters)
+                    updateMapWithShelters(shelters, currentLocation)
 
                     Toast.makeText(requireContext(), "${shelters.size} 개의 대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
                 } else {
@@ -103,24 +105,45 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    // 모든 대피소에 마커를 지도에 표시
-    private fun updateMapWithShelters(shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>) {
+    // 대피소 데이터를 지도에 표시하고, 반경밖의 마커는 삭제
+    private fun updateMapWithShelters(
+        shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>,
+        currentLocation: LatLng
+    ) {
+        // 기존마커 제거
+        val marker = Marker()
+        marker.map = null
+
         shelters.forEach { shelter ->
             val latitude = shelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
             val longitude = shelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
 
             // 좌표가 유효한 경우에만 마커 생성
             if (latitude != 0.0 && longitude != 0.0) {
-                val marker = Marker().apply {
-                    position = LatLng(latitude, longitude)
-                    map = naverMap
-                    icon = OverlayImage.fromResource(R.drawable.marker_red)
-                    captionText = "${shelter.vtAcmdfcltyNm}"
-                    captionRequestedWidth = 150
+                val shelterLocation = LatLng(latitude, longitude)
+                val distance = calculateDistance(currentLocation, shelterLocation)
+
+                if(distance <= 5000.0){
+                    Marker().apply {
+                        position = LatLng(latitude, longitude)
+                        map = naverMap
+                        icon = OverlayImage.fromResource(R.drawable.marker_red)
+                        captionText = "${shelter.vtAcmdfcltyNm}"
+                        captionRequestedWidth = 150
+                    }
                 }
             }
         }
     }
+
+
+    // 두 지점 간의 거리 계산 (단위: 미터)
+    private fun calculateDistance(start: LatLng, end: LatLng): Double {
+        val results = FloatArray(1)
+        Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results)
+        return results[0].toDouble()
+    }
+
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
@@ -134,6 +157,16 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             val latitude = location.latitude
             val longitude = location.longitude
 
+            // 반경 5km 서클오버레이 설정
+            val circleOverlay = CircleOverlay()
+            circleOverlay.map = null   //기존서클오버레이 제거
+            circleOverlay.apply {
+                center = LatLng(latitude, longitude)
+                radius = 5000.0         // 반경 5km
+                map = naverMap
+                color = Color.argb(0, 255, 0, 0)    // 서클색상 투명으로
+            }
+
             // Geocoder로 위경도를 주소로 변환
             val geocoder = Geocoder(requireContext(), Locale.KOREA)
             val addresses = geocoder.getFromLocation(latitude, longitude, 1)
@@ -145,7 +178,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
                 // API 호출
                 viewModel.fetchAllShelters(ctprvnNm)
-                observeViewModel()
+                observeViewModel(LatLng(latitude, longitude))
             }
         }
     }
