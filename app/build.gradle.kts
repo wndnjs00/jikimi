@@ -11,9 +11,6 @@ plugins {
     id ("kotlin-parcelize")
 }
 
-//val properties = Properties().apply {
-//    load(FileInputStream(rootProject.file("local.properties")))
-//}
 
 fun getApiKey(propertyKey: String): String {
     return gradleLocalProperties(rootDir,providers).getProperty(propertyKey)
@@ -35,15 +32,14 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-//        addManifestPlaceholders(mapOf("NAVERMAP_CLIENT_ID" to properties.getProperty("NAVERMAP_CLIENT_ID")))
-//        buildConfigField("String", "OUTDOOR_EVACUATION_API_BASE", properties.getProperty("OUTDOOR_EVACUATION_API_BASE"))
-//        buildConfigField("String", "OUTDOOR_EVACUATION_API", properties.getProperty("OUTDOOR_EVACUATION_API"))
-//        buildConfigField("String", "OUTDOOR_EVACUATION_SERVICE_KEY", properties.getProperty("OUTDOOR_EVACUATION_SERVICE_KEY"))
 
         addManifestPlaceholders(mapOf("NAVERMAP_CLIENT_ID" to getApiKey("NAVERMAP_CLIENT_ID")))
         buildConfigField("String", "OUTDOOR_EVACUATION_API_BASE", getApiKey("OUTDOOR_EVACUATION_API_BASE"))
         buildConfigField("String", "OUTDOOR_EVACUATION_API", getApiKey("OUTDOOR_EVACUATION_API"))
         buildConfigField("String", "OUTDOOR_EVACUATION_SERVICE_KEY", getApiKey("OUTDOOR_EVACUATION_SERVICE_KEY"))
+        buildConfigField("String", "INDOOR_EVACUATION_API_BASE", getApiKey("INDOOR_EVACUATION_API_BASE"))
+        buildConfigField("String", "INDOOR_EVACUATION_API", getApiKey("INDOOR_EVACUATION_API"))
+        buildConfigField("String", "INDOOR_EVACUATION_SERVICE_KEY", getApiKey("INDOOR_EVACUATION_SERVICE_KEY"))
     }
 
     packaging {
