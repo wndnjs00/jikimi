@@ -101,8 +101,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 if (outdoorShelters.isNotEmpty()) {
                     // 대피소 데이터를 지도에 업데이트
                     updateOutdoorSheltersOnMap(outdoorShelters, currentLocation)
-
-                    Toast.makeText(requireContext(), "${outdoorShelters.size} 개의 대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "${outdoorShelters.size} 개의 야외대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(requireContext(), "야외대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -209,30 +208,13 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             val longitude = location.longitude
 
             // 반경 10km 서클오버레이 설정
-            val circleOverlay = CircleOverlay().apply {
+            CircleOverlay().apply {
                 map = null  // 기존 서클 오버레이 제거
                 center = LatLng(latitude, longitude)
                 radius = 10000.0     // 반경 10km
                 map = naverMap
                 color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정(알파0으로 바꾸기)
             }
-
-            // Geocoder로 위경도를 주소로 변환
-//            val geocoder = Geocoder(requireContext(), Locale.KOREA)
-//            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
-//            if (addresses?.isNotEmpty() == true) {
-//                val address = addresses[0]
-//                val current_address = address.adminArea ?: ""
-////                val sggNm = address.locality ?: ""
-//                Log.d("현재주소","${current_address}")
-//
-//                // 야외,실내 API데이터 요청
-//                outdoorViewModel.fetchOutdoorShelters(current_address)
-//                indoorViewModel.fetchIndoorShelters(current_address)
-//
-//                // 야외,실내 API데이터 관찰
-//                observeOutdoorViewModel(LatLng(latitude, longitude))
-//                observeIndoorViewModel(LatLng(latitude, longitude))
 
             // Geocoder를 비동기적으로 실행
             lifecycleScope.launch {
@@ -255,24 +237,18 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     // Geocoder를 사용해 위경도 좌표를 주소로 변환 (백그라운드에서 처리)
     private suspend fun getCurrentAddress(latitude: Double, longitude: Double): String? {
         return withContext(Dispatchers.IO) {
-            try {
                 val geocoder = Geocoder(requireContext(), Locale.KOREA)
                 val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
                 if (addresses?.isNotEmpty() == true) {
-                    return@withContext addresses[0].adminArea // adminArea에 해당하는 ctprvnNm 반환
+                    val current_address = addresses[0].adminArea // adminArea에 해당하는 ctprvnNm 반환
+                    Log.d("현재주소", "$current_address") // 로그로 출력
+                    current_address
                 } else {
-                    Log.e("Geocoder", "주소를 찾을 수 없습니다.")
-                    return@withContext null
+                    Log.e("현재주소_에러", "현재주소를 찾을 수 없습니다.")
+                    null
                 }
-            } catch (e: IOException) {
-                Log.e("Geocoder", "Geocoder 오류: ${e.message}")
-                return@withContext null
-            } catch (e: Exception) {
-                Log.e("Geocoder", "예상치 못한 오류: ${e.message}")
-                return@withContext null
             }
-        }
     }
 
     companion object {
