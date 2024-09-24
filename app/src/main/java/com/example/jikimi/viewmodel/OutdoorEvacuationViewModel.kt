@@ -22,7 +22,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
     val shelters: StateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>> = _shelters
 
     // API로 ctprvnNm데이터를 가져오고 업데이트
-    fun fetchAllShelters(ctprvnNm: String) {
+    fun fetchOutdoorShelters(ctprvnNm: String) {
         viewModelScope.launch {
             try {
                 // ctprvnNm를 기반으로 API 호출
@@ -42,3 +42,5 @@ class OutdoorEvacuationViewModel @Inject constructor(
         }
     }
 }
+
+
