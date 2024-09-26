@@ -1,6 +1,5 @@
 package com.example.jikimi.viewmodel
 
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,6 +19,11 @@ class OutdoorEvacuationViewModel @Inject constructor(
 
     private val _shelters = MutableStateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>>(emptyList())
     val shelters: StateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>> = _shelters
+
+    // 위치 데이터
+    private val _currentLocation = MutableStateFlow<LatLng?>(null)
+    val currentLocation: StateFlow<LatLng?> = _currentLocation
+
 
     // API로 ctprvnNm데이터를 가져오고 업데이트
     fun fetchOutdoorShelters(ctprvnNm: String) {
@@ -41,6 +45,13 @@ class OutdoorEvacuationViewModel @Inject constructor(
             }
         }
     }
+
+
+    // 위치 업데이트 메서드
+    fun updateCurrentLocation(latitude: Double, longitude: Double) {
+        _currentLocation.value = LatLng(latitude, longitude)
+    }
 }
+
 
 
