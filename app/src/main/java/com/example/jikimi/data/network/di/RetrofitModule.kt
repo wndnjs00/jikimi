@@ -1,9 +1,9 @@
 package com.example.jikimi.data.network.di
 
-import com.example.jikimi.BuildConfig
+import com.example.jikimi.data.network.INDOOR_EVACUATION_API_BASE
+import com.example.jikimi.data.network.IndoorEvacuationService
 import com.example.jikimi.data.network.OUTDOOR_EVACUATION_API_BASE
 import com.example.jikimi.data.network.OutdoorEvacuationService
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -54,6 +54,33 @@ object RetrofitModule {
     ): OutdoorEvacuationService {
         return retrofit.create(OutdoorEvacuationService::class.java)
     }
+
+
+
+
+    @Singleton
+    @Provides
+    @Named("IndoorEvacuation")
+    fun indoorEvacuationRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val gson = GsonBuilder().setLenient().create()
+
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+            .baseUrl(INDOOR_EVACUATION_API_BASE)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @Named("IndoorEvacuationService")
+    fun provideIndoorEvacuation(
+        @Named("IndoorEvacuation") retrofit: Retrofit
+    ): IndoorEvacuationService {
+        return retrofit.create(IndoorEvacuationService::class.java)
+    }
+
+
 }
 
 
