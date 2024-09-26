@@ -1,11 +1,9 @@
 package com.example.jikimi.data.network.di
 
-import com.example.jikimi.BuildConfig
 import com.example.jikimi.data.network.INDOOR_EVACUATION_API_BASE
 import com.example.jikimi.data.network.IndoorEvacuationService
 import com.example.jikimi.data.network.OUTDOOR_EVACUATION_API_BASE
 import com.example.jikimi.data.network.OutdoorEvacuationService
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
