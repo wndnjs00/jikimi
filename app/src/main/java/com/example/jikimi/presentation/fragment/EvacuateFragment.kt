@@ -207,12 +207,19 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
                 // 반경 5km 이내의 대피소만 표시
                 if (distance <= 50000.0) {
-                    Marker().apply {
+                    val outdoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
                         icon = OverlayImage.fromResource(R.drawable.marker_red)
                         captionText = "${outdoorShelter.vtAcmdfcltyNm}\n${String.format("%.2f", distance)} m"
                         captionRequestedWidth = 150
+                    }
+
+                    outdoorMarker.setOnClickListener {
+                        val bottomSheetFragment = BottomSheetFragment()
+                        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+                        Toast.makeText(requireContext(), "${outdoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
+                        true
                     }
                 }
             }
@@ -240,12 +247,19 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
                 // 반경 5km 이내의 대피소만 표시
                 if (distance <= 50000.0) {
-                    Marker().apply {
+                    val indoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
                         icon = OverlayImage.fromResource(R.drawable.maker_blue)
                         captionText = "${indoorShelter.vtAcmdfcltyNm}\n${String.format("%.2f", distance)} m"
                         captionRequestedWidth = 150
+                    }
+
+                    indoorMarker.setOnClickListener {
+                        val bottomSheetFragment = BottomSheetFragment()
+                        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+                        Toast.makeText(requireContext(), "${indoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
+                        true
                     }
                 }
             }

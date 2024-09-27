@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">jikimi</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- bottomSheet -->
+    <string name="distance_tv">몇m</string>
+    <string name="shelter_tv">야외/실내대피장소</string>
+    <string name="shelter_name_tv">대피 시설명</string>
+    <string name="shelter_address_tv">대피 시설명 주소</string>
+    <string name="shelter_people_tv">학교운동장</string>
+    <string name="shelter_classification_tv">수용인원: 30명</string>
+    <string name="shelter_phone_tv">02-0000-0000</string>
+
 </resources>
