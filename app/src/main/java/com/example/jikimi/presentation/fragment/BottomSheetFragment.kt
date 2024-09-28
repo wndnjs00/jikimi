@@ -15,7 +15,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentBottomSheetBinding? = null
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,10 +32,13 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object{
         private const val OUTDOOR_SHELTER_DATA = "outdoor_shelter_data"
-        fun outdoorNewInstance(outdoorShelterData : EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row) : BottomSheetFragment{
+        private const val DISTANCE_DATA = "distance_data"
+
+        fun outdoorNewInstance(outdoorShelterData : EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row, distance: Double) : BottomSheetFragment{
             val fragment = BottomSheetFragment()
             val args = Bundle().apply {
                 putParcelable(OUTDOOR_SHELTER_DATA, outdoorShelterData)
+                putDouble(DISTANCE_DATA, distance)
             }
             fragment.arguments = args
             return fragment
@@ -50,7 +52,10 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         val outdoorShelter = arguments?.getParcelable<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>(OUTDOOR_SHELTER_DATA)
         Log.d("BottomSheetFragment", "Shelter Name: ${outdoorShelter}")
 
+        val distance = arguments?.getDouble(DISTANCE_DATA)
+
         binding.shelterTv.text = "야외대피장소"
+        binding.distanceTv.text = "${String.format("%.2f", distance ?: 0.0)} m"
         binding.shelterNameTv.text = outdoorShelter?.vtAcmdfcltyNm ?: "데이터없음"
         binding.shelterClassificationTv.text = outdoorShelter?.acmdfcltySeNm ?: "데이터없음"
         binding.shelterPhoneTv.text = outdoorShelter?.mngpsTelno ?: "데이터없음"
