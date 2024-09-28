@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.EarthquakeIndoorsShelterResponse
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
+import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.databinding.FragmentEvacuateBinding
 import com.example.jikimi.viewmodel.IndoorEvacuationViewModel
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
@@ -203,7 +204,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
                 val shelterLocation = LatLng(latitude, longitude)
-                val distance = calculateDistance(currentLocation, shelterLocation)
+                val distance = currentLocation.distanceExtention(shelterLocation)
 
                 // 반경 5km 이내의 대피소만 표시
                 if (distance <= 50000.0) {
@@ -216,8 +217,9 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     }
 
                     outdoorMarker.setOnClickListener {
-                        // 마커 클릭시 BottomSheetFragment로 Row전체데이터(outdoorShelter) 전달
-                        val bottomSheetFragment = BottomSheetFragment.outdoorNewInstance(outdoorShelter)
+                        val distance = currentLocation.distanceExtention(shelterLocation)
+                        // 마커 클릭시 BottomSheetFragment로 Row전체데이터(outdoorShelter)와 distance 전달
+                        val bottomSheetFragment = BottomSheetFragment.outdoorNewInstance(outdoorShelter, distance)
 
                         bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
                         Toast.makeText(requireContext(), "${outdoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
@@ -245,7 +247,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
                 val shelterLocation = LatLng(latitude, longitude)
-                val distance = calculateDistance(currentLocation, shelterLocation)
+                val distance = currentLocation.distanceExtention(shelterLocation)
 
                 // 반경 5km 이내의 대피소만 표시
                 if (distance <= 50000.0) {
@@ -269,11 +271,11 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     }
 
     // 두지점간의 거리 계산
-    private fun calculateDistance(start: LatLng, end: LatLng): Double {
-        val results = FloatArray(1)
-        Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results)
-        return results[0].toDouble()
-    }
+//    private fun calculateDistance(start: LatLng, end: LatLng): Double {
+//        val results = FloatArray(1)
+//        Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results)
+//        return results[0].toDouble()
+//    }
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
