@@ -216,7 +216,9 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     }
 
                     outdoorMarker.setOnClickListener {
-                        val bottomSheetFragment = BottomSheetFragment()
+                        // 마커 클릭시 BottomSheetFragment로 Row전체데이터(outdoorShelter) 전달
+                        val bottomSheetFragment = BottomSheetFragment.outdoorNewInstance(outdoorShelter)
+
                         bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
                         Toast.makeText(requireContext(), "${outdoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
                         true
