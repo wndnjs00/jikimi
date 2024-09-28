@@ -99,13 +99,16 @@
 
     <TextView
         android:id="@+id/shelter_address_tv"
-        android:layout_width="@dimen/fragment_margin_370"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_margin_8"
         android:text="@string/shelter_address_tv"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_16"
-        android:layout_marginTop="@dimen/fragment_margin_8"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shelter_name_tv" />
 
     <View
@@ -143,7 +146,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fragment_margin_3"
-            android:text="@string/shelter_classification_tv"
+            android:text="@string/shelter_people_tv"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_14"
             app:layout_constraintBottom_toBottomOf="@+id/shelter_classification_iv"
@@ -178,7 +181,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fragment_margin_3"
-            android:text="@string/shelter_people_tv"
+            android:text="@string/shelter_classification_tv"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_14"
             app:layout_constraintBottom_toBottomOf="@+id/shelter_people_iv"
