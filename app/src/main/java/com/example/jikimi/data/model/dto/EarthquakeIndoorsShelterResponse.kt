@@ -1,7 +1,9 @@
 package com.example.jikimi.data.model.dto
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class EarthquakeIndoorsShelterResponse(
     @SerializedName("EarthquakeIndoors") val earthquakeIndoors: List<EarthquakeIndoor>
@@ -23,6 +25,7 @@ data class EarthquakeIndoorsShelterResponse(
             )
         }
 
+        @Parcelize
         data class Row(
             @SerializedName("arcd") val arcd: String?,
             @SerializedName("acmdfclty_sn") val acmdfcltySn: String?,
@@ -42,6 +45,6 @@ data class EarthquakeIndoorsShelterResponse(
             @SerializedName("rn_adres") val rnAdres: String?,
             @SerializedName("mngdpt_nm") val mngdptNm: String?,
             @SerializedName("vt_acmd_psbl_nmpr") val vtAcmdPsblNmpr: String?
-        )
+        ) : Parcelable
     }
 }
