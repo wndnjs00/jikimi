@@ -217,7 +217,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     }
 
                     outdoorMarker.setOnClickListener {
-                        val distance = currentLocation.distanceExtention(shelterLocation)
                         // 마커 클릭시 BottomSheetFragment로 Row전체데이터(outdoorShelter)와 distance 전달
                         val bottomSheetFragment = BottomSheetFragment.outdoorNewInstance(outdoorShelter, distance)
 
@@ -250,7 +249,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 val distance = currentLocation.distanceExtention(shelterLocation)
 
                 // 반경 5km 이내의 대피소만 표시
-                if (distance <= 50000.0) {
+                if (distance <= 100000.0) {
                     val indoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
@@ -260,7 +259,9 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     }
 
                     indoorMarker.setOnClickListener {
-                        val bottomSheetFragment = BottomSheetFragment()
+                        // 마커 클릭시 BottomSheetFragment로 Row전체데이터(indoorShelter)와 distance 전달
+                        val bottomSheetFragment = BottomSheetFragment.indoorNewInstance(indoorShelter, distance)
+
                         bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
                         Toast.makeText(requireContext(), "${indoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
                         true
@@ -269,13 +270,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
-    // 두지점간의 거리 계산
-//    private fun calculateDistance(start: LatLng, end: LatLng): Double {
-//        val results = FloatArray(1)
-//        Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results)
-//        return results[0].toDouble()
-//    }
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
