@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".presentation.fragment.BottomSheetFragment"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <view
+        android:id="@+id/bottomsheet_view"
+        class="com.google.android.material.bottomsheet.BottomSheetDragHandleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_40"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_20"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_20"/>
+
+    <TextView
+        android:id="@+id/distance_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/distance_tv"
+        android:textColor="@color/red"
+        android:textSize="@dimen/text_size_20"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/fragment_margin_10"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/gl_top" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/shelter_constraint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shelter_shape_corner"
+        app:layout_constraintBottom_toBottomOf="@+id/distance_tv"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toTopOf="@+id/distance_tv">
+
+        <TextView
+            android:id="@+id/shelter_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shelter_tv"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_16"
+            android:layout_marginStart="@dimen/fragment_margin_5"
+            android:layout_marginEnd="@dimen/fragment_margin_5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/shelter_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/shelter_name_tv"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_20"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/fragment_margin_20"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/distance_tv" />
+
+    <ImageView
+        android:id="@+id/empty_heart_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/empty_heart_img"
+        app:layout_constraintBottom_toBottomOf="@+id/shelter_name_tv"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toTopOf="@+id/shelter_name_tv" />
+
+
+    <TextView
+        android:id="@+id/shelter_address_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_margin_8"
+        android:text="@string/shelter_address_tv"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_16"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shelter_name_tv" />
+
+    <View
+        android:id="@+id/line_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fragment_margin_3"
+        android:background="@color/line_gray"
+        android:layout_marginTop="@dimen/fragment_margin_20"
+        app:layout_constraintTop_toBottomOf="@+id/shelter_address_tv"
+        android:layout_marginStart="@dimen/fragment_margin_20"
+        android:layout_marginEnd="@dimen/fragment_margin_20"
+        tools:ignore="MissingConstraints" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/shelter_classification_constraint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_margin_20"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/line_view">
+
+        <ImageView
+            android:id="@+id/shelter_classification_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/shelter_classification_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/shelter_classification_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/shelter_classification_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_margin_3"
+            android:text="@string/shelter_people_tv"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_14"
+            app:layout_constraintBottom_toBottomOf="@+id/shelter_classification_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/shelter_classification_iv"
+            app:layout_constraintTop_toTopOf="@+id/shelter_classification_iv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/shelter_people_constraint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_margin_20"
+        app:layout_constraintEnd_toEndOf="@id/gl_end"
+        app:layout_constraintTop_toBottomOf="@+id/line_view">
+
+        <ImageView
+            android:id="@+id/shelter_people_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/shelter_people_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/shelter_people_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/shelter_people_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_margin_3"
+            android:text="@string/shelter_classification_tv"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_14"
+            app:layout_constraintBottom_toBottomOf="@+id/shelter_people_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/shelter_people_iv"
+            app:layout_constraintTop_toTopOf="@+id/shelter_people_iv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/shelter_phone_constraint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fragment_margin_12"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/shelter_classification_constraint">
+
+        <ImageView
+            android:id="@+id/shelter_phone_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/shelter_phone_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/shelter_phone_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/shelter_phone_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_margin_3"
+            android:text="@string/shelter_phone_tv"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_14"
+            app:layout_constraintBottom_toBottomOf="@+id/shelter_phone_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/shelter_phone_iv"
+            app:layout_constraintTop_toTopOf="@+id/shelter_phone_iv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <View
+        android:id="@+id/line_view2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fragment_margin_3"
+        android:background="@color/transparent"
+        android:layout_marginTop="@dimen/fragment_margin_20"
+        app:layout_constraintTop_toBottomOf="@+id/shelter_phone_constraint"
+        android:layout_marginStart="@dimen/fragment_margin_20"
+        android:layout_marginEnd="@dimen/fragment_margin_20"
+        tools:ignore="MissingConstraints" />
+</androidx.constraintlayout.widget.ConstraintLayout>

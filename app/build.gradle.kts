@@ -105,4 +105,7 @@ dependencies {
     implementation (libs.androidx.fragment.ktx)
 
     implementation (libs.androidx.core)
+
+    implementation (libs.androidx.multidex)
+
 }
