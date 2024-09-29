@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.EarthquakeIndoorsShelterResponse
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
+import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.databinding.FragmentEvacuateBinding
 import com.example.jikimi.viewmodel.IndoorEvacuationViewModel
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
@@ -203,16 +204,25 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
                 val shelterLocation = LatLng(latitude, longitude)
-                val distance = calculateDistance(currentLocation, shelterLocation)
+                val distance = currentLocation.distanceExtention(shelterLocation)
 
                 // 반경 5km 이내의 대피소만 표시
                 if (distance <= 50000.0) {
-                    Marker().apply {
+                    val outdoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
                         icon = OverlayImage.fromResource(R.drawable.marker_red)
                         captionText = "${outdoorShelter.vtAcmdfcltyNm}\n${String.format("%.2f", distance)} m"
                         captionRequestedWidth = 150
+                    }
+
+                    outdoorMarker.setOnClickListener {
+                        // 마커 클릭시 BottomSheetFragment로 Row전체데이터(outdoorShelter)와 distance 전달
+                        val bottomSheetFragment = BottomSheetFragment.outdoorNewInstance(outdoorShelter, distance)
+
+                        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+                        Toast.makeText(requireContext(), "${outdoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
+                        true
                     }
                 }
             }
@@ -236,27 +246,29 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
                 val shelterLocation = LatLng(latitude, longitude)
-                val distance = calculateDistance(currentLocation, shelterLocation)
+                val distance = currentLocation.distanceExtention(shelterLocation)
 
                 // 반경 5km 이내의 대피소만 표시
-                if (distance <= 50000.0) {
-                    Marker().apply {
+                if (distance <= 100000.0) {
+                    val indoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
                         icon = OverlayImage.fromResource(R.drawable.maker_blue)
                         captionText = "${indoorShelter.vtAcmdfcltyNm}\n${String.format("%.2f", distance)} m"
                         captionRequestedWidth = 150
                     }
+
+                    indoorMarker.setOnClickListener {
+                        // 마커 클릭시 BottomSheetFragment로 Row전체데이터(indoorShelter)와 distance 전달
+                        val bottomSheetFragment = BottomSheetFragment.indoorNewInstance(indoorShelter, distance)
+
+                        bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+                        Toast.makeText(requireContext(), "${indoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
+                        true
+                    }
                 }
             }
         }
-    }
-
-    // 두지점간의 거리 계산
-    private fun calculateDistance(start: LatLng, end: LatLng): Double {
-        val results = FloatArray(1)
-        Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results)
-        return results[0].toDouble()
     }
 
     companion object {
