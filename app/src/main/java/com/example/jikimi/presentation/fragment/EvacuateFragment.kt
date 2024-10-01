@@ -22,6 +22,7 @@ import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.databinding.FragmentEvacuateBinding
 import com.example.jikimi.viewmodel.IndoorEvacuationViewModel
+import com.example.jikimi.viewmodel.LikeViewModel
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.LocationTrackingMode
@@ -62,6 +63,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
         initializeMap()
         initializeLocationSource()
+        likeBottomSheet()
     }
 
     // 지도 초기화
@@ -272,6 +274,15 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
+
+    // 좋아요 표시 눌렀을때 bottomSheet 나오게
+    private fun likeBottomSheet(){
+        binding.likeConstraint.setOnClickListener {
+            val likeBottomSheetFragment = LikeBottomSheetFragment()
+            likeBottomSheetFragment.show(childFragmentManager, likeBottomSheetFragment.tag)
+        }
+    }
+
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
