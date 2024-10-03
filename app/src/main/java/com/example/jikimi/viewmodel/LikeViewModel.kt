@@ -53,14 +53,14 @@ class LikeViewModel @Inject constructor(
         }
     }
 
-    // 데이터삭제
-    fun deleteData(likeEntity: LikeEntity) = viewModelScope.launch {
-        withContext(Dispatchers.IO){
-            shelterDao.deleteData(likeEntity)
-
-            // 삭제 후 데이터가 제대로 반영되었는지 로그로 확인
-            val updatedEntities = shelterDao.getAllData().first()
-            Log.d("LikeViewModelss", "삭제 후 업데이트된 데이터: $updatedEntities")
+    // 데이터 삭제(vtAcmdfcltyNm[대피소명]을 기준으로)
+    fun deleteData(shelterName: String) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            val entityToDelete = shelterDao.deleteDataFromShelterName(shelterName)
+            if (entityToDelete != null) {
+                shelterDao.deleteData(entityToDelete)
+            }
         }
     }
+
 }

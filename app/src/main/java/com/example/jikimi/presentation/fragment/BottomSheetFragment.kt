@@ -101,7 +101,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 }
             }
 
-            // Initialize the likeEntity using the shelter data
             likeEntity = LikeEntity(
                 vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
                 rnAdres = outdoorShelter.rnAdres ?: "",
@@ -139,7 +138,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 }
             }
 
-            // Initialize the likeEntity using the indoor shelter data
             if (indoorShelter != null) {
                 likeEntity = LikeEntity(
                     vtAcmdfcltyNm = indoorShelter.vtAcmdfcltyNm ?: "",
@@ -164,23 +162,11 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 binding.emptyHeartIv.setImageResource(R.drawable.full_heart_img)
             }else{
                 // Room 사용해서 데이터 삭제
-                likeViewModel.deleteData(likeEntity!!)
+                likeViewModel.deleteData(likeEntity!!.vtAcmdfcltyNm)
                 binding.emptyHeartIv.setImageResource(R.drawable.empty_heart_img)
-
-                // 데이터 삭제후 즉시 반영되는지 확인하기위해
-                observeLikeEntityUpdate()
                 }
             }
         }
-
-    // 데이터가 업데이트되었는지 확인하기 위한 함수 (옵션)
-    private fun observeLikeEntityUpdate() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            likeViewModel.likeEntity.collect { updatedLikeEntities ->
-                Log.d("업데이트된 LikeEntity 리스트", "업데이트된 LikeEntity 리스트: $updatedLikeEntities")
-            }
-        }
-    }
 
 
     private fun liked(){

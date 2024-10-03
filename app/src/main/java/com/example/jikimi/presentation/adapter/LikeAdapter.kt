@@ -48,7 +48,7 @@ class LikeAdapter(
 
     object LikeDiffUtil : DiffUtil.ItemCallback<LikeEntity>(){
         override fun areItemsTheSame(oldItem: LikeEntity, newItem: LikeEntity): Boolean {
-            return oldItem == newItem
+            return oldItem.vtAcmdfcltyNm == newItem.vtAcmdfcltyNm
         }
 
         override fun areContentsTheSame(oldItem: LikeEntity, newItem: LikeEntity): Boolean {
