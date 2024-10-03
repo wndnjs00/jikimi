@@ -9,5 +9,7 @@ data class LikeEntity(
     val vtAcmdfcltyNm : String,
     val rnAdres : String,
     val vtAcmdPsblNmpr : String,
-    val dtlAdres : String
+    val dtlAdres : String,
+    val distanceData : String,
+    val shelterType : String
 )
