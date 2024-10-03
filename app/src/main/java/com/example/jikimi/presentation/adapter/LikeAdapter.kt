@@ -33,14 +33,18 @@ class LikeAdapter(
 
         fun bind(likeEntity: LikeEntity){
 
-            binding.likeShelterNameTv.text = likeEntity.vtAcmdfcltyNm
-            binding.likeShelterAddressTv.text = likeEntity.rnAdres
+            with(binding){
+                likeShelterNameTv.text = likeEntity.vtAcmdfcltyNm
+                likeShelterAddressTv.text = likeEntity.rnAdres
+                likeShelterTv.text = likeEntity.shelterType
+                likeDistanceTv.text = "${likeEntity.distanceData} m"
 
-            // 주소 데이터 설정
-            binding.likeShelterAddressTv.text = when {
-                !likeEntity?.rnAdres.isNullOrEmpty() -> likeEntity?.rnAdres // rnAdres가 존재하면 사용
-                !likeEntity?.dtlAdres.isNullOrEmpty() -> likeEntity?.dtlAdres // rnAdres가 null이면 dtlAdres 사용
-                else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
+                // 주소 데이터 설정
+                likeShelterAddressTv.text = when {
+                    !likeEntity?.rnAdres.isNullOrEmpty() -> likeEntity?.rnAdres // rnAdres가 존재하면 사용
+                    !likeEntity?.dtlAdres.isNullOrEmpty() -> likeEntity?.dtlAdres // rnAdres가 null이면 dtlAdres 사용
+                    else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
+                }
             }
         }
     }
