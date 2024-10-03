@@ -8,4 +8,5 @@
     <color name="line_gray">#E9E9E9</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="blue">#B7CFFF</color>
+    <color name="corner_stroke_gray">#DEDEDE</color>
 </resources>

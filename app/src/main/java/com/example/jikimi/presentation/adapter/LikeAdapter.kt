@@ -10,7 +10,8 @@ import com.example.jikimi.data.model.entity.LikeEntity
 import com.example.jikimi.databinding.LikeItemBinding
 
 class LikeAdapter(
-
+    private val onClick : (LikeEntity, Int) -> Unit,
+    private val onLongClick : (LikeEntity, Int) -> Unit,
 ) :ListAdapter<LikeEntity, LikeAdapter.LikeViewHolder>(LikeDiffUtil){
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -24,6 +25,15 @@ class LikeAdapter(
     override fun onBindViewHolder(holder: LikeViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
+
+        holder.itemView.setOnClickListener{
+            onClick(item, position)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onLongClick(item, position)
+            true
+        }
     }
 
 

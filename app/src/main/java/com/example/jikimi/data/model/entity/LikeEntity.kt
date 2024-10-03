@@ -8,8 +8,9 @@ data class LikeEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val vtAcmdfcltyNm : String,
     val rnAdres : String,
-    val vtAcmdPsblNmpr : String,
     val dtlAdres : String,
     val distanceData : String,
-    val shelterType : String
+    val shelterType : String,
+    val latitude : Double,
+    val longitude : Double,
 )
