@@ -16,6 +16,7 @@ import com.example.jikimi.data.model.entity.LikeEntity
 import com.example.jikimi.databinding.FragmentBottomSheetBinding
 import com.example.jikimi.viewmodel.LikeViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -104,10 +105,12 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             likeEntity = LikeEntity(
                 vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
                 rnAdres = outdoorShelter.rnAdres ?: "",
-                vtAcmdPsblNmpr = outdoorShelter.vtAcmdPsblNmpr ?: "",
+//                vtAcmdPsblNmpr = outdoorShelter.vtAcmdPsblNmpr ?: "",
                 dtlAdres = outdoorShelter.dtlAdres ?: "",
                 distanceData = String.format("%.2f", distance ?: 0.0),
-                shelterType = "야외대피장소"
+                shelterType = "야외대피장소",
+                latitude = outdoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0,
+                longitude = outdoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
             )
         }
     }
@@ -144,10 +147,12 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 likeEntity = LikeEntity(
                     vtAcmdfcltyNm = indoorShelter.vtAcmdfcltyNm ?: "",
                     rnAdres = indoorShelter.rnAdres ?: "",
-                    vtAcmdPsblNmpr = indoorShelter.vtAcmdPsblNmpr ?: "",
+//                    vtAcmdPsblNmpr = indoorShelter.vtAcmdPsblNmpr ?: "",
                     dtlAdres = indoorShelter.dtlAdres ?: "",
                     distanceData = String.format("%.2f", distance ?: 0.0),
-                    shelterType = "임시주거시설"
+                    shelterType = "임시주거시설",
+                    latitude = indoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0,
+                    longitude = indoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
                 )
             }
         }
@@ -164,10 +169,12 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 // Room 사용해서 데이터저장
                 likeViewModel.saveData(likeEntity!!)
                 binding.emptyHeartIv.setImageResource(R.drawable.full_heart_img)
+                Snackbar.make(binding.emptyHeartIv, "좋아요가 완료되었습니다.", Snackbar.LENGTH_SHORT).show()
             }else{
                 // Room 사용해서 데이터 삭제
                 likeViewModel.deleteData(likeEntity!!.vtAcmdfcltyNm)
                 binding.emptyHeartIv.setImageResource(R.drawable.empty_heart_img)
+                Snackbar.make(binding.emptyHeartIv, "좋아요가 삭제되었습니다.", Snackbar.LENGTH_SHORT).show()
                 }
             }
         }

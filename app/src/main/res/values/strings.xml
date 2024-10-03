@@ -12,6 +12,14 @@
 
     <!-- evacuate_fragment -->
     <string name="search_et">대피소,임시주거시설 검색</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- like_dialog -->
+    <string name="dialog_like_delete">좋아요를 삭제하시겠습니까?</string>
+    <string name="dialog_cancel">취소</string>
+    <string name="dialog_delete">삭제</string>
+
+
 </resources>
