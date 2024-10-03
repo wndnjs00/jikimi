@@ -22,4 +22,8 @@ interface ShelterDao {
 
     @Delete
     fun deleteData(likeEntity: LikeEntity)
+
+    // vtAcmdfcltyNm와 일치하는값 찾아서 1개만 반환
+    @Query("SELECT * FROM LikeEntity WHERE vtAcmdfcltyNm = :shelterName LIMIT 1")
+    fun deleteDataFromShelterName(shelterName: String): LikeEntity?
 }
