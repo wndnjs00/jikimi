@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.databinding.FragmentEvacuateBinding
 import com.example.jikimi.viewmodel.IndoorEvacuationViewModel
+import com.example.jikimi.viewmodel.LikeSharedViewModel
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -47,6 +49,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
     private val outdoorViewModel: OutdoorEvacuationViewModel by viewModels()
     private val indoorViewModel: IndoorEvacuationViewModel by viewModels()
+    private val sharedViewModel : LikeSharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +65,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         initializeMap()
         initializeLocationSource()
         likeBottomSheet()
+        observeSharedViewModel()
     }
 
 
@@ -278,15 +282,23 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private fun likeBottomSheet(){
         binding.likeConstraint.setOnClickListener {
             val likeBottomSheetFragment = LikeBottomSheetFragment()
-
-            // 콜백 함수 설정
-            likeBottomSheetFragment.setMapCallback { latitude, longitude, shelterName, shelterType ->
-                moveCameraToLocation(latitude, longitude, shelterName, shelterType)
-            }
-
             likeBottomSheetFragment.show(childFragmentManager, likeBottomSheetFragment.tag)
         }
     }
+
+
+    // sharedViewModel로 데이터공유
+    private fun observeSharedViewModel() {
+        lifecycleScope.launch {
+            sharedViewModel.selectedLikeEntity.collect { likeEntity ->
+                likeEntity?.let {
+                    moveCameraToLocation(it.latitude, it.longitude, it.vtAcmdfcltyNm, it.shelterType)
+                }
+            }
+        }
+    }
+
+
 
     // 네이버맵 카메라이동 + 마커표시함수
     fun moveCameraToLocation(latitude: Double, longitude: Double, shelterName: String, shelterType: String) {

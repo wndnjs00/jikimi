@@ -11,7 +11,7 @@ interface IndoorEvacuationService {
     suspend fun getIndoorEvacuation(
         @Query("serviceKey") serviceKey : String = INDOOR_EVACUATION_SERVICE_KEY,
         @Query("pageNo") pageNo : String = "1",             // 페이지번호 (대구-3적당)
-        @Query("numOfRows") numOfRows : String = "250",      // 한페이지 결과수 (대구-200적당 / 반경도 50Km로 바꿔야함)
+        @Query("numOfRows") numOfRows : String = "10",      // 한페이지 결과수 (대구-200적당 / 반경도 50Km로 바꿔야함)
         @Query("type") type : String = "JSON", // 호출문서형식
     ) : EarthquakeIndoorsShelterResponse
 }
