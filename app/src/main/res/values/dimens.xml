@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-<!--    <dimen name="design_bottom_navigation_text_size" tools:override="true">16sp</dimen>dimen-->
-<!--    <dimen name="design_bottom_navigation_active_text_size" tools:override="true">20sp</dimen>-->
 
     <dimen name="fragment_margin_3">3dp</dimen>
     <dimen name="fragment_margin_5">5dp</dimen>
@@ -9,11 +7,17 @@
     <dimen name="fragment_margin_10">10dp</dimen>
     <dimen name="fragment_margin_12">12dp</dimen>
     <dimen name="fragment_margin_20">20dp</dimen>
+    <dimen name="fragment_margin_30">30dp</dimen>
     <dimen name="fragment_margin_40">40dp</dimen>
+    <dimen name="fragment_margin_52">52dp</dimen>
+    <dimen name="fragment_margin_296">296dp</dimen>
     <dimen name="fragment_margin_370">370dp</dimen>
 
 
+    <dimen name="text_size_10">10sp</dimen>
+    <dimen name="text_size_13">13sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_15">15sp</dimen>
     <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_20">20sp</dimen>
 
