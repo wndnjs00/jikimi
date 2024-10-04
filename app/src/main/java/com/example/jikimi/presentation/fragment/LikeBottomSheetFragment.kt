@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +20,7 @@ import com.example.jikimi.databinding.FragmentBottomSheetBinding
 import com.example.jikimi.databinding.FragmentLikeBottomSheetBinding
 import com.example.jikimi.presentation.VisibilityView
 import com.example.jikimi.presentation.adapter.LikeAdapter
+import com.example.jikimi.viewmodel.LikeSharedViewModel
 import com.example.jikimi.viewmodel.LikeViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -38,40 +40,20 @@ class LikeBottomSheetFragment : BottomSheetDialogFragment() {
     private val likeViewModel : LikeViewModel by viewModels()
     private lateinit var likeEntity: LikeEntity
 
-    private lateinit var naverMapCallback: (Double, Double, String, String) -> Unit
+    private val sharedViewModel: LikeSharedViewModel by activityViewModels()
 
     private val likeAdapter : LikeAdapter by lazy {
         LikeAdapter(
             onClick = { item, position ->
                 likeEntity = item
-                val likeEntity = LikeEntity(
-                    vtAcmdfcltyNm = likeEntity.vtAcmdfcltyNm,
-                    rnAdres = likeEntity.rnAdres,
-                    dtlAdres = likeEntity.dtlAdres,
-                    distanceData = likeEntity.distanceData,
-                    shelterType = likeEntity.shelterType,
-                    latitude = likeEntity.latitude,
-                    longitude = likeEntity.longitude
-                )
-//                Toast.makeText(requireContext(), "$likeEntity", Toast.LENGTH_SHORT).show()
-                // 위경도, 시도명 전달
-                naverMapCallback(likeEntity.latitude, likeEntity.longitude, likeEntity.vtAcmdfcltyNm, likeEntity.shelterType)
+                // 클릭한 위경도, 시도명 전달
+                sharedViewModel.selectLikeEntity(likeEntity)
                 dismiss()
             },
 
             onLongClick = {item, positon ->
                 likeEntity = item
-
-                CustomDialog(likeEntity =
-                LikeEntity(
-                    vtAcmdfcltyNm = likeEntity.vtAcmdfcltyNm,
-                    rnAdres = likeEntity.rnAdres,
-                    dtlAdres = likeEntity.dtlAdres,
-                    distanceData = likeEntity.distanceData,
-                    shelterType = likeEntity.shelterType,
-                    latitude = likeEntity.latitude,
-                    longitude = likeEntity.longitude
-                ))
+                CustomDialog(likeEntity)
             }
         )
     }
@@ -145,11 +127,6 @@ class LikeBottomSheetFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-    }
-
-
-    fun setMapCallback(callback: (Double, Double, String, String) -> Unit) {
-        this.naverMapCallback = callback
     }
 
     private fun CustomDialog(likeEntity: LikeEntity){
