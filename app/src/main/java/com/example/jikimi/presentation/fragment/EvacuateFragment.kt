@@ -2,15 +2,12 @@ package com.example.jikimi.presentation.fragment
 
 import android.graphics.Color
 import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,9 +19,10 @@ import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.databinding.FragmentEvacuateBinding
 import com.example.jikimi.viewmodel.IndoorEvacuationViewModel
-import com.example.jikimi.viewmodel.LikeViewModel
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraAnimation
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
@@ -65,6 +63,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         initializeLocationSource()
         likeBottomSheet()
     }
+
 
     // 지도 초기화
     private fun initializeMap() {
@@ -257,7 +256,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     val indoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
-                        icon = OverlayImage.fromResource(R.drawable.maker_blue)
+                        icon = OverlayImage.fromResource(R.drawable.marker_blue)
                         captionText = "${indoorShelter.vtAcmdfcltyNm}\n${String.format("%.2f", distance)} m"
                         captionRequestedWidth = 150
                     }
@@ -275,12 +274,42 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    // 좋아요 표시 눌렀을때 bottomSheet 나오게
+    // likeConstraint 눌렀을때 bottomSheet 나오게
     private fun likeBottomSheet(){
         binding.likeConstraint.setOnClickListener {
             val likeBottomSheetFragment = LikeBottomSheetFragment()
+
+            // 콜백 함수 설정
+            likeBottomSheetFragment.setMapCallback { latitude, longitude, shelterName, shelterType ->
+                moveCameraToLocation(latitude, longitude, shelterName, shelterType)
+            }
+
             likeBottomSheetFragment.show(childFragmentManager, likeBottomSheetFragment.tag)
         }
+    }
+
+    // 네이버맵 카메라이동 + 마커표시함수
+    fun moveCameraToLocation(latitude: Double, longitude: Double, shelterName: String, shelterType: String) {
+            val cameraUpdate = CameraUpdate.scrollTo(LatLng(latitude, longitude)).animate(CameraAnimation.Easing)
+            naverMap.moveCamera(cameraUpdate)
+
+        // 마커가 없을 경우 새로 추가
+//        if (marker == null) {
+//            marker = Marker().apply {
+//                position = LatLng(latitude, longitude)
+//                map = naverMap
+//                captionText = shelterName
+//                icon = when(shelterType){
+//                    "임시주거시설" -> OverlayImage.fromResource(R.drawable.marker_blue)  // 임시주거시설이면 파란 아이콘
+//                    "야외대피장소" -> OverlayImage.fromResource(R.drawable.marker_red)
+//                    else -> OverlayImage.fromResource(R.drawable.ic_launcher_foreground)
+//                }
+//                captionRequestedWidth = 150
+//            }
+//        } else {
+//            // 마커가 이미 있으면 위치 업데이트
+//            marker?.position = LatLng(latitude, longitude)
+//        }
     }
 
 
