@@ -105,7 +105,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             likeEntity = LikeEntity(
                 vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
                 rnAdres = outdoorShelter.rnAdres ?: "",
-//                vtAcmdPsblNmpr = outdoorShelter.vtAcmdPsblNmpr ?: "",
                 dtlAdres = outdoorShelter.dtlAdres ?: "",
                 distanceData = String.format("%.2f", distance ?: 0.0),
                 shelterType = "야외대피장소",
@@ -147,7 +146,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 likeEntity = LikeEntity(
                     vtAcmdfcltyNm = indoorShelter.vtAcmdfcltyNm ?: "",
                     rnAdres = indoorShelter.rnAdres ?: "",
-//                    vtAcmdPsblNmpr = indoorShelter.vtAcmdPsblNmpr ?: "",
                     dtlAdres = indoorShelter.dtlAdres ?: "",
                     distanceData = String.format("%.2f", distance ?: 0.0),
                     shelterType = "임시주거시설",

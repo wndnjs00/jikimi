@@ -38,6 +38,8 @@ class LikeBottomSheetFragment : BottomSheetDialogFragment() {
     private val likeViewModel : LikeViewModel by viewModels()
     private lateinit var likeEntity: LikeEntity
 
+    private lateinit var naverMapCallback: (Double, Double, String, String) -> Unit
+
     private val likeAdapter : LikeAdapter by lazy {
         LikeAdapter(
             onClick = { item, position ->
@@ -51,7 +53,10 @@ class LikeBottomSheetFragment : BottomSheetDialogFragment() {
                     latitude = likeEntity.latitude,
                     longitude = likeEntity.longitude
                 )
-                Toast.makeText(requireContext(), "$likeEntity", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "$likeEntity", Toast.LENGTH_SHORT).show()
+                // 위경도, 시도명 전달
+                naverMapCallback(likeEntity.latitude, likeEntity.longitude, likeEntity.vtAcmdfcltyNm, likeEntity.shelterType)
+                dismiss()
             },
 
             onLongClick = {item, positon ->
@@ -142,6 +147,10 @@ class LikeBottomSheetFragment : BottomSheetDialogFragment() {
         }
     }
 
+
+    fun setMapCallback(callback: (Double, Double, String, String) -> Unit) {
+        this.naverMapCallback = callback
+    }
 
     private fun CustomDialog(likeEntity: LikeEntity){
         val dialog = Dialog(requireContext())
