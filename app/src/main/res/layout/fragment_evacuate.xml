@@ -7,6 +7,13 @@
     tools:context=".presentation.fragment.EvacuateFragment">
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_30"/>
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,5 +38,44 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navermap_locationButtonEnabled="true"/>
 
+    <EditText
+        android:id="@+id/search_et"
+        android:layout_width="@dimen/fragment_margin_296"
+        android:layout_height="@dimen/fragment_margin_52"
+        android:background="@drawable/corner_search_edittext"
+        android:drawableStart="@drawable/search_img"
+        android:drawableEnd="@drawable/voice_img"
+        android:drawablePadding="12dp"
+        android:hint="@string/search_et"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_15"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@id/gl_top"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/like_constraint"
+        android:layout_width="@dimen/fragment_margin_52"
+        android:layout_height="@dimen/fragment_margin_52"
+        android:background="@drawable/corner_like"
+        app:layout_constraintBottom_toBottomOf="@+id/search_et"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toTopOf="@+id/gl_top">
+
+        <ImageView
+            android:id="@+id/like_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/white_like_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

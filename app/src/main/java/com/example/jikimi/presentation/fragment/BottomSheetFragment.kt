@@ -7,17 +7,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.EarthquakeIndoorsShelterResponse
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
+import com.example.jikimi.data.model.entity.LikeEntity
 import com.example.jikimi.databinding.FragmentBottomSheetBinding
+import com.example.jikimi.viewmodel.LikeViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BottomSheetFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentBottomSheetBinding? = null
+
+    private val likeViewModel : LikeViewModel by viewModels()
+
+    private var likeEntity : LikeEntity? = null
+    private var likeClick = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +44,8 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
         getOutdoorShelterData()
         getIndoorShelterData()
+        likeClickListener()
+        liked()
     }
 
 
@@ -87,6 +101,16 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                     else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
                 }
             }
+
+            likeEntity = LikeEntity(
+                vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
+                rnAdres = outdoorShelter.rnAdres ?: "",
+                dtlAdres = outdoorShelter.dtlAdres ?: "",
+                distanceData = String.format("%.2f", distance ?: 0.0),
+                shelterType = "야외대피장소",
+                latitude = outdoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0,
+                longitude = outdoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            )
         }
     }
 
@@ -117,9 +141,60 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                     else -> "데이터가 없음"
                 }
             }
+
+            if (indoorShelter != null) {
+                likeEntity = LikeEntity(
+                    vtAcmdfcltyNm = indoorShelter.vtAcmdfcltyNm ?: "",
+                    rnAdres = indoorShelter.rnAdres ?: "",
+                    dtlAdres = indoorShelter.dtlAdres ?: "",
+                    distanceData = String.format("%.2f", distance ?: 0.0),
+                    shelterType = "임시주거시설",
+                    latitude = indoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0,
+                    longitude = indoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+                )
+            }
         }
     }
 
+
+    private fun likeClickListener(){
+        // 좋아요 상태 검사에 따른 UI 업데이트
+        binding.emptyHeartIv.setOnClickListener {
+
+            likeClick = !likeClick
+
+            if (likeEntity != null && likeClick){
+                // Room 사용해서 데이터저장
+                likeViewModel.saveData(likeEntity!!)
+                binding.emptyHeartIv.setImageResource(R.drawable.full_heart_img)
+                Snackbar.make(binding.emptyHeartIv, "좋아요가 완료되었습니다.", Snackbar.LENGTH_SHORT).show()
+            }else{
+                // Room 사용해서 데이터 삭제
+                likeViewModel.deleteData(likeEntity!!.vtAcmdfcltyNm)
+                binding.emptyHeartIv.setImageResource(R.drawable.empty_heart_img)
+                Snackbar.make(binding.emptyHeartIv, "좋아요가 삭제되었습니다.", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+    private fun liked(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            likeViewModel.likeEntity.collect{ like ->
+                // vtAcmdfcltyNm가 일치하는지 확인 (vtAcmdfcltyNm로 좋아요 여부확인)
+                val isLiked = like.any {it.vtAcmdfcltyNm == likeEntity?.vtAcmdfcltyNm}
+
+                binding.emptyHeartIv.setImageResource(
+                    if(isLiked){
+                        R.drawable.full_heart_img
+                    }else{
+                        R.drawable.empty_heart_img
+                    }
+                )
+                likeClick = isLiked
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
