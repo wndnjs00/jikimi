@@ -1,7 +1,7 @@
 package com.example.jikimi.data.repository
 
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
-import com.example.jikimi.data.network.OutdoorEvacuationService
+import com.example.jikimi.data.network.service.OutdoorEvacuationService
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton

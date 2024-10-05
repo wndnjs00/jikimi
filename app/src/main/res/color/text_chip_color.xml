@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--선택되었을때 글자색-->
+    <item android:color="@color/white" android:state_checked="true" />
+    <!--선택되지 않았을때의 글자색-->
+    <item android:color="@color/chip_text_not_clicked" />
+</selector>

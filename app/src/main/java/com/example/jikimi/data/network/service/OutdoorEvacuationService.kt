@@ -1,6 +1,8 @@
-package com.example.jikimi.data.network
+package com.example.jikimi.data.network.service
 
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
+import com.example.jikimi.data.network.OUTDOOR_EVACUATION_API
+import com.example.jikimi.data.network.OUTDOOR_EVACUATION_SERVICE_KEY
 import retrofit2.http.GET
 import retrofit2.http.Query
 
