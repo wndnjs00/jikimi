@@ -21,5 +21,12 @@
     <string name="dialog_cancel">취소</string>
     <string name="dialog_delete">삭제</string>
 
+    <!--commonsense_fragment-->
+    <string name="commonsense_main_tv">재난상식</string>
+    <string name="commonsense_chip_first">전체</string>
+    <string name="commonsense_chip_second">자연재난</string>
+    <string name="commonsense_chip_three">사회재난</string>
+    <string name="commonsense_chip_four">생활안전</string>
+
 
 </resources>

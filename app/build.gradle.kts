@@ -40,6 +40,9 @@ android {
         buildConfigField("String", "INDOOR_EVACUATION_API_BASE", getApiKey("INDOOR_EVACUATION_API_BASE"))
         buildConfigField("String", "INDOOR_EVACUATION_API", getApiKey("INDOOR_EVACUATION_API"))
         buildConfigField("String", "INDOOR_EVACUATION_SERVICE_KEY", getApiKey("INDOOR_EVACUATION_SERVICE_KEY"))
+        buildConfigField("String", "NATURALDISASTER_API_BASE", getApiKey("NATURALDISASTER_API_BASE"))
+        buildConfigField("String", "NATURALDISASTER_API", getApiKey("NATURALDISASTER_API"))
+        buildConfigField("String", "NATURALDISASTER_SERVICE_KEY", getApiKey("NATURALDISASTER_SERVICE_KEY"))
     }
 
     packaging {
@@ -112,4 +115,11 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // To convert xml
+    implementation (libs.annotation)
+    implementation (libs.core)
+    implementation (libs.retrofit.converter)
+    ksp (libs.processor)
+
 }

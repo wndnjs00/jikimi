@@ -9,4 +9,6 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="blue">#B7CFFF</color>
     <color name="corner_stroke_gray">#DEDEDE</color>
+    <color name="chip_stroke_gray">#C8C7C7</color>
+    <color name="chip_text_not_clicked">#606060</color>
 </resources>
