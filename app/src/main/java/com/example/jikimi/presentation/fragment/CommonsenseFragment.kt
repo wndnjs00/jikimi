@@ -82,9 +82,9 @@ class CommonsenseFragment : Fragment() {
 
     private fun setObserve(){
         viewLifecycleOwner.lifecycleScope.launch {
-            commonsenseViewModel.naturalDisaster.collect{
+            commonsenseViewModel.naturalDisaster.collect{ disasterItems ->
 
-                commonsenseAdapter.submitList(it)
+                commonsenseAdapter.submitList(disasterItems)
             }
         }
     }

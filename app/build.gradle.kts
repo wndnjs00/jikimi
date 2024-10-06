@@ -117,9 +117,9 @@ dependencies {
     ksp(libs.room.compiler)
 
     // To convert xml
-    implementation (libs.annotation)
-    implementation (libs.core)
-    implementation (libs.retrofit.converter)
-    ksp (libs.processor)
+    implementation("com.tickaroo.tikxml:core:0.8.13")
+    implementation("com.tickaroo.tikxml:annotation:0.8.13")
+    implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    ksp("com.tickaroo.tikxml:processor:0.8.13")
 
 }
