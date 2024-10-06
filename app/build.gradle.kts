@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.hilt)    //hilt
 //    id("com.google.gms.google-services")
     id ("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 
@@ -117,9 +118,10 @@ dependencies {
     ksp(libs.room.compiler)
 
     // To convert xml
-    implementation("com.tickaroo.tikxml:core:0.8.13")
-    implementation("com.tickaroo.tikxml:annotation:0.8.13")
-    implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
-    ksp("com.tickaroo.tikxml:processor:0.8.13")
+    implementation ("com.tickaroo.tikxml:annotation:0.8.13")
+    implementation ("com.tickaroo.tikxml:core:0.8.13")
+    implementation ("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+
+    kapt ("com.tickaroo.tikxml:processor:0.8.13")
 
 }
