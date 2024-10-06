@@ -1,14 +1,16 @@
 package com.example.jikimi.data.model.dto
 
 import com.tickaroo.tikxml.annotation.Element
-import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
+import com.tickaroo.tikxml.annotation.PropertyElement
+
 
 @Xml(name = "response")
 data class NaturalDisasterResponse(
     @Element(name = "header") val header : Header,
     @Element(name = "body") val body : Body
 )
+
 
 @Xml(name = "header")
 data class Header(
