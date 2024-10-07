@@ -3,6 +3,7 @@ activityKtx = "1.9.1"
 agp = "8.5.1"
 annotation = "0.8.13"
 annotationVersion = "0.8.15"
+coil = "2.6.0"
 core = "0.8.15"
 fragmentKtx = "1.8.2"
 hiltAndroid = "2.51.1"
@@ -41,6 +42,7 @@ androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fr
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
 annotation = { module = "com.tickaroo.tikxml:annotation", version.ref = "annotation" }
 annotation-v0815 = { module = "com.tickaroo.tikxml:annotation", version.ref = "annotationVersion" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 core = { module = "com.tickaroo.tikxml:core", version.ref = "annotation" }
 core-v0815 = { module = "com.tickaroo.tikxml:core", version.ref = "core" }

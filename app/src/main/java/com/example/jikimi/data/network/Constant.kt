@@ -16,3 +16,13 @@ const val INDOOR_EVACUATION_SERVICE_KEY = BuildConfig.INDOOR_EVACUATION_SERVICE_
 const val NATURALDISASTER_API_BASE = BuildConfig.NATURALDISASTER_API_BASE
 const val NATURALDISASTER_API = BuildConfig.NATURALDISASTER_API
 const val NATURALDISASTER_SERVICE_KEY = BuildConfig.NATURALDISASTER_SERVICE_KEY
+
+
+object Constant{
+    // 공유되는 데이터
+    const val OUTDOOR_SHELTER_DATA = "outdoor_shelter_data"
+    const val OUTDOOR_DISTANCE_DATA = "outdoor_distance_data"
+    const val INDOOR_SHELTER_DATA = "indoor_shelter_data"
+    const val INDOOR_DISTANCE_DATA = "indoor_distance_data"
+    const val ITEM_DATA = "item_data"
+}

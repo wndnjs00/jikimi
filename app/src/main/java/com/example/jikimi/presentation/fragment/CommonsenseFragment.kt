@@ -11,8 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.jikimi.R
+import com.example.jikimi.data.model.dto.Item
 import com.example.jikimi.databinding.FragmentCommonsenseBinding
 import com.example.jikimi.presentation.ChipType
+import com.example.jikimi.presentation.activity.MainActivity
 import com.example.jikimi.presentation.adapter.CommonsenseAdapter
 import com.example.jikimi.viewmodel.CommonsenseViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,10 +26,19 @@ class CommonsenseFragment : Fragment() {
     private var _binding: FragmentCommonsenseBinding? = null
 
     private val commonsenseViewModel : CommonsenseViewModel by viewModels()
+    private lateinit var itemData : Item
 
     private val commonsenseAdapter : CommonsenseAdapter by lazy{
         CommonsenseAdapter(
-
+            onClick = { item, position ->
+                itemData = item
+                // DetailFragment로 item을 전달하면서 이동
+                val detailFragment = DetailFragment.newInstance(itemData)
+                (activity as MainActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.detailFragment, detailFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         )
     }
 

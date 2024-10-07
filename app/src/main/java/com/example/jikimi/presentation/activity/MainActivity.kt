@@ -7,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.jikimi.R
+import com.example.jikimi.data.model.dto.Item
 import com.example.jikimi.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
