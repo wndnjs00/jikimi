@@ -15,5 +15,14 @@
         android:id="@+id/commonsenseFragment"
         android:name="com.example.jikimi.presentation.fragment.CommonsenseFragment"
         android:label="fragment_commonsense"
-        tools:layout="@layout/fragment_commonsense" />
+        tools:layout="@layout/fragment_commonsense" >
+        <action
+            android:id="@+id/action_commonsenseFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.jikimi.presentation.fragment.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" />
 </navigation>

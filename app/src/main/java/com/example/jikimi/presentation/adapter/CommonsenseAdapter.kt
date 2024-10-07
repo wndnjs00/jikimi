@@ -5,12 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.Item
 import com.example.jikimi.databinding.CommonsenseItemBinding
 
 class CommonsenseAdapter(
-//    private val onClick : (Item, Int) -> Unit
+    private val onClick : (Item, Int) -> Unit
 ) : ListAdapter<Item, CommonsenseAdapter.CommonsenseViewHolder>(CommonsenseDiffUtil){
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -24,9 +25,9 @@ class CommonsenseAdapter(
         val item = getItem(position)
         holder.bind(item)
 
-//        holder.itemView.setOnClickListener{
-//            onClick(item, position)
-//        }
+        holder.itemView.setOnClickListener{
+            onClick(item, position)
+        }
     }
 
 
@@ -35,9 +36,15 @@ class CommonsenseAdapter(
     ): RecyclerView.ViewHolder(binding.root){
 
         fun bind(item : Item){
-            binding.cardViewTv.text = item.safetyCateNm2
+            with(binding){
+                cardViewTv.text = item.safetyCateNm2
 
-            //coil사용해서 이미지 띄우기
+                //coil사용해서 이미지 띄우기
+                cardViewIv.load(item.contentsUrl){
+                    placeholder(R.drawable.ic_launcher_foreground)  //로딩중
+                    error(R.drawable.ic_launcher_foreground)        // 에러발생시
+                }
+            }
         }
     }
 

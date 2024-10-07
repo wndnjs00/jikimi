@@ -27,11 +27,11 @@ class CommonsenseViewModel @Inject constructor(
                 // API호출
                 val response = naturalDisasterRepository.requestNaturalDisaster(safetyCate)
 
-                if(response.body != null){
-                    _naturalDisaster.value = response.body.items?.item ?: emptyList()
+                if(response != null){
+                    _naturalDisaster.value = response.body?.items?.item ?: emptyList()
                     Log.d("naturalDisaster API호출 성공", "데이터 : ${response}")
                 }else{
-                    Log.e("naturalDisaster_null_error", "Body is null")
+                    Log.e("naturalDisaster_null_error", "response is null")
                 }
 
             } catch (e: Exception){

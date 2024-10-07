@@ -124,4 +124,8 @@ dependencies {
 
     kapt ("com.tickaroo.tikxml:processor:0.8.13")
 
+    //coil
+    implementation(libs.coil)
+
+
 }
