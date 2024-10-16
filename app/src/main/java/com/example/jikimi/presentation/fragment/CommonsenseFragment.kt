@@ -35,7 +35,7 @@ class CommonsenseFragment : Fragment() {
                 // DetailFragment로 item을 전달하면서 이동
                 val detailFragment = DetailFragment.newInstance(itemData)
                 (activity as MainActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.detailFragment, detailFragment)
+                    .replace(R.id.fcv_main, detailFragment)
                     .addToBackStack(null)
                     .commit()
             }

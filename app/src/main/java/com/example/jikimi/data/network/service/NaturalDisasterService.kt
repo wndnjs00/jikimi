@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface NaturalDisasterService {
     @GET(NATURALDISASTER_API)
     suspend fun getNaturalDisaster(
-        @Query("serviceKey") serviceKey : String = NATURALDISASTER_SERVICE_KEY,
+        @Query("serviceKey", encoded = true) serviceKey : String = NATURALDISASTER_SERVICE_KEY,
         @Query("safety_cate") safetyCate : String,
     ) : NaturalDisasterResponse
 }
