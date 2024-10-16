@@ -35,14 +35,10 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
-import java.io.IOException
 import java.util.Locale
 
-@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private val binding get() = _binding!!
@@ -185,26 +181,14 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private suspend fun getCurrentAddress(latitude: Double, longitude: Double): String? {
         return withContext(Dispatchers.IO) {
             val geocoder = Geocoder(requireContext(), Locale.KOREA)
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
-            try{
-                withTimeout(3000){
-
-                    val addresses = geocoder.getFromLocation(latitude, longitude, 1)
-
-                    if (addresses?.isNotEmpty() == true) {
-                        val current_address = addresses[0].adminArea // adminArea에 해당하는 ctprvnNm 반환
-                        Log.d("현재주소", "$current_address") // 로그로 출력
-                        current_address
-                    } else {
-                        Log.e("현재주소_에러", "현재주소를 찾을 수 없습니다.")
-                        null
-                    }
-                }
-            } catch (e: IOException){
-                Log.e("GeocoderError", "Geocoder failed", e)
-                null
-            }catch (e: TimeoutCancellationException){
-                Log.e("GeocoderTimeout", "Geocoder took too long")
+            if (addresses?.isNotEmpty() == true) {
+                val current_address = addresses[0].adminArea // adminArea에 해당하는 ctprvnNm 반환
+                Log.d("현재주소", "$current_address") // 로그로 출력
+                current_address
+            } else {
+                Log.e("현재주소_에러", "현재주소를 찾을 수 없습니다.")
                 null
             }
         }
