@@ -1,5 +1,5 @@
 # ⚡️지키미⚡️
-지진발생시 주변 야외대피장소와 임시주거시설을 한눈에 확인할 수 있는 안전지킴이앱!
+지진발생시 주변 대피소를 한눈에 확인할 수 있는 안전지킴이앱!
 <br/><br/>
 <img width="870" alt="image" src="https://github.com/user-attachments/assets/0088a265-ca97-46cd-8741-91be123088ac">
 <br/><br/>
