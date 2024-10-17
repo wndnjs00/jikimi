@@ -23,9 +23,9 @@ data class Header(
 @Xml(name = "body")
 data class Body(
     @Element(name = "items") val items : Items?,
-    @PropertyElement(name = "numOfRows") val numOfRows : Int = 10,
-    @PropertyElement(name = "pageNo") val pageNo : Int = 1,
-    @PropertyElement(name = "totalCount") val totalCount : Int = 30, //총개수
+    @PropertyElement(name = "numOfRows") val numOfRows : Int ,
+    @PropertyElement(name = "pageNo") val pageNo : Int ,
+    @PropertyElement(name = "totalCount") val totalCount : Int , //총개수
 )
 
 @Xml(name = "items")

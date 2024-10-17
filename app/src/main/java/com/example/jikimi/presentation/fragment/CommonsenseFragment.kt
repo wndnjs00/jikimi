@@ -27,13 +27,14 @@ class CommonsenseFragment : Fragment() {
 
     private val commonsenseViewModel : CommonsenseViewModel by viewModels()
     private lateinit var itemData : Item
+    private lateinit var disasterItems: List<Item>
 
     private val commonsenseAdapter : CommonsenseAdapter by lazy{
         CommonsenseAdapter(
             onClick = { item, position ->
                 itemData = item
                 // DetailFragment로 item을 전달하면서 이동
-                val detailFragment = DetailFragment.newInstance(itemData)
+                val detailFragment = DetailFragment.newInstance(itemData, disasterItems)
                 (activity as MainActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.fcv_main, detailFragment)
                     .addToBackStack(null)
@@ -78,7 +79,10 @@ class CommonsenseFragment : Fragment() {
     private fun chipType(type: ChipType){
         when(type){
             ChipType.FIRST -> Toast.makeText(requireContext(), "ViewModel로 전체데이터 가져오기", Toast.LENGTH_SHORT).show()
-            ChipType.SECOND -> commonsenseViewModel.getNaturalDisaster(safetyCate = "01001")
+            ChipType.SECOND -> {
+                val safetyCates = listOf("01001","01002","01003","01004")
+                commonsenseViewModel.getNaturalDisaster(safetyCates)
+            }
             ChipType.THIRD -> Toast.makeText(requireContext(), "ViewModel로 사회재난 데이터 가져오기", Toast.LENGTH_SHORT).show()
             ChipType.FOURTH -> Toast.makeText(requireContext(), "ViewModel로 생활재난 데이터 가져오기", Toast.LENGTH_SHORT).show()
         }
@@ -94,7 +98,7 @@ class CommonsenseFragment : Fragment() {
     private fun setObserve(){
         viewLifecycleOwner.lifecycleScope.launch {
             commonsenseViewModel.naturalDisaster.collect{ disasterItems ->
-
+                this@CommonsenseFragment.disasterItems = disasterItems
                 commonsenseAdapter.submitList(disasterItems)
             }
         }
