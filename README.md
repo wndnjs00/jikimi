@@ -65,7 +65,5 @@
 <br/><br/>
 ### ⚙️기술적 의사결정
 
-- **Single Activity Architecture(SAA) 적용이유**
-
-  - Acticity는 Fragment에 비해 상대적으로 무겁기때문에, **메모리 효율성을 높이기 위함**
-  - **Fragment를 사용하여 복잡한 UI에 쉽게 대처**하기 위함
+**Single Activity Architecture(SAA) 적용**<br/>
+Acticity는 Fragment에 비해 상대적으로 무겁기때문에 Fragment를 사용하여 메모리 효율성을 높이고, 복잡한 UI에 쉽게 대처하기 위해 SAA방식을 프로젝트에 적용시켰습니다. 
