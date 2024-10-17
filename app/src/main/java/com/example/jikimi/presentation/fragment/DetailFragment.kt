@@ -70,67 +70,42 @@ class DetailFragment : Fragment() {
             }
             titleTv.text = item.safetyCateNm2
 
+            val safetyCate3Map = when (titleTv.text) {
+                "태풍" -> arrayOf("01001001", "01001002", "01001003")
+                "홍수" -> arrayOf("01002001", "01002002", "01002003")
+                "호우" -> arrayOf("01003001", "01003002", "01003003")
+                "강풍" -> arrayOf("01004001", "01004002", "01004003")
+                "대설" -> arrayOf("01005001", "01005002", "01005003")
+                "한파" -> arrayOf("01006001", "01006002", "01006003")
+                "풍랑" -> arrayOf("01007001", "01007002", "01007003")
+                "황사" -> arrayOf("01008001", "01008002", "01008003")
+                "폭염" -> arrayOf("01009001", "01009002", "01009003")
+                "가뭄" -> arrayOf("01010001", "01010002", "01010003")
+                "지진" -> arrayOf("01011001", "01011002", "01011003")
+                "지진해일" -> arrayOf("01012001", "01012002", "01012003")
+                "해일" -> arrayOf("01013001", "01013002", "01013003")
+                "산사태" -> arrayOf("01014001", "01014002", "01014003")
+                "화산폭발" -> arrayOf("01015001", "01015002", "01015003")
+                else -> emptyArray()
+            }
 
-            when (titleTv.text) {
-                "태풍" -> {
-                    allItems.find { it.safetyCate3 == "01001001" }?.let { item ->
-                        contentTitleTv2.text = item.safetyCateNm3
-                        contentTv.text = item.actRmks
-                    }
-
-                    allItems.find { it.safetyCate3 == "01001002" }?.let { item ->
-                        contentTitleTv3.text = item.safetyCateNm3
-                        contentTv2.text = item.actRmks
-                    }
-
-                    allItems.find { it.safetyCate3 == "01001003" }?.let { item ->
-                        contentTitleTv4.text = item.safetyCateNm3
-                        contentTv3.text = item.actRmks
-                    }
-                }
-                "홍수" -> {
-                    allItems.find { it.safetyCate3 == "01002001" }?.let { item ->
-                        contentTitleTv2.text = item.safetyCateNm3
-                        contentTv.text = item.actRmks
-                    }
-                    allItems.find { it.safetyCate3 == "01002002" }?.let { item ->
-                        contentTitleTv3.text = item.safetyCateNm3
-                        contentTv2.text = item.actRmks
-                    }
-                    allItems.find { it.safetyCate3 == "01002003" }?.let { item ->
-                        contentTitleTv4.text = item.safetyCateNm3
-                        contentTv3.text = item.actRmks
+            safetyCate3Map.forEachIndexed { index, safetyCate3 ->
+                allItems.find { it.safetyCate3 == safetyCate3 }?.let { item ->
+                    when (index) {
+                        0 -> {
+                            contentTitleTv2.text = item.safetyCateNm3
+                            contentTv.text = item.actRmks
+                        }
+                        1 -> {
+                            contentTitleTv3.text = item.safetyCateNm3
+                            contentTv2.text = item.actRmks
+                        }
+                        2 -> {
+                            contentTitleTv4.text = item.safetyCateNm3
+                            contentTv3.text = item.actRmks
+                        }
                     }
                 }
-                "호우" -> {
-                    allItems.find { it.safetyCate3 == "01003001" }?.let { item ->
-                        contentTitleTv2.text = item.safetyCateNm3
-                        contentTv.text = item.actRmks
-                    }
-                    allItems.find { it.safetyCate3 == "01003002" }?.let { item ->
-                        contentTitleTv3.text = item.safetyCateNm3
-                        contentTv2.text = item.actRmks
-                    }
-                    allItems.find { it.safetyCate3 == "01003003" }?.let { item ->
-                        contentTitleTv4.text = item.safetyCateNm3
-                        contentTv3.text = item.actRmks
-                    }
-                }
-                "강풍" -> {
-                    allItems.find { it.safetyCate3 == "01004001" }?.let { item ->
-                        contentTitleTv2.text = item.safetyCateNm3
-                        contentTv.text = item.actRmks
-                    }
-                    allItems.find { it.safetyCate3 == "01004002" }?.let { item ->
-                        contentTitleTv3.text = item.safetyCateNm3
-                        contentTv2.text = item.actRmks
-                    }
-                    allItems.find { it.safetyCate3 == "01004003" }?.let { item ->
-                        contentTitleTv4.text = item.safetyCateNm3
-                        contentTv3.text = item.actRmks
-                    }
-                }
-                else -> {""}
             }
         }
     }

@@ -80,7 +80,7 @@ class CommonsenseFragment : Fragment() {
         when(type){
             ChipType.FIRST -> Toast.makeText(requireContext(), "ViewModel로 전체데이터 가져오기", Toast.LENGTH_SHORT).show()
             ChipType.SECOND -> {
-                val safetyCates = listOf("01001","01002","01003","01004")
+                val safetyCates = listOf("01001","01002","01003","01004","01005","01006","01007","01008","01009","01010","01011","01012","01013","01014","01015")
                 commonsenseViewModel.getNaturalDisaster(safetyCates)
             }
             ChipType.THIRD -> Toast.makeText(requireContext(), "ViewModel로 사회재난 데이터 가져오기", Toast.LENGTH_SHORT).show()
