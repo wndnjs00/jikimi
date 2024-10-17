@@ -25,4 +25,5 @@ object Constant{
     const val INDOOR_SHELTER_DATA = "indoor_shelter_data"
     const val INDOOR_DISTANCE_DATA = "indoor_distance_data"
     const val ITEM_DATA = "item_data"
+    const val ALL_ITEMS = "all_items"
 }
