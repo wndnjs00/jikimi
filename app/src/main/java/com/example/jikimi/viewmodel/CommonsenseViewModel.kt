@@ -41,8 +41,8 @@ class CommonsenseViewModel @Inject constructor(
                 }
             }
             // 모든 결과를 한번에 업데이트하는데, 중복되는 값은 필터링(safetyCateNm2를 기준으로)
-            val filterItems = allItems.distinctBy { it.safetyCateNm2 }
-            _naturalDisaster.value = filterItems
+//            val filterItems = allItems.distinctBy { it.safetyCateNm2 }
+            _naturalDisaster.value = allItems
         }
     }
 }
