@@ -68,27 +68,25 @@
 
 - 다양한 **재난행동요령** 제공
 
+<br/><br/>
+## ⚙️기술적 의사결정
 
+**Single Activity Architecture(SAA) 적용**<br/>
+Acticity는 Fragment에 비해 상대적으로 무겁기때문에 Fragment를 사용하여 메모리 효율성을 높이고, 복잡한 UI에 쉽게 대처하기 위해 SAA방식을 프로젝트에 적용시켰습니다. 
 
 
 <br/><br/>
 ## 🚨트러블슈팅
 
 1) Manifest내에 작성되는 키값을 local.properties로 빼주는 작업시 발생하는 문제
-    - 네이버맵 sdk를 사용해서 맵을 띄울때 client ID는 **Manifest내에 작성되는 키**이기 때문에, **buildConfigField() 대신 addManifestPlaceholders()함수를 사용**해서 해결했습니다
+    - 네이버맵 sdk를 사용해서 맵을 띄울때 client ID는 **Manifest내에 작성되는 키**이기 때문에, **buildConfigField() 대신 addManifestPlaceholders()함수를 사용**해서 해결했습니다.
 <br/>
  
 2) API 연속호출로 인한 비효율적인 문제 -> 모든 지역의 위경도좌표를 전부 호출하면 **과도한 호출로인한 데이터낭비** 발생
-    - **circleOverlay() 반경을 5km로 지정**하고 **해당반경내에 있는 데이터만 마커로 표시해주는 로직을 적용**하여, **사용자경험을 향상**시키고 **시스템성능을 효율적으로 관리**하도록 해결했습니다
+    - **circleOverlay() 반경을 5km로 지정**하고 **해당반경내에 있는 데이터만 마커로 표시해주는 로직을 적용**하여, **사용자경험을 향상**시키고 **시스템성능을 효율적으로 관리**하도록 해결했습니다.
 <br/>
 
 3) Room을 통해 데이터를 삭제하는 로직이 올바르게 작동하지 않는 문제
-    - **vtAcmdfcltyNm[대피소명]값을 기준**으로 **해당값과 일치할때 삭제하는 로직을 추가**해, 더욱 정확하게 데이터를 삭제하도록하여 해결했습니다
+    - **vtAcmdfcltyNm[대피소명]값을 기준**으로 **해당값과 일치할때 삭제하는 로직을 추가**해, 더욱 정확하게 데이터를 삭제하도록하여 해결했습니다.
  
 
-
-<br/><br/>
-## ⚙️기술적 의사결정
-
-**Single Activity Architecture(SAA) 적용**<br/>
-Acticity는 Fragment에 비해 상대적으로 무겁기때문에 Fragment를 사용하여 메모리 효율성을 높이고, 복잡한 UI에 쉽게 대처하기 위해 SAA방식을 프로젝트에 적용시켰습니다. 
