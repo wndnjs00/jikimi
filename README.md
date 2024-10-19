@@ -3,7 +3,7 @@
 <br/><br/>
 <img width="870" alt="image" src="https://github.com/user-attachments/assets/5ea20d7a-6474-4ac8-a669-86deb187a8ed">
 <br/><br/>
-## 🕖 개발 기간 [구현중]
+## 개발 기간 [구현중]
 2024.08.16 ~ 
 <br/><br/>
 ## 프로젝트 소개
