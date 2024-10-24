@@ -28,16 +28,17 @@ data class Body(
     @PropertyElement(name = "totalCount") val totalCount : Int , //총개수
 )
 
+@Parcelize
 @Xml(name = "items")
 data class Items(
     @Element(name = "item") val item: List<Item>?
-)
+) : Parcelable
 
 @Parcelize
 @Xml(name = "item")
 data class Item(
     @PropertyElement(name = "actRmks") var actRmks: String?,  //설명
-    @PropertyElement(name = "contentsType") var contentsType: Int?,
+    @PropertyElement(name = "contentsType") var contentsType: String?,
     @PropertyElement(name = "mainOrd") var mainOrd: Int?,
     @PropertyElement(name = "safetyCate1") var safetyCate1: String?,
     @PropertyElement(name = "safetyCate2") var safetyCate2: String?,
