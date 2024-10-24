@@ -38,11 +38,21 @@ class CommonsenseAdapter(
         fun bind(item : Item){
             with(binding){
                 cardViewTv.text = item.safetyCateNm2
+                
+                val Image = when{
+                    item.safetyCateNm2 == "태풍" -> R.drawable.marker_red
+                    item.safetyCateNm2 == "호우" -> R.drawable.marker_blue
+                    item.safetyCateNm2 == "강풍" -> R.drawable.search_img
+                    item.safetyCateNm2 == "대설" -> R.drawable.shelter_phone_img
+                    item.safetyCateNm2 == "한파" -> R.drawable.shelter_people_img
+                    item.safetyCateNm2 == "풍랑" -> R.drawable.shelter_classification_img
+                    else -> R.drawable.ic_launcher_foreground // 기본 이미지
+                }
 
                 //coil사용해서 이미지 띄우기
                 cardViewIv.load(item.contentsUrl){
-                    placeholder(R.drawable.ic_launcher_foreground)  //로딩중
-                    error(R.drawable.ic_launcher_foreground)        // 에러발생시
+                    placeholder(Image)  //로딩중
+                    error(Image) // 에러발생시
                 }
             }
         }
@@ -50,11 +60,11 @@ class CommonsenseAdapter(
 
     object CommonsenseDiffUtil : DiffUtil.ItemCallback<Item>(){
         override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return oldItem == newItem
+            return oldItem.safetyCateNm3 == newItem.safetyCateNm3
         }
 
         override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return oldItem == newItem
+            return oldItem.safetyCateNm3 == newItem.safetyCateNm3
         }
     }
 

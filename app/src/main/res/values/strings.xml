@@ -28,5 +28,15 @@
     <string name="commonsense_chip_three">사회재난</string>
     <string name="commonsense_chip_four">생활안전</string>
 
+    <!--detail_fragment-->
+    <string name="detail_main_tv">재난상식</string>
+    <string name="detail_title_tv">태풍</string>
+    <string name="detail_content_title_tv1">대처방안</string>
+    <string name="detail_content_title_tv2">행동요령1</string>
+    <string name="detail_content_tv">행동요령 내용1~~</string>
+    <string name="detail_content_title_tv3">행동요령2</string>
+    <string name="detail_content_tv2">행동요령 내용2~~</string>
+    <string name="detail_content_title_tv4">행동요령3</string>
+    <string name="detail_content_tv3">행동요령 내용3~~</string>
 
 </resources>

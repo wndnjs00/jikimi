@@ -8,10 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.Item
+import com.example.jikimi.data.model.dto.Items
 import com.example.jikimi.databinding.FragmentCommonsenseBinding
 import com.example.jikimi.presentation.ChipType
 import com.example.jikimi.presentation.activity.MainActivity
@@ -27,14 +30,15 @@ class CommonsenseFragment : Fragment() {
 
     private val commonsenseViewModel : CommonsenseViewModel by viewModels()
     private lateinit var itemData : Item
-    private lateinit var disasterItems: List<Item>
+    private var disasterItems: MutableList<Item> = mutableListOf()
 
     private val commonsenseAdapter : CommonsenseAdapter by lazy{
         CommonsenseAdapter(
             onClick = { item, position ->
                 itemData = item
-                // DetailFragment로 item을 전달하면서 이동
-                val detailFragment = DetailFragment.newInstance(itemData, disasterItems)
+
+                // DetailFragment로 데이터를 전달하면서 이동
+                val detailFragment = DetailFragment.newInstance(itemData)
                 (activity as MainActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.fcv_main, detailFragment)
                     .addToBackStack(null)
@@ -80,8 +84,10 @@ class CommonsenseFragment : Fragment() {
         when(type){
             ChipType.FIRST -> Toast.makeText(requireContext(), "ViewModel로 전체데이터 가져오기", Toast.LENGTH_SHORT).show()
             ChipType.SECOND -> {
-                val safetyCates = listOf("01001","01002","01003","01004","01005","01006","01007","01008","01009","01010","01011","01012","01013","01014","01015")
-                commonsenseViewModel.getNaturalDisaster(safetyCates)
+                if(disasterItems.isEmpty()){
+                    val safetyCates = listOf("01001","01002","01003","01004","01005","01006","01007","01008","01009","01010","01011","01012","01013","01014","01015")
+                    commonsenseViewModel.getNaturalDisaster(safetyCates)
+                }
             }
             ChipType.THIRD -> Toast.makeText(requireContext(), "ViewModel로 사회재난 데이터 가져오기", Toast.LENGTH_SHORT).show()
             ChipType.FOURTH -> Toast.makeText(requireContext(), "ViewModel로 생활재난 데이터 가져오기", Toast.LENGTH_SHORT).show()
@@ -95,11 +101,17 @@ class CommonsenseFragment : Fragment() {
         }
     }
 
-    private fun setObserve(){
+    private fun setObserve() {
         viewLifecycleOwner.lifecycleScope.launch {
-            commonsenseViewModel.naturalDisaster.collect{ disasterItems ->
-                this@CommonsenseFragment.disasterItems = disasterItems
-                commonsenseAdapter.submitList(disasterItems)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                commonsenseViewModel.naturalDisaster.collect { item ->
+                   item?.let{
+                       if (!disasterItems.contains(it)) { // 중복 체크
+                           disasterItems.add(it)
+                           commonsenseAdapter.submitList(disasterItems.toList())
+                       }
+                   }
+                }
             }
         }
     }

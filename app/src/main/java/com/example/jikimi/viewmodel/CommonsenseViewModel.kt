@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jikimi.data.model.dto.Item
+import com.example.jikimi.data.model.dto.Items
 import com.example.jikimi.data.repository.NaturalDisasterRepository
 import com.example.jikimi.presentation.adapter.CommonsenseAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,33 +17,63 @@ import javax.inject.Inject
 @HiltViewModel
 class CommonsenseViewModel @Inject constructor(
     private val naturalDisasterRepository: NaturalDisasterRepository
-) : ViewModel(){
+) : ViewModel() {
 
-    private val _naturalDisaster = MutableStateFlow<List<Item>>(emptyList())
-    val naturalDisaster : StateFlow<List<Item>> = _naturalDisaster
+    private val _naturalDisaster = MutableStateFlow<Item?>(null)
+    val naturalDisaster: StateFlow<Item?> = _naturalDisaster
 
-    fun getNaturalDisaster(safetyCates : List<String>){
-        viewModelScope.launch{
-            val allItems = mutableListOf<Item>()
-            safetyCates.forEach{ safetyCate ->
+    private val _clickItem = MutableStateFlow<List<Item>>(emptyList())
+    val clickItem: StateFlow<List<Item>> = _clickItem
+
+
+    fun getNaturalDisaster(safetyCates: List<String>) {
+        viewModelScope.launch {
+            safetyCates.forEach { safetyCate ->
                 try {
                     // API호출
                     val response = naturalDisasterRepository.requestNaturalDisaster(safetyCate)
 
-                    if(response != null){
+                    if (response != null) {
                         val items = response.body?.items?.item ?: emptyList()
-                        allItems.addAll(items)  // 결과를 리스트에 추가
+
+                        // contentsType이 2 또는 3인 데이터 필터링 후 첫 번째 데이터만 가져옴 / 해당 데이터 없을시 contentsType가 1인 첫번째값 호출
+                        val filteredItem = items.firstOrNull {
+                            it.contentsType == "2" || it.contentsType == "3"
+                        } ?: items.firstOrNull {
+                            it.contentsType == "1"
+                        }
+
+                        _naturalDisaster.value = filteredItem
+
                         Log.d("naturalDisaster API호출 성공", "데이터 : ${response}")
-                    }else{
+                    } else {
                         Log.e("naturalDisaster_null_error", "response is null")
                     }
-                } catch (e: Exception){
+                } catch (e: Exception) {
                     Log.d("naturalDisaster API호출 실패", "API 받아오기 실패: ${e.message}")
                 }
             }
-            // 모든 결과를 한번에 업데이트하는데, 중복되는 값은 필터링(safetyCateNm2를 기준으로)
-//            val filterItems = allItems.distinctBy { it.safetyCateNm2 }
-            _naturalDisaster.value = allItems
+        }
+    }
+
+
+    fun getClickItem(safetyCates: String) {
+        viewModelScope.launch {
+            try {
+                val responses = naturalDisasterRepository.requestNaturalDisaster(safetyCates)
+
+                if (responses != null) {
+                    val items = responses.body?.items?.item ?: emptyList()
+                    _clickItem.value = items
+                } else {
+                    Log.e("naturalDisaster_null_error", "response is null")
+                }
+            } catch (e: Exception) {
+                Log.d("naturalDisaster API 호출 실패", "API 받아오기 실패: ${e.message}")
+            }
         }
     }
 }
+
+
+

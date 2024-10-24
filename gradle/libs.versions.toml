@@ -31,6 +31,7 @@ okhttp = "4.12.0"
 #Room
 retrofitConverter = "0.8.15"
 room = "2.6.1"
+media3CommonKtx = "1.4.1"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
@@ -71,6 +72,7 @@ retrofit-converter-v0815 = { module = "com.tickaroo.tikxml:retrofit-converter", 
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 
 
 [plugins]
