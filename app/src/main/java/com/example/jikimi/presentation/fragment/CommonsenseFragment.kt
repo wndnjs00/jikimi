@@ -105,12 +105,12 @@ class CommonsenseFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 commonsenseViewModel.naturalDisaster.collect { item ->
-                   item?.let{
-                       if (!disasterItems.contains(it)) { // 중복 체크
-                           disasterItems.add(it)
-                           commonsenseAdapter.submitList(disasterItems.toList())
-                       }
-                   }
+                    item?.let{
+                        if (!disasterItems.contains(it)) { // 중복 체크
+                            disasterItems.add(it)
+                            commonsenseAdapter.submitList(disasterItems.toList())
+                        }
+                    }
                 }
             }
         }

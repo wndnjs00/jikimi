@@ -38,21 +38,28 @@ class CommonsenseAdapter(
         fun bind(item : Item){
             with(binding){
                 cardViewTv.text = item.safetyCateNm2
-                
-                val Image = when{
-                    item.safetyCateNm2 == "태풍" -> R.drawable.marker_red
-                    item.safetyCateNm2 == "호우" -> R.drawable.marker_blue
-                    item.safetyCateNm2 == "강풍" -> R.drawable.search_img
-                    item.safetyCateNm2 == "대설" -> R.drawable.shelter_phone_img
-                    item.safetyCateNm2 == "한파" -> R.drawable.shelter_people_img
-                    item.safetyCateNm2 == "풍랑" -> R.drawable.shelter_classification_img
-                    else -> R.drawable.ic_launcher_foreground // 기본 이미지
-                }
+
+                // 안전 카테고리와 이미지 매핑
+                val imageMap = mapOf(
+                    "태풍" to R.drawable.wind_img,
+                    "호우" to R.drawable.rain_img,
+                    "강풍" to R.drawable.storm_img,
+                    "대설" to R.drawable.snow_img,
+                    "한파" to R.drawable.cold_img,
+                    "풍랑" to R.drawable.storm,
+                    "황사" to R.drawable.sand_img,
+                    "폭염" to R.drawable.heat_img,
+                    "가뭄" to R.drawable.drought_img,
+                    "산사태" to R.drawable.landslide_img,
+                )
+
+                // 해당 카테고리에 맞는 이미지 가져오기, 기본 이미지는 ic_launcher_foreground
+                val image = imageMap[item.safetyCateNm2] ?: R.drawable.ic_launcher_foreground
 
                 //coil사용해서 이미지 띄우기
                 cardViewIv.load(item.contentsUrl){
-                    placeholder(Image)  //로딩중
-                    error(Image) // 에러발생시
+                    placeholder(image)  //로딩중
+                    error(image) // 에러발생시
                 }
             }
         }
