@@ -15,15 +15,15 @@ interface ShelterDao {
     fun getAllData() : Flow<List<LikeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertData(likeEntity: LikeEntity)
+    suspend fun insertData(likeEntity: LikeEntity)
 
     @Update
-    fun updataData(likeEntity: LikeEntity)
+    suspend fun updataData(likeEntity: LikeEntity)
 
     @Delete
-    fun deleteData(likeEntity: LikeEntity)
+    suspend fun deleteData(likeEntity: LikeEntity)
 
     // vtAcmdfcltyNm와 일치하는값 찾아서 1개만 반환
     @Query("SELECT * FROM LikeEntity WHERE vtAcmdfcltyNm = :shelterName LIMIT 1")
-    fun deleteDataFromShelterName(shelterName: String): LikeEntity?
+    suspend fun deleteDataFromShelterName(shelterName: String): LikeEntity?
 }

@@ -74,6 +74,3 @@ class CommonsenseViewModel @Inject constructor(
         }
     }
 }
-
-
-
