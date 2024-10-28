@@ -36,7 +36,7 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getItemData()
-        observeClickItem()
+        setObserveClickItem()
     }
 
     companion object {
@@ -51,7 +51,7 @@ class DetailFragment : Fragment() {
     }
 
 
-    private fun observeClickItem() {
+    private fun setObserveClickItem() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 commonsenseViewModel.clickItem.collect { filteredItems ->
@@ -66,7 +66,7 @@ class DetailFragment : Fragment() {
             itemData = item
             updateUI(itemData)
             
-            val categoryCode = when (itemData.safetyCateNm2) {
+            val naturalDisasterCategory = when (itemData.safetyCateNm2) {
                 "태풍" -> "01001"
                 "홍수" -> "01002"
                 "호우" -> "01003"
@@ -84,7 +84,7 @@ class DetailFragment : Fragment() {
                 "화산폭발" -> "01015"
                 else -> return
             }
-            commonsenseViewModel.getClickItem(categoryCode)
+            commonsenseViewModel.getClickItem(naturalDisasterCategory)
         }
     }
 
@@ -92,26 +92,29 @@ class DetailFragment : Fragment() {
         with(binding) {
             titleTv.text = item.safetyCateNm2
 
-            // 안전 카테고리와 이미지 매핑
-            val imageMap = mapOf(
-                "태풍" to R.drawable.wind_img,
-                "호우" to R.drawable.rain_img,
-                "강풍" to R.drawable.storm_img,
-                "대설" to R.drawable.snow_img,
-                "한파" to R.drawable.cold_img,
-                "풍랑" to R.drawable.storm,
-                "황사" to R.drawable.sand_img,
-                "폭염" to R.drawable.heat_img,
-                "가뭄" to R.drawable.drought_img,
-                "산사태" to R.drawable.landslide_img,
-            )
+            val disasterImage = when (item.safetyCateNm2) {
+                "태풍" -> R.drawable.wind_img
+                "홍수" -> R.drawable.flood_img
+                "호우" -> R.drawable.rain_img
+                "강풍" -> R.drawable.storm_img
+                "대설" -> R.drawable.snow_img
+                "한파" -> R.drawable.cold_img
+                "풍랑" -> R.drawable.tsunami_earthquake_img
+                "황사" -> R.drawable.sand_img
+                "폭염" -> R.drawable.heat_img
+                "가뭄" -> R.drawable.drought_img
+                "지진" -> R.drawable.earthquake_img
+                "지진해일" -> R.drawable.storm
+                "해일" -> R.drawable.tsunami_img
+                "산사태" -> R.drawable.landslide_img
+                "화산폭발" -> R.drawable.volcano_img
+                else -> R.drawable.ic_launcher_foreground
+            }
 
-            // 해당 카테고리에 맞는 이미지 가져오기, 기본 이미지는 ic_launcher_foreground
-            val image = imageMap[item.safetyCateNm2] ?: R.drawable.ic_launcher_foreground
-
-            detailCardViewIv.load(item.contentsUrl) {
-                placeholder(image)
-                error(image)
+            //coil사용해서 이미지 띄우기
+            detailCardViewIv.load(disasterImage){
+                placeholder(R.drawable.ic_launcher_foreground)  //로딩중
+                error(R.drawable.ic_launcher_foreground) // 에러발생시
             }
         }
     }
@@ -144,9 +147,8 @@ class DetailFragment : Fragment() {
                 else -> null
             }
 
-
-            contentPair?.let { (titleView, contentView) ->
-                titleView.text = item.safetyCateNm3
+            contentPair?.let { (titleTv, contentTv) ->
+                titleTv.text = item.safetyCateNm3
 
                 // actRmks 값 필터링
                 val filteredActRmks = item.actRmks?.let { actRmks ->
@@ -154,10 +156,11 @@ class DetailFragment : Fragment() {
                         .replace("&#xD;", "") // &#xD;를 제거
                 } ?: "" // actRmks가 null인 경우 빈 문자열로 대체
 
+                // 줄바꿈
                 if (filteredActRmks.isNotBlank()) {
-                    val currentText = contentView.text.toString()
+                    val currentText = contentTv.text.toString()
                     // 줄바꿈을 포함하여 텍스트를 추가
-                    contentView.text = if (currentText.isBlank()) {
+                    contentTv.text = if (currentText.isBlank()) {
                         "$filteredActRmks\n"
                     } else {
                         "$currentText\n$filteredActRmks\n"

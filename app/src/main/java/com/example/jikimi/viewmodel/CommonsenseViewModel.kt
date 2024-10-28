@@ -36,10 +36,8 @@ class CommonsenseViewModel @Inject constructor(
                     if (response != null) {
                         val items = response.body?.items?.item ?: emptyList()
 
-                        // contentsType이 2 또는 3인 데이터 필터링 후 첫 번째 데이터만 가져옴 / 해당 데이터 없을시 contentsType가 1인 첫번째값 호출
+                        // contentsType이 1인 데이터 필터링 후 첫 번째 데이터만 가져옴
                         val filteredItem = items.firstOrNull {
-                            it.contentsType == "2" || it.contentsType == "3"
-                        } ?: items.firstOrNull {
                             it.contentsType == "1"
                         }
 
@@ -57,6 +55,7 @@ class CommonsenseViewModel @Inject constructor(
     }
 
 
+    // 자연재난 아이템 클릭했을때
     fun getClickItem(safetyCates: String) {
         viewModelScope.launch {
             try {
