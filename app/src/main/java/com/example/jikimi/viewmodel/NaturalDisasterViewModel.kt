@@ -4,9 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jikimi.data.model.dto.Item
-import com.example.jikimi.data.model.dto.Items
 import com.example.jikimi.data.repository.NaturalDisasterRepository
-import com.example.jikimi.presentation.adapter.CommonsenseAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +13,7 @@ import javax.inject.Inject
 
 // 자연재난 눌렀을때 받아올 데이터
 @HiltViewModel
-class CommonsenseViewModel @Inject constructor(
+class NaturalDisasterViewModel @Inject constructor(
     private val naturalDisasterRepository: NaturalDisasterRepository
 ) : ViewModel() {
 
