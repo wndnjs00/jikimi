@@ -12,9 +12,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import coil.load
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.Item
+import com.example.jikimi.data.model.dto.SocialItem
 import com.example.jikimi.data.network.Constant
 import com.example.jikimi.databinding.FragmentDetailBinding
-import com.example.jikimi.viewmodel.CommonsenseViewModel
+import com.example.jikimi.presentation.activity.MainActivity
+import com.example.jikimi.viewmodel.NaturalDisasterViewModel
+import com.example.jikimi.viewmodel.SocialDisasterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -23,7 +26,8 @@ class DetailFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentDetailBinding? = null
     private lateinit var itemData: Item
-    private val commonsenseViewModel: CommonsenseViewModel by viewModels()
+    private val naturalDisasterViewModel: NaturalDisasterViewModel by viewModels()
+    private val socialDisasterViewModel: SocialDisasterViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,8 +39,15 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // MainActivity의 BottomNavigationView 숨기기
+        (activity as? MainActivity)?.hideBottomNavigation()
+
         getItemData()
         setObserveClickItem()
+
+        getSocialItemData()
+        setObserveSocialClickItem()
     }
 
     companion object {
@@ -54,8 +65,18 @@ class DetailFragment : Fragment() {
     private fun setObserveClickItem() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                commonsenseViewModel.clickItem.collect { filteredItems ->
+                naturalDisasterViewModel.clickItem.collect { filteredItems ->
                     updateContent(filteredItems)
+                }
+            }
+        }
+    }
+
+    private fun setObserveSocialClickItem(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                socialDisasterViewModel.socialClickItem.collect{filteredItems ->
+                    updateSocialContent(filteredItems)
                 }
             }
         }
@@ -84,8 +105,38 @@ class DetailFragment : Fragment() {
                 "화산폭발" -> "01015"
                 else -> return
             }
-            commonsenseViewModel.getClickItem(naturalDisasterCategory)
+            naturalDisasterViewModel.getClickItem(naturalDisasterCategory)
         }
+    }
+
+    fun getSocialItemData(){
+        val socialDisasterCategory = when (itemData.safetyCateNm2) {
+            "해양오염사고" -> "02001"
+            "대규모 수질오염" -> "02002"
+            "식용수" -> "02003"
+            "공동구 재난" -> "02004"
+            "가축질병" -> "02005"
+            "감염병 예방" -> "02006"
+            "철도·지하철·유도선 사고" -> "02007"
+            "금융전산" -> "02008"
+            "원전사고" -> "02009"
+            "화학물질사고" -> "02010"
+            "화재" -> "02011"
+            "산불" -> "02012"
+            "건축물 붕괴" -> "02013"
+            "댐 붕괴" -> "02014"
+            "폭발" -> "02015"
+            "항공기사고" -> "02016"
+            "화생방사고" -> "02017"
+            "정전 및 전력부족" -> "02018"
+            "전기·가스사고" -> "02019"
+            "유도선 사고" -> "02020"
+            "수난사고" -> "02021"
+            "테러" -> "02022"
+            "전력수급단계별" -> "02023"
+            else -> return
+        }
+        socialDisasterViewModel.getClickSocialItem(socialDisasterCategory)
     }
 
     private fun updateUI(item: Item) {
@@ -108,6 +159,8 @@ class DetailFragment : Fragment() {
                 "해일" -> R.drawable.tsunami_img
                 "산사태" -> R.drawable.landslide_img
                 "화산폭발" -> R.drawable.volcano_img
+
+                "해양오염사고" -> R.drawable.volcano_img
                 else -> R.drawable.ic_launcher_foreground
             }
 
@@ -134,16 +187,72 @@ class DetailFragment : Fragment() {
             val contentPair = when (item.safetyCate3) {
                 "01001001", "01002001", "01003001", "01004001", "01005001",
                 "01006001", "01007001", "01008001", "01009001", "01010001",
-                "01011009", "01012005", "01013001", "01014001", "01015001" -> Pair(binding.contentTitleTv2, binding.contentTv)
+                "01011009", "01012005", "01013001", "01014001", "01015001", -> Pair(binding.contentTitleTv2, binding.contentTv)
 
                 "01001002", "01002002", "01003002", "01004002", "01005002",
                 "01006002", "01007002", "01008002", "01009002", "01010002",
-                "01011010", "01012006", "01013002", "01014002", "01015002" -> Pair(binding.contentTitleTv3, binding.contentTv2)
+                "01011010", "01012006", "01013002", "01014002", "01015002", -> Pair(binding.contentTitleTv3, binding.contentTv2)
 
                 "01001003", "01002003", "01003003", "01004003", "01005003",
                 "01006003", "01007003", "01008003", "01009003", "01010003",
-                "01011012", "01012003", "01013003", "01014003", "01015003" -> Pair(binding.contentTitleTv4, binding.contentTv3)
+                "01011012", "01012003", "01013003", "01014003", "01015003", -> Pair(binding.contentTitleTv4, binding.contentTv3)
+                else -> null
+            }
 
+            contentPair?.let { (titleTv, contentTv) ->
+                titleTv.text = item.safetyCateNm3
+
+                // actRmks 값 필터링
+                val filteredActRmks = item.actRmks?.let { actRmks ->
+                    actRmks.replace("Q&amp;A", "Q&A") // Q&amp;A를 Q&A로 변경
+                        .replace("&#xD;", "") // &#xD;를 제거
+                } ?: "" // actRmks가 null인 경우 빈 문자열로 대체
+
+                // 줄바꿈
+                if (filteredActRmks.isNotBlank()) {
+                    val currentText = contentTv.text.toString()
+                    // 줄바꿈을 포함하여 텍스트를 추가
+                    contentTv.text = if (currentText.isBlank()) {
+                        "$filteredActRmks\n"
+                    } else {
+                        "$currentText\n$filteredActRmks\n"
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun updateSocialContent(filteredItems: List<SocialItem>) {
+
+        // 기본적으로 빈값을 먼저 할당
+        binding.contentTitleTv2.text = ""
+        binding.contentTv.text = ""
+        binding.contentTitleTv3.text = ""
+        binding.contentTv2.text = ""
+        binding.contentTitleTv4.text = ""
+        binding.contentTv3.text = ""
+
+        // filteredItems을 순회하며, safetyCate3값을 기반으로 텍스트에 업데이트
+        filteredItems.forEach { item ->
+            val contentPair = when (item.safetyCate3) {
+                "02001001", "02002001", "02003001", "02004001", "02005001",
+                "02006001", "02007001", "02008001", "02009001", "02010001",
+                "02011001", "02012001", "02013001", "02014001", "02015001",
+                "02016001", "02017001", "02018001", "02019001", "02020002",
+                "02021002", "02022007", "02023001",  -> Pair(binding.contentTitleTv2, binding.contentTv)
+
+                "02001002", "02002002", "02003002", "02004002", "02005002",
+                "02006002", "02007002", "02008002", "02009002", "02010002",
+                "02011002", "02012004", "02013003", "02014002", "02015004",
+                "02016002", "02017002", "02018002", "02019002", "02020003",
+                "02021003", "02022009", "02023002", -> Pair(binding.contentTitleTv3, binding.contentTv2)
+
+                "02001003", "02002003", "02003003", "02004003", "02005004",
+                "02006003", "02007003", "02008003", "02009003", "02010004",
+                "02011004", "02012006", "02013005", "02014003", "02015005",
+                "02016003", "02017003", "02018003", "02019004", "02020004",
+                "02021009", "02022010", "02023003", -> Pair(binding.contentTitleTv4, binding.contentTv3)
                 else -> null
             }
 
@@ -173,6 +282,9 @@ class DetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // MainActivity의 BottomNavigationView 다시 보이게 설정
+        (activity as? MainActivity)?.showBottomNavigation()
     }
 }
 

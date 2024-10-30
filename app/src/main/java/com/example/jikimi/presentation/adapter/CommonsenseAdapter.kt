@@ -55,6 +55,30 @@ class CommonsenseAdapter(
                     "해일" -> R.drawable.tsunami_img
                     "산사태" -> R.drawable.landslide_img
                     "화산폭발" -> R.drawable.volcano_img
+
+                    "해양오염사고" -> R.drawable.volcano_img
+                    "대규모 수질오염" -> R.drawable.volcano_img
+                    "식용수" -> R.drawable.volcano_img
+                    "공동구 재난" -> R.drawable.volcano_img
+                    "가축질병" -> R.drawable.volcano_img
+                    "감염병 예방" -> R.drawable.volcano_img
+                    "철도·지하철·유도선 사고" -> R.drawable.volcano_img
+                    "금융전산" -> R.drawable.volcano_img
+                    "원전사고" -> R.drawable.volcano_img
+                    "화학물질사고" -> R.drawable.volcano_img
+                    "화재" -> R.drawable.volcano_img
+                    "산불" -> R.drawable.volcano_img
+                    "건축물 붕괴" -> R.drawable.volcano_img
+                    "댐 붕괴" -> R.drawable.volcano_img
+                    "폭발" -> R.drawable.volcano_img
+                    "항공기사고" -> R.drawable.volcano_img
+                    "화생방사고" -> R.drawable.volcano_img
+                    "정전 및 전력부족" -> R.drawable.volcano_img
+                    "전기·가스사고" -> R.drawable.volcano_img
+                    "유도선 사고" -> R.drawable.volcano_img
+                    "수난사고" -> R.drawable.volcano_img
+                    "테러" -> R.drawable.volcano_img
+                    "전력수급단계별" -> R.drawable.volcano_img
                     else -> R.drawable.ic_launcher_foreground
                 }
 
