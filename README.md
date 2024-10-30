@@ -1,7 +1,7 @@
 # ⚡️지키미⚡️
 지진발생시 주변 대피소 정보를 한눈에 확인할 수 있는 안전지킴이앱!
 <br/><br/>
-<img width="870" alt="image" src="https://github.com/user-attachments/assets/5ea20d7a-6474-4ac8-a669-86deb187a8ed">
+<img width="870" alt="image" src="https://github.com/user-attachments/assets/096ba978-f787-447b-bdec-4d12c3cb8113">
 <br/><br/>
 ## 개발 기간 [구현중]
 2024.08.16 ~ 
@@ -31,8 +31,9 @@
 ## 🚨 다양한 재난행동요령 정보까지!
 지진뿐만 아니라 다양한 재난행동요령 정보까지 확인해 여러 긴급상황에 대비해보세요
 <p align="left">
-  <img src="https://github.com/user-attachments/assets/77562a99-61fa-4e52-9b03-562392b780c0" width="180" height="400" />
-  <img src="https://github.com/user-attachments/assets/5dcac045-1777-435b-8d23-4cee1382de1d" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/9950cdb4-36ab-4de1-b7ca-fd9da848d1af" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/9007acb0-8190-4016-849c-c83bd83fbeb2" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/ef82a37d-bc15-4b3f-bc07-043f36de68f7" width="180" height="400" />
 </p>
 
 <br/><br/>
