@@ -151,6 +151,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             val latitude = location.latitude
             val longitude = location.longitude
 
+            // 즉시 위치 업데이트 및 기존 마커 제거
             outdoorViewModel.updateCurrentLocation(latitude, longitude)
             indoorViewModel.updateCurrentLocation(latitude, longitude)
 
@@ -160,8 +161,13 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
                 // currentAddress가 유효한 경우에만 API 요청
                 if (!currentAddress.isNullOrEmpty()) {
+                    Log.d("위치변경", "현재위치: $latitude, $longitude, 주소: $currentAddress")
                     outdoorViewModel.fetchOutdoorShelters(currentAddress)
                     indoorViewModel.fetchIndoorShelters(currentAddress)
+                } else {
+                    // 주소 변환 실패시에도 위치 기반으로만 데이터 요청
+                    outdoorViewModel.fetchOutdoorShelters("")
+                    indoorViewModel.fetchIndoorShelters("")
                 }
             }
 
@@ -171,7 +177,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 center = LatLng(latitude, longitude)
                 radius = 5000.0     // 반경 5km로 수정
                 map = naverMap
-                color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정
+                color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정으로 변경하기
             }
         }
     }
@@ -180,15 +186,29 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     // Geocoder를 사용해 위경도 좌표를 주소로 변환 (백그라운드에서 처리)
     private suspend fun getCurrentAddress(latitude: Double, longitude: Double): String? {
         return withContext(Dispatchers.IO) {
-            val geocoder = Geocoder(requireContext(), Locale.KOREA)
-            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            try {
+                val geocoder = Geocoder(requireContext(), Locale.KOREA)
+                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
-            if (addresses?.isNotEmpty() == true) {
-                val current_address = addresses[0].adminArea // adminArea에 해당하는 ctprvnNm 반환
-                Log.d("현재주소", "$current_address") // 로그로 출력
-                current_address
-            } else {
-                Log.e("현재주소_에러", "현재주소를 찾을 수 없습니다.")
+                if (addresses?.isNotEmpty() == true) {
+                    // 시/도 정보 (예: 경기도)와 시/군/구 정보 (예: 수원시) 결합
+                    val adminArea = addresses[0].adminArea ?: "" // 시/도 (예: 경기도)
+                    val locality = addresses[0].locality ?: ""   // 시/군/구 (예: 수원시)
+
+                    val current_address = if (locality.isNotEmpty()) {
+                        "$adminArea $locality"
+                    } else {
+                        adminArea
+                    }
+
+                    Log.d("현재주소", "$current_address")
+                    current_address
+                } else {
+                    Log.e("현재주소_에러", "현재주소를 찾을 수 없습니다.")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("현재주소_에러", "주소변환 중 오류: ${e.message}")
                 null
             }
         }
@@ -197,7 +217,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
     // 야외대피소 데이터를 지도에 표시하고, 반경밖의 마커는 삭제
     private fun updateOutdoorSheltersOnMap(
-        shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>,
+        shelters: List<EarthquakeOutdoorsShelterResponse.Shelter>,
         currentLocation: LatLng
     ) {
         // 기존 마커 제거
@@ -205,8 +225,8 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         marker.map = null
 
         shelters.forEach { outdoorShelter ->
-            val latitude = outdoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-            val longitude = outdoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val latitude = outdoorShelter.la?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val longitude = outdoorShelter.lo?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
 
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
@@ -214,7 +234,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 val distance = currentLocation.distanceExtention(shelterLocation)
 
                 // 반경 5km 이내의 대피소만 표시
-                if (distance <= 50000.0) {
+                if (distance <= 5000.0) {
                     val outdoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap

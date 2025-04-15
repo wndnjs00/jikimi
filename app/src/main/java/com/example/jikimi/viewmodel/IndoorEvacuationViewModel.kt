@@ -49,6 +49,12 @@ class IndoorEvacuationViewModel @Inject constructor(
                         } else {
                             false
                         }
+                    }.sortedBy { shelter ->
+                        // 가까운 대피소부터 정렬
+                        val latitude = shelter.ycord?.toDoubleOrNull() ?: 0.0
+                        val longitude = shelter.xcord?.toDoubleOrNull() ?: 0.0
+                        val shelterLocation = LatLng(latitude, longitude)
+                        location.distanceExtention(shelterLocation)
                     }
 
                     // 필터링한 대피소데이터를 shelters에 업데이트
