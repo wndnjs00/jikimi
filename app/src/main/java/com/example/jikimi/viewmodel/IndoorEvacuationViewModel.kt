@@ -33,8 +33,8 @@ class IndoorEvacuationViewModel @Inject constructor(
                 Log.d("IndoorEvacuationViewModel_response", "Response received: $response")
 
                 val sheltersList = response?.earthquakeIndoors?.flatMap { it.row ?: emptyList() } ?: emptyList()
-                // ctprvnNm(지역명) 필터링 [전체데이터중에서 지역명과 일치하는 지역만 보여주기위해서]
-                val filteredShelters = sheltersList.filter { it.ctprvnNm == currentAddress }
+                // sggNm(..시) 필터링 [전체데이터중에서 시와 일치하는 지역만 보여주기위해서]
+                val filteredShelters = sheltersList.filter { it.sggNm == currentAddress }
 
                 // 필터링한 대피소데이터를 shelters에 업데이트
                 _shelter.value = filteredShelters

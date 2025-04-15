@@ -7,5 +7,5 @@
     <item
         android:id="@+id/commonsenseFragment"
         android:icon="@drawable/ic_nav_commonsense"
-        android:title="재난상식"/>
+        android:title="재난토크"/>
 </menu>

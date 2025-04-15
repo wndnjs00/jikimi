@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/commonsenseFragment"
-        android:name="com.example.jikimi.presentation.fragment.CommonsenseFragment"
+        android:name="com.example.jikimi.presentation.fragment.CommunityFragment"
         android:label="fragment_commonsense"
-        tools:layout="@layout/fragment_commonsense" >
+        tools:layout="@layout/fragment_community" >
         <action
             android:id="@+id/action_commonsenseFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
