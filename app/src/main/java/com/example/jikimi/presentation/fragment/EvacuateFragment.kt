@@ -169,11 +169,10 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             CircleOverlay().apply {
                 map = null  // 기존 서클 오버레이 제거
                 center = LatLng(latitude, longitude)
-                radius = 50000.0     // 반경 5km
+                radius = 5000.0     // 반경 5km로 수정
                 map = naverMap
-                color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정(알파0으로 바꾸기)
+                color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정
             }
-
         }
     }
 
@@ -248,16 +247,16 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         marker.map = null
 
         shelters.forEach { indoorShelter ->
-            val latitude = indoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-            val longitude = indoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val latitude = indoorShelter.ycord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val longitude = indoorShelter.xcord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
 
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
                 val shelterLocation = LatLng(latitude, longitude)
                 val distance = currentLocation.distanceExtention(shelterLocation)
 
-                // 반경 5km 이내의 대피소만 표시
-                if (distance <= 100000.0) {
+                // 반경 5km 이내의 대피소만 표시 (5000m)
+                if (distance <= 5000.0) {
                     val indoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
