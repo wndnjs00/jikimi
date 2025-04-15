@@ -25,11 +25,21 @@ class OutdoorEvacuationViewModel @Inject constructor(
     private val _currentLocation = MutableStateFlow<LatLng?>(null)
     val currentLocation: StateFlow<LatLng?> = _currentLocation
 
+    // API 요청 중인지 확인하는 플래그 추가
+    private var isLoading = false
+
 
     // API로 currentAddress 데이터를 가져오고 업데이트
     fun fetchOutdoorShelters(currentAddress: String) {
+        // 이미 로딩 중이면 중복 호출 방지
+        if (isLoading) {
+            Log.d("OutdoorEvacuationViewModel", "Already loading data, skipping request")
+            return
+        }
+
         viewModelScope.launch {
             try {
+                isLoading = true
                 // API 호출
                 val response = outdoorEvacuationRepository.requestOutdoorEvacuation()
                 Log.d("OutdoorEvacuationViewModel_response", "Response received: $response")
@@ -77,6 +87,8 @@ class OutdoorEvacuationViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e("OutdoorEvacuationViewModel_error", "API request failed: ${e.message}", e)
+            } finally {
+                isLoading = false
             }
         }
     }
