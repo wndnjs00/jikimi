@@ -2,6 +2,7 @@ package com.example.jikimi.presentation.fragment
 
 import android.graphics.Color
 import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -51,6 +52,12 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private val outdoorViewModel: OutdoorEvacuationViewModel by viewModels()
     private val indoorViewModel: IndoorEvacuationViewModel by viewModels()
     private val sharedViewModel : LikeSharedViewModel by activityViewModels()
+
+    // 위치 업데이트 관련 변수 추가
+    private var lastProcessedLocation: Location? = null
+    private var lastApiCallTime: Long = 0
+    private val MIN_DISTANCE_FOR_UPDATE = 100 // 100m 이상 이동 시 업데이트
+    private val MIN_TIME_BETWEEN_UPDATES = 30000 // 30초 (밀리초 단위)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -145,40 +152,66 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         // 마커 갱신을 호출하여 지도에 기존 마커를 다시 그림
         observeViewModels()
 
-        // 위치가 변경될때마다 데이터 요청
+        // 위치가 변경될때마다 데이터 요청 (개선된 로직)
         naverMap.addOnLocationChangeListener { location ->
-            // 현재위치 받아옴
-            val latitude = location.latitude
-            val longitude = location.longitude
+            // 현재 위치
+            val currentLocation = Location("current").apply {
+                latitude = location.latitude
+                longitude = location.longitude
+            }
 
-            // 즉시 위치 업데이트 및 기존 마커 제거
-            outdoorViewModel.updateCurrentLocation(latitude, longitude)
-            indoorViewModel.updateCurrentLocation(latitude, longitude)
+            val currentTime = System.currentTimeMillis()
 
-            // Geocoder를 비동기적으로 실행
-            lifecycleScope.launch {
-                val currentAddress = getCurrentAddress(latitude, longitude)
+            // 이전 위치가 있고, 최소 거리 이동 조건과 최소 시간 경과 조건을 검사
+            val shouldUpdate = lastProcessedLocation == null ||
+                    (currentLocation.distanceTo(lastProcessedLocation!!) >= MIN_DISTANCE_FOR_UPDATE &&
+                            currentTime - lastApiCallTime >= MIN_TIME_BETWEEN_UPDATES)
 
-                // currentAddress가 유효한 경우에만 API 요청
-                if (!currentAddress.isNullOrEmpty()) {
-                    Log.d("위치변경", "현재위치: $latitude, $longitude, 주소: $currentAddress")
-                    outdoorViewModel.fetchOutdoorShelters(currentAddress)
-                    indoorViewModel.fetchIndoorShelters(currentAddress)
-                } else {
-                    // 주소 변환 실패시에도 위치 기반으로만 데이터 요청
-                    outdoorViewModel.fetchOutdoorShelters("")
-                    indoorViewModel.fetchIndoorShelters("")
+            // 즉시 위치 업데이트 (UI 업데이트용)
+            outdoorViewModel.updateCurrentLocation(location.latitude, location.longitude)
+            indoorViewModel.updateCurrentLocation(location.latitude, location.longitude)
+
+            if (shouldUpdate) {
+                Log.d("위치업데이트", "유의미한 위치 변경: ${location.latitude}, ${location.longitude}")
+
+                // 위치 정보와 API 호출 시간 업데이트
+                lastProcessedLocation = currentLocation
+                lastApiCallTime = currentTime
+
+                // Geocoder를 비동기적으로 실행
+                lifecycleScope.launch {
+                    val currentAddress = getCurrentAddress(location.latitude, location.longitude)
+
+                    // currentAddress가 유효한 경우에만 API 요청
+                    if (!currentAddress.isNullOrEmpty()) {
+                        Log.d("위치변경_API_요청", "현재위치: ${location.latitude}, ${location.longitude}, 주소: $currentAddress")
+                        outdoorViewModel.fetchOutdoorShelters(currentAddress)
+                        indoorViewModel.fetchIndoorShelters(currentAddress)
+                    } else {
+                        // 주소 변환 실패시에도 위치 기반으로만 데이터 요청
+                        outdoorViewModel.fetchOutdoorShelters("")
+                        indoorViewModel.fetchIndoorShelters("")
+                    }
                 }
             }
 
-            // 반경 5km 서클오버레이 설정
-            CircleOverlay().apply {
-                map = null  // 기존 서클 오버레이 제거
-                center = LatLng(latitude, longitude)
-                radius = 5000.0     // 반경 5km로 수정
-                map = naverMap
-                color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정으로 변경하기
-            }
+            // 반경 5km 서클오버레이 설정 (UI 업데이트용이므로 항상 실행)
+            updateCircleOverlay(location.latitude, location.longitude)
+        }
+    }
+
+    // 서클 오버레이 업데이트 메서드 분리 (코드 가독성 향상)
+    private var currentCircleOverlay: CircleOverlay? = null
+    private fun updateCircleOverlay(latitude: Double, longitude: Double) {
+        // 기존 서클 제거
+        currentCircleOverlay?.map = null
+
+        // 새로운 서클 생성 및 표시
+        currentCircleOverlay = CircleOverlay().apply {
+            center = LatLng(latitude, longitude)
+            radius = 5000.0     // 반경 5km
+            map = naverMap
+            color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정
         }
     }
 
@@ -357,6 +390,8 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         naverMap.locationSource = null // LocationSource 해제
         val marker = Marker()
         marker.map = null
+        currentCircleOverlay?.map = null // 서클 오버레이 해제
+        lastProcessedLocation = null // 메모리 해제
     }
 }
 

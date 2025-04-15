@@ -24,14 +24,23 @@ class IndoorEvacuationViewModel @Inject constructor(
     private val _currentLocation = MutableStateFlow<LatLng?>(null)
     val currentLocation: StateFlow<LatLng?> = _currentLocation
 
+    // API 요청 중인지 확인하는 플래그 추가
+    private var isLoading = false
 
     // API데이터를 가져오고 업데이트
+    // API데이터를 가져오고 업데이트 (중복 호출 방지 로직 추가)
     fun fetchIndoorShelters(currentAddress: String) {
+        // 이미 로딩 중이면 중복 호출 방지
+        if (isLoading) {
+            Log.d("IndoorEvacuationViewModel", "Already loading data, skipping request")
+            return
+        }
+
         viewModelScope.launch {
             try {
+                isLoading = true
                 // API 호출
                 val response = indoorEvacuationRepository.requestIndoorEvacuation()
-                Log.d("IndoorEvacuationViewModel_response", "Response received: $response")
 
                 val sheltersList = response?.earthquakeIndoors?.flatMap { it.row ?: emptyList() } ?: emptyList()
 
@@ -59,16 +68,17 @@ class IndoorEvacuationViewModel @Inject constructor(
 
                     // 필터링한 대피소데이터를 shelters에 업데이트
                     _shelter.value = filteredShelters
-                    Log.d("IndoorEvacuationViewModel_marker", "Shelters found within 5km: ${filteredShelters.size}")
+                    Log.d("IndoorEvacuationViewModel", "Shelters found within 5km: ${filteredShelters.size}")
                 } ?: run {
                     // currentLocation이 없는 경우 주소 기반으로 필터링
                     val filteredShelters = sheltersList.filter { it.sggNm == currentAddress }
                     _shelter.value = filteredShelters
-                    Log.d("IndoorEvacuationViewModel_marker", "Shelters found by address: ${filteredShelters.size}")
                 }
 
             } catch (e: Exception) {
-                Log.e("IndoorEvacuationViewModel_error", "API 받아오기 실패: ${e.message}", e)
+                Log.e("IndoorEvacuationViewModel", "API 받아오기 실패: ${e.message}", e)
+            } finally {
+                isLoading = false
             }
         }
     }
