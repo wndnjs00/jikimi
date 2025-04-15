@@ -2,15 +2,9 @@ package com.example.jikimi.data.network.di
 
 import com.example.jikimi.data.network.INDOOR_EVACUATION_API_BASE
 import com.example.jikimi.data.network.service.IndoorEvacuationService
-import com.example.jikimi.data.network.NATURALDISASTER_API_BASE
 import com.example.jikimi.data.network.OUTDOOR_EVACUATION_API_BASE
-import com.example.jikimi.data.network.SOCIAL_DISASTER_API_BASE
-import com.example.jikimi.data.network.service.NaturalDisasterService
 import com.example.jikimi.data.network.service.OutdoorEvacuationService
-import com.example.jikimi.data.network.service.SocialDisasterService
 import com.google.gson.GsonBuilder
-import com.tickaroo.tikxml.TikXml
-import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -87,54 +81,6 @@ object RetrofitModule {
     }
 
 
-    @Singleton
-    @Provides
-    @Named("NaturalDisaster")
-    fun NaturalRetrofit(okHttpClient: OkHttpClient) : Retrofit{
-        return Retrofit.Builder()
-            .addConverterFactory(
-                TikXmlConverterFactory
-                    .create(TikXml.Builder().exceptionOnUnreadXml(false).build())
-            )
-            .client(okHttpClient)
-            .baseUrl(NATURALDISASTER_API_BASE)
-            .build()
-    }
-
-    @Singleton
-    @Provides
-    @Named("NaturalDisasterService")
-    fun provideNaturalDisaster(
-        @Named("NaturalDisaster") retrofit: Retrofit
-    ) : NaturalDisasterService{
-        return retrofit.create(NaturalDisasterService::class.java)
-    }
-
-
-
-    @Singleton
-    @Provides
-    @Named("SocialDisaster")
-    fun SocialRetrofit(okHttpClient: OkHttpClient) : Retrofit{
-        return Retrofit.Builder()
-            .addConverterFactory(
-                TikXmlConverterFactory
-                    .create(TikXml.Builder().exceptionOnUnreadXml(false).build())
-            )
-            .client(okHttpClient)
-            .baseUrl(SOCIAL_DISASTER_API_BASE)
-            .build()
-    }
-
-
-    @Singleton
-    @Provides
-    @Named("SocialDisasterService")
-    fun provideSocialDisaster(
-        @Named("SocialDisaster") retrofit: Retrofit
-    ) : SocialDisasterService{
-        return retrofit.create(SocialDisasterService::class.java)
-    }
 }
 
 
