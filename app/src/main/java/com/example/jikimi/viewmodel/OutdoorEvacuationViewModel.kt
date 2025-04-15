@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
+import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.data.repository.OutdoorEvacuationRepository
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,31 +18,65 @@ class OutdoorEvacuationViewModel @Inject constructor(
     private val outdoorEvacuationRepository: OutdoorEvacuationRepository
 ) : ViewModel() {
 
-    private val _shelters = MutableStateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>>(emptyList())
-    val shelters: StateFlow<List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>> = _shelters
+    private val _shelters = MutableStateFlow<List<EarthquakeOutdoorsShelterResponse.Shelter>>(emptyList())
+    val shelters: StateFlow<List<EarthquakeOutdoorsShelterResponse.Shelter>> = _shelters
 
     // 위치 데이터
     private val _currentLocation = MutableStateFlow<LatLng?>(null)
     val currentLocation: StateFlow<LatLng?> = _currentLocation
 
 
-    // API로 ctprvnNm데이터를 가져오고 업데이트
-    fun fetchOutdoorShelters(ctprvnNm: String) {
+    // API로 currentAddress 데이터를 가져오고 업데이트
+    fun fetchOutdoorShelters(currentAddress: String) {
         viewModelScope.launch {
             try {
-                // ctprvnNm를 기반으로 API 호출
-                val response = outdoorEvacuationRepository.requestOutdoorEvacuation(ctprvnNm)
+                // API 호출
+                val response = outdoorEvacuationRepository.requestOutdoorEvacuation()
                 Log.d("OutdoorEvacuationViewModel_response", "Response received: $response")
 
-                // earthquakeOutdoorsShelter2의 row가 null일 경우 emptyList로 처리하여 null값 받지 않도록
-                val sheltersList = response?.earthquakeOutdoorsShelter2?.flatMap { it.row ?: emptyList() } ?: emptyList()
+                val sheltersList = response.body ?: emptyList()
 
-                // 가져온 대피소데이터를 shelters에 업데이트
-                _shelters.value = sheltersList
-                Log.d("OutdoorEvacuationViewModel_marker", "Shelters found: ${sheltersList.size}")
+                // 현재 위치를 사용할 수 있는 경우 거리별 필터링
+                _currentLocation.value?.let { location ->
+                    // 반경 5km 이내의 대피소만 필터링
+                    val filteredShelters = sheltersList.filter { shelter ->
+                        val latitude = shelter.la?.toDoubleOrNull() ?: 0.0
+                        val longitude = shelter.lo?.toDoubleOrNull() ?: 0.0
+
+                        if (latitude != 0.0 && longitude != 0.0) {
+                            val shelterLocation = LatLng(latitude, longitude)
+                            val distance = location.distanceExtention(shelterLocation)
+                            distance <= 5000.0 // 5km = 5000m
+                        } else {
+                            false
+                        }
+                    }.sortedBy { shelter ->
+                        // 가까운 대피소부터 정렬
+                        val latitude = shelter.la?.toDoubleOrNull() ?: 0.0
+                        val longitude = shelter.lo?.toDoubleOrNull() ?: 0.0
+                        val shelterLocation = LatLng(latitude, longitude)
+                        location.distanceExtention(shelterLocation)
+                    }
+
+                    // 필터링된 데이터로 대피소 업데이트
+                    _shelters.value = filteredShelters
+                    Log.d("OutdoorEvacuationViewModel_marker", "Shelters found within 5km: ${filteredShelters.size}")
+                } ?: run {
+                    // 주소 기반 필터링 개선 - 대략적인 위치 매칭 시도
+                    val adminKeywords = currentAddress.split(" ")
+                    val filteredByAddress = sheltersList.filter { shelter ->
+                        val shelterAddress = shelter.eqkAcmdfcltyAdres ?: ""
+                        // 주소의 일부라도 매칭되면 포함
+                        adminKeywords.any { keyword ->
+                            shelterAddress.contains(keyword) && keyword.length >= 2
+                        }
+                    }
+                    _shelters.value = filteredByAddress
+                    Log.d("OutdoorEvacuationViewModel_marker", "Shelters filtered by address: ${filteredByAddress.size}")
+                }
 
             } catch (e: Exception) {
-                Log.e("OutdoorEvacuationViewModel_error", "API 받아오기 실패: ${e.message}", e)
+                Log.e("OutdoorEvacuationViewModel_error", "API request failed: ${e.message}", e)
             }
         }
     }

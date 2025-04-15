@@ -5,44 +5,33 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 data class EarthquakeOutdoorsShelterResponse(
-    @SerializedName("EarthquakeOutdoorsShelter2") val earthquakeOutdoorsShelter2: List<EarthquakeOutdoorsShelter2>
+    @SerializedName("header") val header: Header,
+    @SerializedName("numOfRows") val numOfRows: Int,
+    @SerializedName("pageNo") val pageNo: Int,
+    @SerializedName("totalCount") val totalCount: Int,
+    @SerializedName("body") val body: List<Shelter>
 ) {
-    data class EarthquakeOutdoorsShelter2(
-        @SerializedName("head") val head: List<Head>,
-        @SerializedName("row") val row: List<Row>
-    ) {
-        data class Head(
-            @SerializedName("totalCount") val totalCount: String?,
-            @SerializedName("numOfRows") val numOfRows: String?,
-            @SerializedName("pageNo") val pageNo: String?,
-            @SerializedName("type") val type: String?,
-            @SerializedName("RESULT") val result: RESULT?,
-        ) {
-            data class RESULT(
-                @SerializedName("resultCode") val resultCode: String?,
-                @SerializedName("resultMsg") val resultMsg: String?
-            )
-        }
+    data class Header(
+        @SerializedName("resultMsg") val resultMsg: String?,
+        @SerializedName("resultCode") val resultCode: String?,
+        @SerializedName("errorMsg") val errorMsg: String?
+    )
 
-        @Parcelize
-        data class Row(
-            @SerializedName("acmdfclty_se_nm") val acmdfcltySeNm: String?,
-            @SerializedName("acmdfclty_sn") val acmdfcltySn: String?,
-            @SerializedName("arcd") val arcd: String?,
-            @SerializedName("bdong_cd") val bdongCd: String?,
-            @SerializedName("ctprvn_nm") val ctprvnNm: String?,
-            @SerializedName("dtl_adres") val dtlAdres: String?,
-            @SerializedName("fclty_ar") val fcltyAr: String?,
-            @SerializedName("hdong_cd") val hdongCd: String?,
-            @SerializedName("mngps_nm") val mngpsNm: String?,
-            @SerializedName("mngps_telno") val mngpsTelno: String?,
-            @SerializedName("rdnmadr_cd") val rdnmadrCd: String?,
-            @SerializedName("rn_adres") val rnAdres: String?,
-            @SerializedName("sgg_nm") val sggNm: String?,
-            @SerializedName("vt_acmd_psbl_nmpr") val vtAcmdPsblNmpr: String?,
-            @SerializedName("vt_acmdfclty_nm") val vtAcmdfcltyNm: String?,
-            @SerializedName("xcord") val xcord: String,
-            @SerializedName("ycord") val ycord: String
-        ) : Parcelable
-    }
+    @Parcelize
+    data class Shelter(
+        @SerializedName("DTL_ADRES") val dtlAdres: String?, //상세주소
+        @SerializedName("USE_SE_CD") val useSeCd: String?,  //사용구분코드
+        @SerializedName("LO") val lo: String?,  //경도
+        @SerializedName("VT_ACMDFCLTY_NM") val vtAcmdfcltyNm: String?,//이재민수용시설명
+        @SerializedName("RN_DTL_ADRES") val rnDtlAdres: String?,    //도로명상세주소
+        @SerializedName("ACMD_BULD_MNG_NO") val acmdBuldMngNo: String?,//수용건물관리번호
+        @SerializedName("BDONG_CD") val bdongCd: String?,   //법정동코드
+        @SerializedName("ARCD") val arcd: String?,  //지역코드
+        @SerializedName("HDONG_CD") val hdongCd: String?, //행정동코드
+        @SerializedName("FCLTY_AR") val fcltyAr: Int?,  //시설면적
+        @SerializedName("LA") val la: String?,  //위도
+        @SerializedName("ACMDFCLTY_SN") val acmdfcltySn: Int?, //수용시설일련번호
+        @SerializedName("EQK_ACMDFCLTY_ADRES") val eqkAcmdfcltyAdres: String?,  //지진옥외대피장소주소
+        @SerializedName("VT_ACMD_PSBL_NMPR") val vtAcmdPsblNmpr: Int?   //이재민수용가능인원
+    ) : Parcelable
 }
