@@ -56,7 +56,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
                         if (latitude != 0.0 && longitude != 0.0) {
                             val shelterLocation = LatLng(latitude, longitude)
                             val distance = location.distanceExtention(shelterLocation)
-                            distance <= 5000.0 // 5km = 5000m
+                            distance <= 10000.0 // 10km = 10000m
                         } else {
                             false
                         }
