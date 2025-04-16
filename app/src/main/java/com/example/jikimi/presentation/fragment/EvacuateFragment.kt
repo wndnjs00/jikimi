@@ -1,24 +1,35 @@
 package com.example.jikimi.presentation.fragment
 
+import android.content.Context
 import android.graphics.Color
 import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.jikimi.R
+import com.example.jikimi.data.local.dao.ShelterDao
 import com.example.jikimi.data.model.dto.EarthquakeIndoorsShelterResponse
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
+import com.example.jikimi.data.model.entity.ShelterEntity
 import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.databinding.FragmentEvacuateBinding
+import com.example.jikimi.presentation.adapter.ShelterSearchAdapter
 import com.example.jikimi.viewmodel.IndoorEvacuationViewModel
 import com.example.jikimi.viewmodel.LikeSharedViewModel
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
@@ -38,6 +49,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
+import javax.inject.Inject
+import kotlin.time.measureTimedValue
 
 @AndroidEntryPoint
 class EvacuateFragment : Fragment(), OnMapReadyCallback {
@@ -50,6 +63,21 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private val outdoorViewModel: OutdoorEvacuationViewModel by viewModels()
     private val indoorViewModel: IndoorEvacuationViewModel by viewModels()
     private val sharedViewModel : LikeSharedViewModel by activityViewModels()
+
+    // 위치 업데이트 관련 변수 추가
+    private var lastProcessedLocation: Location? = null
+    private var lastApiCallTime: Long = 0
+    private val MIN_DISTANCE_FOR_UPDATE = 100 // 100m 이상 이동 시 업데이트
+    private val MIN_TIME_BETWEEN_UPDATES = 30000 // 30초 (밀리초 단위)
+
+    private val searchAdapter = ShelterSearchAdapter { shelter ->
+        onShelterSearchItemClick(shelter)
+    }
+
+    // Room DB 주입
+    @Inject
+    lateinit var shelterDao: ShelterDao
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +94,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         initializeLocationSource()
         likeBottomSheet()
         observeSharedViewModel()
+        setupSearchUI()
     }
 
 
@@ -112,6 +141,9 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                         if (currentLocation != null && outdoorShelters.isNotEmpty()) {
                             updateOutdoorSheltersOnMap(outdoorShelters, currentLocation)
                             Toast.makeText(requireContext(), "${outdoorShelters.size} 개의 야외대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
+
+                            // 검색을 위해 DB에 저장
+                            saveOutdoorSheltersToDatabase(outdoorShelters)
                         }else{
                             Toast.makeText(requireContext(), "야외대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
@@ -125,6 +157,9 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                         if (currentLocation != null && indoorShelters.isNotEmpty()) {
                             updateIndoorSheltersOnMap(indoorShelters, currentLocation)
                             Toast.makeText(requireContext(), "${indoorShelters.size} 개의 실내 대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
+
+                            // 검색을 위해 DB에 저장
+                            saveIndoorSheltersToDatabase(indoorShelters)
                         }else{
                             Toast.makeText(requireContext(), "실내대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
@@ -144,35 +179,66 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         // 마커 갱신을 호출하여 지도에 기존 마커를 다시 그림
         observeViewModels()
 
-        // 위치가 변경될때마다 데이터 요청
+        // 위치가 변경될때마다 데이터 요청 (개선된 로직)
         naverMap.addOnLocationChangeListener { location ->
-            // 현재위치 받아옴
-            val latitude = location.latitude
-            val longitude = location.longitude
+            // 현재 위치
+            val currentLocation = Location("current").apply {
+                latitude = location.latitude
+                longitude = location.longitude
+            }
 
-            outdoorViewModel.updateCurrentLocation(latitude, longitude)
-            indoorViewModel.updateCurrentLocation(latitude, longitude)
+            val currentTime = System.currentTimeMillis()
 
-            // Geocoder를 비동기적으로 실행
-            lifecycleScope.launch {
-                val currentAddress = getCurrentAddress(latitude, longitude)
+            // 이전 위치가 있고, 최소 거리 이동 조건과 최소 시간 경과 조건을 검사
+            val shouldUpdate = lastProcessedLocation == null ||
+                    (currentLocation.distanceTo(lastProcessedLocation!!) >= MIN_DISTANCE_FOR_UPDATE &&
+                            currentTime - lastApiCallTime >= MIN_TIME_BETWEEN_UPDATES)
 
-                // currentAddress가 유효한 경우에만 API 요청
-                if (!currentAddress.isNullOrEmpty()) {
-                    outdoorViewModel.fetchOutdoorShelters(currentAddress)
-                    indoorViewModel.fetchIndoorShelters(currentAddress)
+            // 즉시 위치 업데이트 (UI 업데이트용)
+            outdoorViewModel.updateCurrentLocation(location.latitude, location.longitude)
+            indoorViewModel.updateCurrentLocation(location.latitude, location.longitude)
+
+            if (shouldUpdate) {
+                Log.d("위치업데이트", "유의미한 위치 변경: ${location.latitude}, ${location.longitude}")
+
+                // 위치 정보와 API 호출 시간 업데이트
+                lastProcessedLocation = currentLocation
+                lastApiCallTime = currentTime
+
+                // Geocoder를 비동기적으로 실행
+                lifecycleScope.launch {
+                    val currentAddress = getCurrentAddress(location.latitude, location.longitude)
+
+                    // currentAddress가 유효한 경우에만 API 요청
+                    if (!currentAddress.isNullOrEmpty()) {
+                        Log.d("위치변경_API_요청", "현재위치: ${location.latitude}, ${location.longitude}, 주소: $currentAddress")
+                        outdoorViewModel.fetchOutdoorShelters(currentAddress)
+                        indoorViewModel.fetchIndoorShelters(currentAddress)
+                    } else {
+                        // 주소 변환 실패시에도 위치 기반으로만 데이터 요청
+                        outdoorViewModel.fetchOutdoorShelters("")
+                        indoorViewModel.fetchIndoorShelters("")
+                    }
                 }
             }
 
-            // 반경 5km 서클오버레이 설정
-            CircleOverlay().apply {
-                map = null  // 기존 서클 오버레이 제거
-                center = LatLng(latitude, longitude)
-                radius = 50000.0     // 반경 5km
-                map = naverMap
-                color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정(알파0으로 바꾸기)
-            }
+            // 반경 5km 서클오버레이 설정 (UI 업데이트용이므로 항상 실행)
+            updateCircleOverlay(location.latitude, location.longitude)
+        }
+    }
 
+    // 서클 오버레이 업데이트 메서드 분리 (코드 가독성 향상)
+    private var currentCircleOverlay: CircleOverlay? = null
+    private fun updateCircleOverlay(latitude: Double, longitude: Double) {
+        // 기존 서클 제거
+        currentCircleOverlay?.map = null
+
+        // 새로운 서클 생성 및 표시
+        currentCircleOverlay = CircleOverlay().apply {
+            center = LatLng(latitude, longitude)
+            radius = 10000.0     // 반경 10km
+            map = naverMap
+            color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정
         }
     }
 
@@ -180,15 +246,29 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     // Geocoder를 사용해 위경도 좌표를 주소로 변환 (백그라운드에서 처리)
     private suspend fun getCurrentAddress(latitude: Double, longitude: Double): String? {
         return withContext(Dispatchers.IO) {
-            val geocoder = Geocoder(requireContext(), Locale.KOREA)
-            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            try {
+                val geocoder = Geocoder(requireContext(), Locale.KOREA)
+                val addresses = geocoder.getFromLocation(latitude, longitude, 1)
 
-            if (addresses?.isNotEmpty() == true) {
-                val current_address = addresses[0].adminArea // adminArea에 해당하는 ctprvnNm 반환
-                Log.d("현재주소", "$current_address") // 로그로 출력
-                current_address
-            } else {
-                Log.e("현재주소_에러", "현재주소를 찾을 수 없습니다.")
+                if (addresses?.isNotEmpty() == true) {
+                    // 시/도 정보 (예: 경기도)와 시/군/구 정보 (예: 수원시) 결합
+                    val adminArea = addresses[0].adminArea ?: "" // 시/도 (예: 경기도)
+                    val locality = addresses[0].locality ?: ""   // 시/군/구 (예: 수원시)
+
+                    val current_address = if (locality.isNotEmpty()) {
+                        "$adminArea $locality"
+                    } else {
+                        adminArea
+                    }
+
+                    Log.d("현재주소", "$current_address")
+                    current_address
+                } else {
+                    Log.e("현재주소_에러", "현재주소를 찾을 수 없습니다.")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("현재주소_에러", "주소변환 중 오류: ${e.message}")
                 null
             }
         }
@@ -197,7 +277,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
     // 야외대피소 데이터를 지도에 표시하고, 반경밖의 마커는 삭제
     private fun updateOutdoorSheltersOnMap(
-        shelters: List<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>,
+        shelters: List<EarthquakeOutdoorsShelterResponse.Shelter>,
         currentLocation: LatLng
     ) {
         // 기존 마커 제거
@@ -205,16 +285,16 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         marker.map = null
 
         shelters.forEach { outdoorShelter ->
-            val latitude = outdoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-            val longitude = outdoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val latitude = outdoorShelter.la?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val longitude = outdoorShelter.lo?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
 
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
                 val shelterLocation = LatLng(latitude, longitude)
                 val distance = currentLocation.distanceExtention(shelterLocation)
 
-                // 반경 5km 이내의 대피소만 표시
-                if (distance <= 50000.0) {
+                // 반경 10km 이내의 대피소만 표시
+                if (distance <= 10000.0) {
                     val outdoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
@@ -247,16 +327,16 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         marker.map = null
 
         shelters.forEach { indoorShelter ->
-            val latitude = indoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
-            val longitude = indoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val latitude = indoorShelter.ycord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+            val longitude = indoorShelter.xcord.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
 
             // 유효한 좌표인지 확인
             if (latitude != 0.0 && longitude != 0.0) {
                 val shelterLocation = LatLng(latitude, longitude)
                 val distance = currentLocation.distanceExtention(shelterLocation)
 
-                // 반경 5km 이내의 대피소만 표시
-                if (distance <= 100000.0) {
+                // 반경 10km 이내의 대피소만 표시
+                if (distance <= 10000.0) {
                     val indoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
@@ -305,23 +385,216 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             val cameraUpdate = CameraUpdate.scrollTo(LatLng(latitude, longitude)).animate(CameraAnimation.Easing)
             naverMap.moveCamera(cameraUpdate)
 
-        // 마커가 없을 경우 새로 추가
-//        if (marker == null) {
-//            marker = Marker().apply {
-//                position = LatLng(latitude, longitude)
-//                map = naverMap
-//                captionText = shelterName
-//                icon = when(shelterType){
-//                    "임시주거시설" -> OverlayImage.fromResource(R.drawable.marker_blue)  // 임시주거시설이면 파란 아이콘
-//                    "야외대피장소" -> OverlayImage.fromResource(R.drawable.marker_red)
-//                    else -> OverlayImage.fromResource(R.drawable.ic_launcher_foreground)
-//                }
-//                captionRequestedWidth = 150
-//            }
-//        } else {
-//            // 마커가 이미 있으면 위치 업데이트
-//            marker?.position = LatLng(latitude, longitude)
-//        }
+        // 선택된 위치에 마커 추가
+        val marker = Marker().apply {
+            position = LatLng(latitude, longitude)
+            map = naverMap
+            icon = OverlayImage.fromResource(
+                if (shelterType == "임시주거시설") R.drawable.marker_blue else R.drawable.marker_red
+            )
+            captionText = shelterName
+            captionRequestedWidth = 150
+        }
+    }
+
+
+    // 검색을 위해
+    // 야외 대피소를 Room DB에 저장 (중복체크 로직 추가)
+    private fun saveOutdoorSheltersToDatabase(shelters: List<EarthquakeOutdoorsShelterResponse.Shelter>) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val shelterEntities = mutableListOf<ShelterEntity>()
+
+            for (shelter in shelters) {
+                val latitude = shelter.la?.toDoubleOrNull() ?: continue
+                val longitude = shelter.lo?.toDoubleOrNull() ?: continue
+                val name = shelter.vtAcmdfcltyNm ?: "이름 없음"
+
+                // 중복 체크
+                val existingShelter = shelterDao.findShelterByNameAndLocation(name, latitude, longitude)
+                if (existingShelter == null) {
+                    shelterEntities.add(
+                        ShelterEntity(
+                            vtAcmdfcltyNm = name,
+                            address = shelter.eqkAcmdfcltyAdres ?: "주소 없음",
+                            detailAddress = shelter.dtlAdres ?: "",
+                            latitude = latitude,
+                            longitude = longitude,
+                            shelterType = "야외대피장소"
+                        )
+                    )
+                }
+            }
+
+            if (shelterEntities.isNotEmpty()) {
+                shelterDao.insertShelters(shelterEntities)
+                Log.d("EvacuateFragment", "야외 대피소 ${shelterEntities.size}개를 저장했습니다.")
+            }
+        }
+    }
+
+    // 실내 대피소를 Room DB에 저장 (중복 체크 로직 추가)
+    private fun saveIndoorSheltersToDatabase(shelters: List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val shelterEntities = mutableListOf<ShelterEntity>()
+
+            for (shelter in shelters) {
+                val latitude = shelter.ycord.toDoubleOrNull() ?: continue
+                val longitude = shelter.xcord.toDoubleOrNull() ?: continue
+                val name = shelter.vtAcmdfcltyNm ?: "이름 없음"
+
+                // 중복 체크
+                val existingShelter = shelterDao.findShelterByNameAndLocation(name, latitude, longitude)
+                if (existingShelter == null) {
+                    shelterEntities.add(
+                        ShelterEntity(
+                            vtAcmdfcltyNm = name,
+                            address = shelter.rnAdres ?: "주소 없음",
+                            detailAddress = shelter.dtlAdres ?: "",
+                            latitude = latitude,
+                            longitude = longitude,
+                            shelterType = "임시주거시설"
+                        )
+                    )
+                }
+            }
+
+            if (shelterEntities.isNotEmpty()) {
+                shelterDao.insertShelters(shelterEntities)
+                Log.d("EvacuateFragment", "실내 대피소 ${shelterEntities.size}개를 저장했습니다.")
+            }
+        }
+    }
+
+
+
+    // 검색 UI 설정
+    private fun setupSearchUI() {
+        // RecyclerView 설정
+        binding.searchResultsRv.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = searchAdapter
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        }
+
+        // 검색창 클릭 이벤트
+        binding.searchEt.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+
+                // 검색 UI 표시
+                binding.searchOverlay.visibility = View.VISIBLE
+                binding.searchContainer.visibility = View.VISIBLE
+
+                // 초기에는 검색 결과를 비우고 안내 메시지 표시
+                binding.noResultsTv.text = "검색어를 입력하세요"
+                binding.noResultsTv.visibility = View.VISIBLE
+                binding.searchResultsRv.visibility = View.GONE
+                searchAdapter.updateShelters(emptyList())
+            }
+        }
+
+        // 검색창 입력 이벤트
+        binding.searchEt.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val query = s?.toString()?.trim() ?: ""
+                if (query.isNotEmpty()) {
+                    searchShelters(query)
+                } else {
+                    // 검색어가 비어있으면 결과 초기화
+                    binding.noResultsTv.text = "검색어를 입력하세요"
+                    binding.noResultsTv.visibility = View.VISIBLE
+                    binding.searchResultsRv.visibility = View.GONE
+                    searchAdapter.updateShelters(emptyList())
+                }
+            }
+        })
+
+        // 검색 완료 이벤트
+        binding.searchEt.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard()
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+
+        // 오버레이 클릭하면 검색 UI 숨기기
+        binding.searchOverlay.setOnClickListener {
+            hideSearchUI()
+        }
+    }
+
+    // 키보드 숨기기
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.searchEt.windowToken, 0)
+    }
+
+    // 검색 UI 숨기기
+    private fun hideSearchUI() {
+        binding.searchOverlay.visibility = View.GONE
+        binding.searchContainer.visibility = View.GONE
+        binding.searchEt.clearFocus()
+        hideKeyboard()
+    }
+
+    // 검색 실행 (검색어가 있을 때만 검색)
+    private fun searchShelters(query: String) {
+        if (query.isEmpty()) {
+            binding.noResultsTv.text = "검색어를 입력하세요"
+            binding.noResultsTv.visibility = View.VISIBLE
+            binding.searchResultsRv.visibility = View.GONE
+            searchAdapter.updateShelters(emptyList())
+            return
+        }
+
+        lifecycleScope.launch {
+            shelterDao.searchShelters(query).collect { shelters ->
+                updateSearchResults(shelters)
+            }
+        }
+    }
+
+    // 검색 결과 업데이트
+    private fun updateSearchResults(shelters: List<ShelterEntity>) {
+        if (shelters.isEmpty()) {
+            binding.noResultsTv.text = "검색 결과가 없습니다"
+            binding.noResultsTv.visibility = View.VISIBLE
+            binding.searchResultsRv.visibility = View.GONE
+        } else {
+            binding.noResultsTv.visibility = View.GONE
+            binding.searchResultsRv.visibility = View.VISIBLE
+            searchAdapter.updateShelters(shelters)
+        }
+    }
+
+    // 검색 결과 아이템 클릭 처리
+    private fun onShelterSearchItemClick(shelter: ShelterEntity) {
+        // 검색 UI 숨기기
+        hideSearchUI()
+
+        // 선택한 대피소로 카메라 이동
+        moveCameraToLocation(shelter.latitude, shelter.longitude, shelter.vtAcmdfcltyNm, shelter.shelterType)
+
+        // 마커 추가
+        val markerPosition = LatLng(shelter.latitude, shelter.longitude)
+        val marker = Marker().apply {
+            position = markerPosition
+            map = naverMap
+            icon = OverlayImage.fromResource(
+                if (shelter.shelterType == "임시주거시설") R.drawable.marker_blue else R.drawable.marker_red
+            )
+            captionText = shelter.vtAcmdfcltyNm
+            captionRequestedWidth = 150
+        }
+
+        // 줌 레벨 조정
+        val cameraUpdate = CameraUpdate.scrollAndZoomTo(markerPosition, 15.0)
+            .animate(CameraAnimation.Easing)
+        naverMap.moveCamera(cameraUpdate)
     }
 
 
@@ -337,6 +610,8 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         naverMap.locationSource = null // LocationSource 해제
         val marker = Marker()
         marker.map = null
+        currentCircleOverlay?.map = null // 서클 오버레이 해제
+        lastProcessedLocation = null // 메모리 해제
     }
 }
 
