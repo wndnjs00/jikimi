@@ -12,7 +12,7 @@ interface IndoorEvacuationService {
 
     suspend fun getIndoorEvacuation(
         @Query("serviceKey", encoded = true) serviceKey : String = INDOOR_EVACUATION_SERVICE_KEY,
-        @Query("pageNo") pageNo : String = "1",             // 페이지번호
+        @Query("pageNo") pageNo : String = "2",             // 페이지번호
         @Query("numOfRows") numOfRows : String = "10",      // 한페이지 결과수
         @Query("type") type : String = "JSON", // 호출문서형식
     ) : EarthquakeIndoorsShelterResponse
