@@ -7,8 +7,8 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)    //hilt
-//    id("com.google.gms.google-services")
     id ("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 
@@ -40,6 +40,13 @@ android {
         buildConfigField("String", "INDOOR_EVACUATION_API_BASE", getApiKey("INDOOR_EVACUATION_API_BASE"))
         buildConfigField("String", "INDOOR_EVACUATION_API", getApiKey("INDOOR_EVACUATION_API"))
         buildConfigField("String", "INDOOR_EVACUATION_SERVICE_KEY", getApiKey("INDOOR_EVACUATION_SERVICE_KEY"))
+        buildConfigField("String", "NATURALDISASTER_API_BASE", getApiKey("NATURALDISASTER_API_BASE"))
+        buildConfigField("String", "NATURALDISASTER_API", getApiKey("NATURALDISASTER_API"))
+        buildConfigField("String", "NATURALDISASTER_SERVICE_KEY", getApiKey("NATURALDISASTER_SERVICE_KEY"))
+
+        buildConfigField("String", "SOCIAL_DISASTER_API_BASE", getApiKey("NATURALDISASTER_API_BASE"))
+        buildConfigField("String", "SOCIAL_DISASTER_API", getApiKey("NATURALDISASTER_API"))
+        buildConfigField("String", "SOCIAL_DISASTER_SERVICE_KEY", getApiKey("NATURALDISASTER_SERVICE_KEY"))
     }
 
     packaging {
@@ -112,4 +119,14 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // To convert xml
+    implementation ("com.tickaroo.tikxml:annotation:0.8.13")
+    implementation ("com.tickaroo.tikxml:core:0.8.13")
+    implementation ("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+
+    kapt ("com.tickaroo.tikxml:processor:0.8.13")
+
+    //coil
+    implementation(libs.coil)
 }

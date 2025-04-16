@@ -13,6 +13,7 @@ import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.EarthquakeIndoorsShelterResponse
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 import com.example.jikimi.data.model.entity.LikeEntity
+import com.example.jikimi.data.network.Constant
 import com.example.jikimi.databinding.FragmentBottomSheetBinding
 import com.example.jikimi.viewmodel.LikeViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -50,16 +51,11 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
 
     companion object{
-        private const val OUTDOOR_SHELTER_DATA = "outdoor_shelter_data"
-        private const val OUTDOOR_DISTANCE_DATA = "outdoor_distance_data"
-        private const val INDOOR_SHELTER_DATA = "indoor_shelter_data"
-        private const val INDOOR_DISTANCE_DATA = "indoor_distance_data"
-
-        fun outdoorNewInstance(outdoorShelterData : EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row, distance: Double) : BottomSheetFragment{
+        fun outdoorNewInstance(outdoorShelterData : EarthquakeOutdoorsShelterResponse.Shelter, distance: Double) : BottomSheetFragment{
             val fragment = BottomSheetFragment()
             val outdoorArgs = Bundle().apply {
-                putParcelable(OUTDOOR_SHELTER_DATA, outdoorShelterData)
-                putDouble(OUTDOOR_DISTANCE_DATA, distance)
+                putParcelable(Constant.OUTDOOR_SHELTER_DATA, outdoorShelterData)
+                putDouble(Constant.OUTDOOR_DISTANCE_DATA, distance)
             }
             fragment.arguments = outdoorArgs
             return fragment
@@ -68,8 +64,8 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
         fun indoorNewInstance(indoorShelterData : EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row, distance: Double) : BottomSheetFragment{
             val fragment = BottomSheetFragment()
             val indoorArgs = Bundle().apply {
-                putParcelable(INDOOR_SHELTER_DATA, indoorShelterData)
-                putDouble(INDOOR_DISTANCE_DATA, distance)
+                putParcelable(Constant.INDOOR_SHELTER_DATA, indoorShelterData)
+                putDouble(Constant.INDOOR_DISTANCE_DATA, distance)
             }
             fragment.arguments = indoorArgs
             return fragment
@@ -80,36 +76,39 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     // 야외대피소 데이터 받아오기
     private fun getOutdoorShelterData(){
 
-        val outdoorShelter = arguments?.getParcelable<EarthquakeOutdoorsShelterResponse.EarthquakeOutdoorsShelter2.Row>(OUTDOOR_SHELTER_DATA)
+        val outdoorShelter = arguments?.getParcelable<EarthquakeOutdoorsShelterResponse.Shelter>(Constant.OUTDOOR_SHELTER_DATA)
         Log.d("BottomSheetFragment", "Shelter Name: ${outdoorShelter}")
 
-        val distance = arguments?.getDouble(OUTDOOR_DISTANCE_DATA)
+        val distance = arguments?.getDouble(Constant.OUTDOOR_DISTANCE_DATA)
 
         if (outdoorShelter != null) {
             with(binding){
                 shelterTv.text = "야외대피장소"
                 distanceTv.text = "${String.format("%.2f", distance ?: 0.0)} m"
                 shelterNameTv.text = outdoorShelter.vtAcmdfcltyNm ?: "데이터 없음"
-                shelterClassificationTv.text = outdoorShelter.acmdfcltySeNm ?: "데이터 없음"
-                shelterPhoneTv.text = outdoorShelter.mngpsTelno ?: "데이터 없음"
-                shelterPeopleConstraint.visibility = View.GONE
+                // Update this as needed based on what fields are available in the new API
+                shelterClassificationTv.text = outdoorShelter.vtAcmdfcltyNm ?: "데이터 없음"
+                shelterPhoneTv.text = "데이터 없음" // 폰 데이터없음
+                shelterPhoneConstraint.visibility = View.INVISIBLE
+                shelterPeopleTv.text = "수용인원: ${outdoorShelter.vtAcmdPsblNmpr ?: "데이터 없음"}명"
 
                 // 주소 데이터 설정
                 shelterAddressTv.text = when {
-                    !outdoorShelter?.rnAdres.isNullOrEmpty() -> outdoorShelter?.rnAdres // rnAdres가 존재하면 사용
-                    !outdoorShelter?.dtlAdres.isNullOrEmpty() -> outdoorShelter?.dtlAdres // rnAdres가 null이면 dtlAdres 사용
+                    !outdoorShelter?.rnDtlAdres.isNullOrEmpty() -> outdoorShelter?.rnDtlAdres // rnDtlAdres가 존재하면 사용
+                    !outdoorShelter?.dtlAdres.isNullOrEmpty() -> outdoorShelter?.dtlAdres // dtlAdres가 null이면 dtlAdres 사용
+                    !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres
                     else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
                 }
             }
 
             likeEntity = LikeEntity(
                 vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
-                rnAdres = outdoorShelter.rnAdres ?: "",
+                rnAdres = outdoorShelter.rnDtlAdres ?: "",
                 dtlAdres = outdoorShelter.dtlAdres ?: "",
                 distanceData = String.format("%.2f", distance ?: 0.0),
                 shelterType = "야외대피장소",
-                latitude = outdoorShelter.ycord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0,
-                longitude = outdoorShelter.xcord?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
+                latitude = outdoorShelter.la?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0,
+                longitude = outdoorShelter.lo?.toDoubleOrNull()?.let { String.format("%.7f", it).toDouble() } ?: 0.0
             )
         }
     }
@@ -118,10 +117,10 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     //실내대피소 데이터 받아오기
     private fun getIndoorShelterData(){
 
-        val indoorShelter = arguments?.getParcelable<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>(INDOOR_SHELTER_DATA)
+        val indoorShelter = arguments?.getParcelable<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>(Constant.INDOOR_SHELTER_DATA)
         Log.d("BottomSheetFragment", "Shelter Name: ${indoorShelter}")
 
-        val distance = arguments?.getDouble(INDOOR_DISTANCE_DATA)
+        val distance = arguments?.getDouble(Constant.INDOOR_DISTANCE_DATA)
 
         with(binding){
             if (indoorShelter != null) {

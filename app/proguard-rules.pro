@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# TikXML rules
+-keep class com.tickaroo.tikxml.** { *; }
+-keepclassmembers class * { @com.tickaroo.tikxml.annotation.** *; }

@@ -1,6 +1,7 @@
 package com.example.jikimi.presentation.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -38,4 +39,13 @@ class MainActivity : AppCompatActivity() {
             true
         }
     }
+
+    fun hideBottomNavigation() {
+        binding.bottomNavBar.visibility = View.GONE
+    }
+
+    fun showBottomNavigation() {
+        binding.bottomNavBar.visibility = View.VISIBLE
+    }
+
 }
