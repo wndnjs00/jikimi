@@ -1,20 +1,28 @@
 package com.example.jikimi.presentation.fragment
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -74,6 +82,10 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         onShelterSearchItemClick(shelter)
     }
 
+    // SpeechRecognizer(음성인식) 관련 변수
+    private lateinit var speechRecognizer: SpeechRecognizer
+    private val RECORD_AUDIO_PERMISSION_CODE = 2000
+
     // Room DB 주입
     @Inject
     lateinit var shelterDao: ShelterDao
@@ -95,6 +107,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         likeBottomSheet()
         observeSharedViewModel()
         setupSearchUI()
+        setupVoiceRecognition()
     }
 
 
@@ -118,12 +131,30 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        // 위치 권한처리
         if (locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
             if (!locationSource.isActivated) {
                 naverMap.locationTrackingMode = LocationTrackingMode.None
             }
             return
         }
+
+        // 음성인식 권한처리
+        if (requestCode == RECORD_AUDIO_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 권한이 승인된 경우
+                startVoiceRecognition()
+            } else {
+                // 권한이 거부된 경우
+                Toast.makeText(
+                    requireContext(),
+                    "음성 인식을 사용하려면 마이크 권한이 필요합니다",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            return
+        }
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
@@ -236,7 +267,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         // 새로운 서클 생성 및 표시
         currentCircleOverlay = CircleOverlay().apply {
             center = LatLng(latitude, longitude)
-            radius = 10000.0     // 반경 10km
+            radius = 5000.0     // 반경 5km
             map = naverMap
             color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정
         }
@@ -293,8 +324,8 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 val shelterLocation = LatLng(latitude, longitude)
                 val distance = currentLocation.distanceExtention(shelterLocation)
 
-                // 반경 10km 이내의 대피소만 표시
-                if (distance <= 10000.0) {
+                // 반경 5km 이내의 대피소만 표시
+                if (distance <= 5000.0) {
                     val outdoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
@@ -335,8 +366,8 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 val shelterLocation = LatLng(latitude, longitude)
                 val distance = currentLocation.distanceExtention(shelterLocation)
 
-                // 반경 10km 이내의 대피소만 표시
-                if (distance <= 10000.0) {
+                // 반경 5km 이내의 대피소만 표시
+                if (distance <= 5000.0) {
                     val indoorMarker = Marker().apply {
                         position = LatLng(latitude, longitude)
                         map = naverMap
@@ -596,6 +627,143 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             .animate(CameraAnimation.Easing)
         naverMap.moveCamera(cameraUpdate)
     }
+
+
+    // SpeechRecognizer(음성인식) 초기화 및 설정
+    private fun setupVoiceRecognition() {
+        // SpeechRecognizer 초기화
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(requireContext())
+
+        // Intent 생성
+        val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR") // 한국어 설정
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "음성으로 말해보세요")
+        }
+
+        // SpeechRecognizer 리스너 설정
+        speechRecognizer.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {
+                // 음성 인식 준비 완료
+                Toast.makeText(requireContext(), "음성 인식 준비 완료", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onBeginningOfSpeech() {
+                // 음성 인식 시작
+                Toast.makeText(requireContext(), "음성으로 말해보세요", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onRmsChanged(rmsdB: Float) {
+                // 소리 크기 변경 (진폭)
+            }
+
+            override fun onBufferReceived(buffer: ByteArray?) {
+                // 버퍼 수신
+            }
+
+            override fun onEndOfSpeech() {
+                // 음성 인식 종료
+                Toast.makeText(requireContext(), "음성 인식 종료", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(error: Int) {
+                // 오류 발생
+                val message = when (error) {
+                    SpeechRecognizer.ERROR_AUDIO -> "오디오 에러"
+                    SpeechRecognizer.ERROR_CLIENT -> "클라이언트 에러"
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "권한 에러"
+                    SpeechRecognizer.ERROR_NETWORK -> "네트워크 에러"
+                    SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "네트워크 타임아웃"
+                    SpeechRecognizer.ERROR_NO_MATCH -> "일치하는 결과 없음"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "음성인식기 사용 중"
+                    SpeechRecognizer.ERROR_SERVER -> "서버 에러"
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "음성 입력 시간 초과"
+                    else -> "알 수 없는 에러"
+                }
+                Toast.makeText(requireContext(), "에러: $message", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResults(results: Bundle?) {
+                // 음성 인식 결과
+                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                if (!matches.isNullOrEmpty()) {
+                    val recognizedText = matches[0] // 가장 신뢰도 높은 결과 사용
+
+                    binding.searchEt.setText(recognizedText) // EditText에 결과 설정
+
+                    // 검색 UI가 활성화되어 있는지 확인하고, 필요하면 활성화
+                    if (binding.searchOverlay.visibility != View.VISIBLE) {
+                        binding.searchOverlay.visibility = View.VISIBLE
+                        binding.searchContainer.visibility = View.VISIBLE
+                    }
+
+                    // 검색 실행
+                    if (recognizedText.isNotEmpty()) {
+                        lifecycleScope.launch {
+                            shelterDao.searchShelters(recognizedText).collect { shelters ->
+                                updateSearchResults(shelters)
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onPartialResults(partialResults: Bundle?) {
+                // 부분 결과
+            }
+
+            override fun onEvent(eventType: Int, params: Bundle?) {
+                // 이벤트
+            }
+        })
+
+        // EditText의 drawableEnd(음성 아이콘) 클릭 이벤트 처리
+        binding.searchEt.setOnTouchListener { v, event ->
+            val drawableEnd = 2 // drawableEnd의 인덱스는 2
+
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= (binding.searchEt.right - binding.searchEt.compoundDrawables[drawableEnd].bounds.width())) {
+                    // 음성 인식 권한 확인 및 요청
+                    checkVoiceRecognitionPermission()
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
+    }
+
+    // 음성인식 권한요청
+    private fun checkVoiceRecognitionPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // 권한이 없는 경우, 권한 요청
+            requestPermissions(
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                RECORD_AUDIO_PERMISSION_CODE
+            )
+        } else {
+            // 이미 권한이 있는 경우, 음성 인식 시작
+            startVoiceRecognition()
+        }
+    }
+
+    // 음성 인식 시작
+    private fun startVoiceRecognition() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR") // 한국어 설정
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "음성으로 말해보세요")
+        }
+
+        try {
+            speechRecognizer.startListening(intent)
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "음성 인식 시작 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
 
     companion object {
