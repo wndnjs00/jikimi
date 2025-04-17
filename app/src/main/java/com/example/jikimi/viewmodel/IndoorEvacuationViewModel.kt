@@ -46,7 +46,7 @@ class IndoorEvacuationViewModel @Inject constructor(
 
                 // currentLocation이 있는 경우만 거리 기반 필터링 수행
                 _currentLocation.value?.let { location ->
-                    // 반경 10km 이내의 대피소만 필터링
+                    // 반경 5km 이내의 대피소만 필터링
                     val filteredShelters = sheltersList.filter { shelter ->
                         val latitude = shelter.ycord.toDoubleOrNull() ?: 0.0
                         val longitude = shelter.xcord.toDoubleOrNull() ?: 0.0
