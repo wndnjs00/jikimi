@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 fun getApiKey(propertyKey: String): String {
@@ -126,4 +127,11 @@ dependencies {
 
     // Splashscreen
     implementation ("androidx.core:core-splashscreen:1.0.1")
+
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-auth-ktx:23.2.0")
+    implementation ("com.google.firebase:firebase-firestore-ktx:25.1.3")
+    implementation("com.google.firebase:firebase-storage")
 }
