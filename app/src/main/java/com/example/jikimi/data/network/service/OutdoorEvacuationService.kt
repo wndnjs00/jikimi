@@ -12,8 +12,8 @@ interface OutdoorEvacuationService {
 
     suspend fun getOutdoorEvacuation(
         @Query("serviceKey") serviceKey : String = OUTDOOR_EVACUATION_SERVICE_KEY,
-        @Query("pageNo") pageNo : String = "2",             // 페이지번호
-        @Query("numOfRows") numOfRows : String = "20",       // 한페이지 결과수
+        @Query("pageNo") pageNo : String = "0",             // 페이지번호
+        @Query("numOfRows") numOfRows : String = "0",       // 한페이지 결과수
         @Query("returnType") type : String = "JSON",        // 호출문서형식
     ) : EarthquakeOutdoorsShelterResponse
 }

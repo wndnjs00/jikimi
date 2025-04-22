@@ -5,56 +5,127 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.jikimi.R
+import com.example.jikimi.Resource
+import com.example.jikimi.databinding.FragmentRegisterBinding
+import com.example.jikimi.presentation.activity.MainActivity
+import com.example.jikimi.viewmodel.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [RegisterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class RegisterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentRegisterBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val viewModel: AuthViewModel by viewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
+        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RegisterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RegisterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupObservers()
+        setupListeners()
+    }
+
+
+    // viewModel에서 StateFlow로 회원가입 상태를 관찰
+    private fun setupObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.signupStatus.collect { resource ->
+                    when (resource) {
+                        is Resource.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+                        is Resource.Success -> {
+                            binding.progressBar.visibility = View.GONE
+                            (activity as MainActivity).showToast("회원가입 성공")
+                            findNavController().navigate(R.id.loginFragment)
+                        }
+                        is Resource.Error -> {
+                            binding.progressBar.visibility = View.GONE
+                            (activity as MainActivity).showToast(resource.message ?: "회원가입 실패")
+                        }
+                        else -> {}
+                    }
                 }
             }
+        }
+    }
+
+
+    private fun setupListeners() {
+        binding.btnRegister.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            val nickname = binding.etNickname.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+            val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+
+            if (validateInputs(email, nickname, password, confirmPassword)) {
+                viewModel.signup(email, password, nickname)
+            }
+        }
+
+        binding.tvLogin.setOnClickListener {
+            findNavController().navigate(R.id.loginFragment)
+        }
+    }
+
+
+    private fun validateInputs(email: String, nickname: String, password: String, confirmPassword: String): Boolean {
+        var isValid = true
+
+        if (email.isEmpty()) {
+            binding.tilEmail.error = "이메일을 입력하세요"
+            isValid = false
+        } else {
+            binding.tilEmail.error = null
+        }
+
+        if (nickname.isEmpty()) {
+            binding.tilNickname.error = "닉네임을 입력하세요"
+            isValid = false
+        } else {
+            binding.tilNickname.error = null
+        }
+
+        if (password.isEmpty()) {
+            binding.tilPassword.error = "비밀번호를 입력하세요"
+            isValid = false
+        } else {
+            binding.tilPassword.error = null
+        }
+
+        if (confirmPassword.isEmpty()) {
+            binding.tilConfirmPassword.error = "비밀번호 확인을 입력하세요"
+            isValid = false
+        } else if (password != confirmPassword) {
+            binding.tilConfirmPassword.error = "비밀번호가 일치하지 않습니다"
+            isValid = false
+        } else {
+            binding.tilConfirmPassword.error = null
+        }
+
+        return isValid
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
