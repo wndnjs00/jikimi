@@ -11,4 +11,6 @@
     <color name="corner_stroke_gray">#DEDEDE</color>
     <color name="chip_stroke_gray">#C8C7C7</color>
     <color name="chip_text_not_clicked">#606060</color>
+    <color name="background_pink">#FFF5F4</color>
+    <color name="stroke_pink">#FFCABE</color>
 </resources>

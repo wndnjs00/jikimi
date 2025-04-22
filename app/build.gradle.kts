@@ -117,4 +117,10 @@ dependencies {
 
     // Paging
     implementation("androidx.paging:paging-runtime-ktx:3.3.6")
+
+    // circleimageview
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
+    //dotsindicator
+    implementation("com.tbuonomo:dotsindicator:5.1.0")
 }
