@@ -8,4 +8,11 @@
     </style>
 
     <style name="Theme.Jikimi" parent="Base.Theme.Jikimi" />
+
+    <!--Floating Button 동그랗게-->
+    <style name="FloatingActionButton" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">32dp</item>
+    </style>
+
 </resources>
