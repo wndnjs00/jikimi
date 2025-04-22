@@ -1,37 +1,29 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import java.io.FileInputStream
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)    //hilt
-    id ("kotlin-parcelize")
-    id("kotlin-kapt")
+    alias(libs.plugins.hilt)
+    id("kotlin-parcelize")
 }
-
 
 fun getApiKey(propertyKey: String): String {
-    return gradleLocalProperties(rootDir,providers).getProperty(propertyKey)
+    return gradleLocalProperties(rootDir, providers).getProperty(propertyKey)
 }
-
 
 android {
     namespace = "com.example.jikimi"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.jikimi"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         multiDexEnabled = true
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
 
         addManifestPlaceholders(mapOf("NAVERMAP_CLIENT_ID" to getApiKey("NAVERMAP_CLIENT_ID")))
         buildConfigField("String", "OUTDOOR_EVACUATION_API_BASE", getApiKey("OUTDOOR_EVACUATION_API_BASE"))
@@ -60,9 +52,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         buildConfig = true
         viewBinding = true
@@ -70,57 +64,55 @@ android {
 }
 
 dependencies {
-    implementation (libs.androidx.core.ktx)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // bottomNavigation
+    // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
     // Naver Map
     implementation(libs.map.sdk)
-    // Naver Map 현재위치
     implementation(libs.play.services.location)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
-    // retrofit2
+    // Retrofit + Gson
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
-    // okhttp
-    implementation (libs.okhttp)
+    // OkHttp
+    implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
-    // viewModels
-    implementation (libs.androidx.activity.ktx)
-    implementation (libs.androidx.fragment.ktx)
+    // ViewModel
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
 
-    implementation (libs.androidx.core)
-
-    implementation (libs.androidx.multidex)
+    // MultiDex
+    implementation(libs.androidx.multidex)
 
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // To convert xml
-    implementation ("com.tickaroo.tikxml:annotation:0.8.13")
-    implementation ("com.tickaroo.tikxml:core:0.8.13")
-    implementation ("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    // TikXML
+    implementation("com.tickaroo.tikxml:annotation:0.8.13")
+    implementation("com.tickaroo.tikxml:core:0.8.13")
+    implementation("com.tickaroo.tikxml:retrofit-converter:0.8.13")
+    ksp("com.tickaroo.tikxml:processor:0.8.13")
 
-    kapt ("com.tickaroo.tikxml:processor:0.8.13")
-
-    //coil
+    // Coil
     implementation(libs.coil)
 
     // Paging
