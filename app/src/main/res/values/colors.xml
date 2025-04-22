@@ -13,4 +13,7 @@
     <color name="chip_text_not_clicked">#606060</color>
     <color name="background_pink">#FFF5F4</color>
     <color name="stroke_pink">#FFCABE</color>
+    <color name="no_gray">#A5A5A5</color>
+    <color name="comment_gray">#888888</color>
+    <color name="second_gray">#ABABAB</color>
 </resources>
