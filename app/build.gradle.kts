@@ -123,4 +123,7 @@ dependencies {
 
     //dotsindicator
     implementation("com.tbuonomo:dotsindicator:5.1.0")
+
+    // Splashscreen
+    implementation ("androidx.core:core-splashscreen:1.0.1")
 }
