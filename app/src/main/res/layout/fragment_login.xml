@@ -48,7 +48,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:hint="이메일"
-        android:background="@drawable/grey_stroke_corner"
         app:layout_constraintEnd_toEndOf="@+id/gl_end"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle">
@@ -67,7 +66,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:hint="비밀번호"
-        android:background="@drawable/grey_stroke_corner"
         app:layout_constraintEnd_toEndOf="@+id/gl_end"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/tilEmail"
@@ -116,6 +114,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

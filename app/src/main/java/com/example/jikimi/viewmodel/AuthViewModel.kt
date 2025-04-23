@@ -50,32 +50,32 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun logout() {
-        _logoutStatus.value = Resource.Loading()
-        viewModelScope.launch {
-            val result = authRepository.logout()
-            _logoutStatus.value = result
-        }
-    }
+//    fun logout() {
+//        _logoutStatus.value = Resource.Loading()
+//        viewModelScope.launch {
+//            val result = authRepository.logout()
+//            _logoutStatus.value = result
+//        }
+//    }
 
-    fun getUserProfile(userId: String) {
-        _userProfile.value = Resource.Loading()
-        viewModelScope.launch {
-            val result = authRepository.getUserProfile(userId)
-            _userProfile.value = result
-        }
-    }
+//    fun getUserProfile(userId: String) {
+//        _userProfile.value = Resource.Loading()
+//        viewModelScope.launch {
+//            val result = authRepository.getUserProfile(userId)
+//            _userProfile.value = result
+//        }
+//    }
 
-    fun updateProfile(nickname: String, imageUri: Uri?) {
-        _updateProfileStatus.value = Resource.Loading()
-        viewModelScope.launch {
-            Log.d("AuthViewModel", "프로필 업데이트 시작 - 닉네임: $nickname, 이미지 URI: $imageUri")
-            val result = authRepository.updateProfile(nickname, imageUri)
-            _updateProfileStatus.value = result
-        }
-    }
+//    fun updateProfile(nickname: String, imageUri: Uri?) {
+//        _updateProfileStatus.value = Resource.Loading()
+//        viewModelScope.launch {
+//            Log.d("AuthViewModel", "프로필 업데이트 시작 - 닉네임: $nickname, 이미지 URI: $imageUri")
+//            val result = authRepository.updateProfile(nickname, imageUri)
+//            _updateProfileStatus.value = result
+//        }
+//    }
 
-    fun getCurrentUser() = authRepository.getCurrentUser()
+//    fun getCurrentUser() = authRepository.getCurrentUser()
 
     fun isLoggedIn() = authRepository.isLoggedIn()
 }

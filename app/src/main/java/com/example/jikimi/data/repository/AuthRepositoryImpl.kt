@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+//    private val storage: FirebaseStorage
 ) : AuthRepository {
 
     // withContext(Dispatchers.IO): I/O 작업(네트워크 요청, 데이터베이스 작업 등)을 백그라운드 스레드에서 실행하도록 지정
@@ -54,93 +54,93 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(): Resource<Boolean> = withContext(Dispatchers.IO) {
-        return@withContext try {
-            firebaseAuth.signOut()
-            Resource.Success(true)
-        } catch (e: Exception) {
-            Resource.Error(e.message ?: "로그아웃 중 오류가 발생했습니다.")
-        }
-    }
+//    override suspend fun logout(): Resource<Boolean> = withContext(Dispatchers.IO) {
+//        return@withContext try {
+//            firebaseAuth.signOut()
+//            Resource.Success(true)
+//        } catch (e: Exception) {
+//            Resource.Error(e.message ?: "로그아웃 중 오류가 발생했습니다.")
+//        }
+//    }
 
-    override fun getCurrentUser(): User? {
-        val firebaseUser = firebaseAuth.currentUser ?: return null
-        return User(firebaseUser.uid, firebaseUser.email ?: "", "")
-    }
-
+//    override fun getCurrentUser(): User? {
+//        val firebaseUser = firebaseAuth.currentUser ?: return null
+//        return User(firebaseUser.uid, firebaseUser.email ?: "", "")
+//    }
+//
     override fun isLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }
-
-    override suspend fun getUserProfile(userId: String): Resource<User> = withContext(Dispatchers.IO) {
-        try {
-            val userDoc = firestore.collection("users").document(userId).get().await()
-            val user = userDoc.toObject(User::class.java)
-                ?: return@withContext Resource.Error("사용자 정보를 찾을 수 없습니다.")
-
-            return@withContext Resource.Success(user)
-        } catch (e: Exception) {
-            return@withContext Resource.Error(e.message ?: "프로필 정보를 불러오는 중 오류가 발생했습니다.")
-        }
-    }
-
-    override suspend fun updateProfile(nickname: String, imageUri: Uri?): Resource<User> = withContext(Dispatchers.IO) {
-        try {
-            val currentUser = firebaseAuth.currentUser
-                ?: return@withContext Resource.Error("로그인이 필요합니다.")
-
-            var profileImageUrl = ""
-
-            // 이미지가 있으면 업로드
-            if (imageUri != null) {
-                val storageRef = storage.reference.child("profile_images/${currentUser.uid}")
-                storageRef.putFile(imageUri).await()
-                profileImageUrl = storageRef.downloadUrl.await().toString()
-            } else {
-                // 기존 이미지 URL 가져오기
-                val userDoc = firestore.collection("users").document(currentUser.uid).get().await()
-                val user = userDoc.toObject(User::class.java)
-                profileImageUrl = user?.profileImageUrl ?: ""
-            }
-
-            // 사용자 프로필 업데이트
-            val updatedUser = User(
-                uid = currentUser.uid,
-                email = currentUser.email ?: "",
-                nickname = nickname,
-                profileImageUrl = profileImageUrl
-            )
-
-            firestore.collection("users").document(currentUser.uid).set(updatedUser).await()
-
-            // 모든 게시물의 닉네임과 프로필 이미지 업데이트
-            val postsSnapshot = firestore.collection("posts")
-                .whereEqualTo("userId", currentUser.uid)
-                .get()
-                .await()
-
-            val batch = firestore.batch()
-            for (document in postsSnapshot.documents) {
-                batch.update(document.reference, "nickname", nickname)
-                batch.update(document.reference, "profileImageUrl", profileImageUrl)
-            }
-
-            // 모든 댓글의 닉네임과 프로필 이미지 업데이트
-            val commentsSnapshot = firestore.collection("comments")
-                .whereEqualTo("userId", currentUser.uid)
-                .get()
-                .await()
-
-            for (document in commentsSnapshot.documents) {
-                batch.update(document.reference, "nickname", nickname)
-                batch.update(document.reference, "profileImageUrl", profileImageUrl)
-            }
-
-            batch.commit().await()
-
-            return@withContext Resource.Success(updatedUser)
-        } catch (e: Exception) {
-            return@withContext Resource.Error(e.message ?: "프로필 업데이트 중 오류가 발생했습니다.")
-        }
-    }
+//
+//    override suspend fun getUserProfile(userId: String): Resource<User> = withContext(Dispatchers.IO) {
+//        try {
+//            val userDoc = firestore.collection("users").document(userId).get().await()
+//            val user = userDoc.toObject(User::class.java)
+//                ?: return@withContext Resource.Error("사용자 정보를 찾을 수 없습니다.")
+//
+//            return@withContext Resource.Success(user)
+//        } catch (e: Exception) {
+//            return@withContext Resource.Error(e.message ?: "프로필 정보를 불러오는 중 오류가 발생했습니다.")
+//        }
+//    }
+//
+//    override suspend fun updateProfile(nickname: String, imageUri: Uri?): Resource<User> = withContext(Dispatchers.IO) {
+//        try {
+//            val currentUser = firebaseAuth.currentUser
+//                ?: return@withContext Resource.Error("로그인이 필요합니다.")
+//
+//            var profileImageUrl = ""
+//
+//            // 이미지가 있으면 업로드
+//            if (imageUri != null) {
+//                val storageRef = storage.reference.child("profile_images/${currentUser.uid}")
+//                storageRef.putFile(imageUri).await()
+//                profileImageUrl = storageRef.downloadUrl.await().toString()
+//            } else {
+//                // 기존 이미지 URL 가져오기
+//                val userDoc = firestore.collection("users").document(currentUser.uid).get().await()
+//                val user = userDoc.toObject(User::class.java)
+//                profileImageUrl = user?.profileImageUrl ?: ""
+//            }
+//
+//            // 사용자 프로필 업데이트
+//            val updatedUser = User(
+//                uid = currentUser.uid,
+//                email = currentUser.email ?: "",
+//                nickname = nickname,
+//                profileImageUrl = profileImageUrl
+//            )
+//
+//            firestore.collection("users").document(currentUser.uid).set(updatedUser).await()
+//
+//            // 모든 게시물의 닉네임과 프로필 이미지 업데이트
+//            val postsSnapshot = firestore.collection("posts")
+//                .whereEqualTo("userId", currentUser.uid)
+//                .get()
+//                .await()
+//
+//            val batch = firestore.batch()
+//            for (document in postsSnapshot.documents) {
+//                batch.update(document.reference, "nickname", nickname)
+//                batch.update(document.reference, "profileImageUrl", profileImageUrl)
+//            }
+//
+//            // 모든 댓글의 닉네임과 프로필 이미지 업데이트
+//            val commentsSnapshot = firestore.collection("comments")
+//                .whereEqualTo("userId", currentUser.uid)
+//                .get()
+//                .await()
+//
+//            for (document in commentsSnapshot.documents) {
+//                batch.update(document.reference, "nickname", nickname)
+//                batch.update(document.reference, "profileImageUrl", profileImageUrl)
+//            }
+//
+//            batch.commit().await()
+//
+//            return@withContext Resource.Success(updatedUser)
+//        } catch (e: Exception) {
+//            return@withContext Resource.Error(e.message ?: "프로필 업데이트 중 오류가 발생했습니다.")
+//        }
+//    }
 }
