@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import com.example.jikimi.Resource
 import com.example.jikimi.databinding.FragmentLoginBinding
 import com.example.jikimi.presentation.activity.MainActivity
 import com.example.jikimi.viewmodel.AuthViewModel
+import com.example.jikimi.viewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -25,6 +27,7 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AuthViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +39,9 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // BottomNavigationView 숨기기
+        (activity as? MainActivity)?.hideBottomNavigation()
 
         setupObservers()
         setupListeners()
@@ -55,6 +61,10 @@ class LoginFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                             (activity as MainActivity).showToast("로그인 성공")
 
+                            // 로그인 성공 시 사용자 닉네임을 SharedViewModel에 업데이트
+                            resource.data?.let { user ->
+                                sharedViewModel.updateNickname(user.nickname)
+                            }
 
                             // evacuateFragment로 이동하고 bottomNavigation 표시
                             findNavController().navigate(R.id.evacuateFragment)
@@ -62,7 +72,7 @@ class LoginFragment : Fragment() {
 
                         }
                         is Resource.Error -> {
-                            binding.progressBar.visibility = View.GONE
+                            binding.progressBar.visibility = View.VISIBLE
                             (activity as MainActivity).showToast(resource.message ?: "로그인 실패")
                         }
                         else -> {} // StateFlow는 초기값이 필요하므로 null이나 기본 상태를 처리
@@ -111,6 +121,9 @@ class LoginFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // BottomNavigationView 다시 보이게 설정
+        (activity as? MainActivity)?.showBottomNavigation()
     }
 
 }

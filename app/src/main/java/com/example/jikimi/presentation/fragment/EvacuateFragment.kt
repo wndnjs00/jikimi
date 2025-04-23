@@ -39,7 +39,7 @@ import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.databinding.FragmentEvacuateBinding
 import com.example.jikimi.presentation.adapter.ShelterSearchAdapter
 import com.example.jikimi.viewmodel.IndoorEvacuationViewModel
-import com.example.jikimi.viewmodel.LikeSharedViewModel
+import com.example.jikimi.viewmodel.SharedViewModel
 import com.example.jikimi.viewmodel.OutdoorEvacuationViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -58,7 +58,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.time.measureTimedValue
 
 @AndroidEntryPoint
 class EvacuateFragment : Fragment(), OnMapReadyCallback {
@@ -70,7 +69,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
     private val outdoorViewModel: OutdoorEvacuationViewModel by viewModels()
     private val indoorViewModel: IndoorEvacuationViewModel by viewModels()
-    private val sharedViewModel : LikeSharedViewModel by activityViewModels()
+    private val sharedViewModel : SharedViewModel by activityViewModels()
 
     // 위치 업데이트 관련 변수 추가
     private var lastProcessedLocation: Location? = null

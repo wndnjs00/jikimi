@@ -78,7 +78,7 @@
         android:id="@+id/safety_linear"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@drawable/corner_search_edittext"
         android:orientation="vertical"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
@@ -114,14 +114,12 @@
             android:id="@+id/message_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:background="#EFEFEF"
+            android:layout_marginBottom="12dp"
             android:gravity="start"
             android:padding="12dp"
             android:text="내용~~~"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
