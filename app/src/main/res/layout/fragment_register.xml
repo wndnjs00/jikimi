@@ -47,7 +47,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:hint="이메일"
-        android:background="@drawable/grey_stroke_corner"
         app:layout_constraintEnd_toEndOf="@+id/gl_end"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle">
@@ -66,7 +65,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:hint="닉네임"
-        android:background="@drawable/grey_stroke_corner"
         app:layout_constraintEnd_toEndOf="@+id/gl_end"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/tilEmail">
@@ -85,7 +83,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:hint="비밀번호"
-        android:background="@drawable/grey_stroke_corner"
         app:layout_constraintEnd_toEndOf="@+id/gl_end"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/tilNickname"
@@ -105,7 +102,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:hint="비밀번호 확인"
-        android:background="@drawable/grey_stroke_corner"
         app:layout_constraintEnd_toEndOf="@+id/gl_end"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/tilPassword"

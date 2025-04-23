@@ -29,6 +29,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupNavigation(savedInstanceState)
+
+        // navController의 목적지 변화 감지
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.loginFragment, R.id.registerFragment -> hideBottomNavigation()
+                else -> {
+                    if (isUserLoggedIn()) {
+                        showBottomNavigation()
+                    }
+                }
+            }
+        }
     }
 
 
@@ -57,12 +69,24 @@ class MainActivity : AppCompatActivity() {
             NavigationUI.onNavDestinationSelected(item, navController)
             true
         }
+
+        // 로그인 여부에 따라 초기 bottomSheet 보임여부 설정
+        updateUIBasedOnLoginStatus()
     }
 
 
     private fun isUserLoggedIn(): Boolean {
         // Firebase Auth를 통해 로그인 상태 확인
         return FirebaseAuth.getInstance().currentUser != null
+    }
+
+
+    private fun updateUIBasedOnLoginStatus() {
+        if (isUserLoggedIn()) {
+            showBottomNavigation()
+        } else {
+            hideBottomNavigation()
+        }
     }
 
     fun hideBottomNavigation() {
@@ -72,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     fun showBottomNavigation() {
         binding.bottomNavBar.visibility = View.VISIBLE
     }
+
 
     fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

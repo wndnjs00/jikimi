@@ -6,6 +6,11 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.jikimi.data.local.AppDatabase
 import com.example.jikimi.data.local.dao.ShelterDao
+import com.example.jikimi.data.repository.AuthRepository
+import com.example.jikimi.data.repository.AuthRepositoryImpl
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +34,20 @@ object RoomModule {
         .build()
 
 
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance() // FirebaseStorage 추가
+
+
+
     @Singleton
     @Provides
     fun provideShelterDao(
@@ -41,4 +60,13 @@ object RoomModule {
             // 테이블을 수정해야 하는 경우 여기에서 수정할 수 있음
         }
     }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+//        storage: FirebaseStorage // FirebaseStorage 추가
+    ): AuthRepository = AuthRepositoryImpl(firebaseAuth,firestore)
+
 }

@@ -775,7 +775,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         super.onDestroyView()
         _binding = null
         // naverMap 관련 리소스를 해제
-        naverMap.locationSource = null // LocationSource 해제
+//        naverMap.locationSource = null // LocationSource 해제
         val marker = Marker()
         marker.map = null
         currentCircleOverlay?.map = null // 서클 오버레이 해제

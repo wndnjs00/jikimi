@@ -49,7 +49,7 @@ class RegisterFragment : Fragment() {
                 viewModel.signupStatus.collect { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
+//                            binding.progressBar.visibility = View.VISIBLE
                         }
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
