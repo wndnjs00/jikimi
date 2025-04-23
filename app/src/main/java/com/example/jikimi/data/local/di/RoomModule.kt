@@ -8,6 +8,8 @@ import com.example.jikimi.data.local.AppDatabase
 import com.example.jikimi.data.local.dao.ShelterDao
 import com.example.jikimi.data.repository.AuthRepository
 import com.example.jikimi.data.repository.AuthRepositoryImpl
+import com.example.jikimi.data.repository.PostRepository
+import com.example.jikimi.data.repository.PostRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -61,12 +63,21 @@ object RoomModule {
         }
     }
 
+
     @Provides
     @Singleton
     fun provideAuthRepository(
         firebaseAuth: FirebaseAuth,
         firestore: FirebaseFirestore,
-//        storage: FirebaseStorage // FirebaseStorage 추가
-    ): AuthRepository = AuthRepositoryImpl(firebaseAuth,firestore)
+        storage: FirebaseStorage
+    ): AuthRepository = AuthRepositoryImpl(firebaseAuth,firestore, storage)
 
+
+    @Provides
+    @Singleton
+    fun providePostRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+        storage: FirebaseStorage
+    ): PostRepository = PostRepositoryImpl(firebaseAuth, firestore, storage)
 }

@@ -37,6 +37,9 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // BottomNavigationView 숨기기
+        (activity as? MainActivity)?.hideBottomNavigation()
+
         setupObservers()
         setupListeners()
     }
@@ -54,10 +57,11 @@ class RegisterFragment : Fragment() {
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
                             (activity as MainActivity).showToast("회원가입 성공")
+
                             findNavController().navigate(R.id.loginFragment)
                         }
                         is Resource.Error -> {
-                            binding.progressBar.visibility = View.GONE
+                            binding.progressBar.visibility = View.VISIBLE
                             (activity as MainActivity).showToast(resource.message ?: "회원가입 실패")
                         }
                         else -> {}
@@ -127,5 +131,8 @@ class RegisterFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // BottomNavigationView 다시 보이게 설정
+        (activity as? MainActivity)?.showBottomNavigation()
     }
 }

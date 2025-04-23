@@ -26,9 +26,8 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // MainActivity의 BottomNavigationView 숨기기
+        // BottomNavigationView 숨기기
         (activity as? MainActivity)?.hideBottomNavigation()
-
 
     }
 
@@ -38,7 +37,7 @@ class DetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        // MainActivity의 BottomNavigationView 다시 보이게 설정
+        // BottomNavigationView 다시 보이게 설정
         (activity as? MainActivity)?.showBottomNavigation()
     }
 }
