@@ -121,9 +121,6 @@ class LoginFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
-        // BottomNavigationView 다시 보이게 설정
-        (activity as? MainActivity)?.showBottomNavigation()
     }
 
 }
