@@ -33,7 +33,11 @@ class AuthViewModel @Inject constructor(
     private val _updateProfileStatus = MutableStateFlow<Resource<User>>(Resource.Loading(null))
     val updateProfileStatus = _updateProfileStatus.asStateFlow()
 
+    private val _deleteAccountStatus = MutableStateFlow<Resource<Boolean>>(Resource.Loading(null))
+    val deleteAccountStatus = _deleteAccountStatus.asStateFlow()
 
+
+    // 회원가입
     fun signup(email: String, password: String, nickname: String) {
         _signupStatus.value = Resource.Loading()
         viewModelScope.launch {
@@ -42,6 +46,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // 로그인
     fun login(email: String, password: String) {
         _loginStatus.value = Resource.Loading()
         viewModelScope.launch {
@@ -50,6 +55,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // 로그아웃
     fun logout() {
         _logoutStatus.value = Resource.Loading()
         viewModelScope.launch {
@@ -58,7 +64,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // 회원탈퇴
+    fun deleteAccount() {
+        _deleteAccountStatus.value = Resource.Loading()
+        viewModelScope.launch {
+            val result = authRepository.deleteAccount()
+            _deleteAccountStatus.value = result
+        }
+    }
+
     fun getCurrentUser() = authRepository.getCurrentUser()
+
 
     fun getUserProfile(userId: String) {
         _userProfile.value = Resource.Loading()

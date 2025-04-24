@@ -99,17 +99,23 @@
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/btnChangeProfile" />
 
-    <EditText
-        android:id="@+id/etNickname"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilNickname"
         android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/grey_stroke_corner"
-        android:inputType="text"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/gl_end"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/tvNickname" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@id/gl_end"
+        app:layout_constraintStart_toStartOf="@id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/tvNickname">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etNickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="닉네임"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <!-- 저장 버튼 -->
     <androidx.appcompat.widget.AppCompatButton
@@ -159,6 +165,18 @@
             android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

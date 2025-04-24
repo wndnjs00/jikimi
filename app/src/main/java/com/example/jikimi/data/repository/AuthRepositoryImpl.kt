@@ -2,6 +2,7 @@ package com.example.jikimi.data.repository
 
 
 import android.net.Uri
+import android.util.Log
 import com.example.jikimi.Resource
 import com.example.jikimi.data.model.dto.User
 import com.google.firebase.auth.FirebaseAuth
@@ -54,6 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    // 로그아웃
     override suspend fun logout(): Resource<Boolean> = withContext(Dispatchers.IO) {
         return@withContext try {
             firebaseAuth.signOut()
@@ -62,6 +64,61 @@ class AuthRepositoryImpl @Inject constructor(
             Resource.Error(e.message ?: "로그아웃 중 오류가 발생했습니다.")
         }
     }
+
+    // 회원탈퇴
+    override suspend fun deleteAccount(): Resource<Boolean> = withContext(Dispatchers.IO) {
+        try {
+            val currentUser = firebaseAuth.currentUser
+                ?: return@withContext Resource.Error("로그인이 필요합니다.")
+
+            val userId = currentUser.uid
+
+            // 1. 사용자의 프로필 이미지 삭제
+            try {
+                val storageRef = storage.reference.child("profile_images/$userId")
+                storageRef.delete().await()
+            } catch (e: Exception) {
+                Log.w("AuthRepository", "프로필 이미지 삭제 실패: ${e.message}")
+                // 이미지가 없어도 계속 진행
+            }
+
+            // 2. 사용자가 작성한 게시물 삭제
+            val postsSnapshot = firestore.collection("posts")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            val batch = firestore.batch()
+
+            for (document in postsSnapshot.documents) {
+                batch.delete(document.reference)
+            }
+
+            // 3. 사용자가 작성한 댓글 삭제
+            val commentsSnapshot = firestore.collection("comments")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            for (document in commentsSnapshot.documents) {
+                batch.delete(document.reference)
+            }
+
+            // 4. Firestore의 사용자 정보 삭제
+            batch.delete(firestore.collection("users").document(userId))
+
+            // 일괄 삭제 실행
+            batch.commit().await()
+
+            // 5. Firebase Auth에서 사용자 삭제
+            currentUser.delete().await()
+
+            return@withContext Resource.Success(true)
+        } catch (e: Exception) {
+            return@withContext Resource.Error(e.message ?: "회원탈퇴 중 오류가 발생했습니다.")
+        }
+    }
+
 
     override fun getCurrentUser(): User? {
         val firebaseUser = firebaseAuth.currentUser ?: return null

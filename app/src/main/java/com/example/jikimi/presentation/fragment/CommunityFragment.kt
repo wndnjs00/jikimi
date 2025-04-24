@@ -1,6 +1,7 @@
 package com.example.jikimi.presentation.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +13,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.jikimi.R
 import com.example.jikimi.Resource
+import com.example.jikimi.data.model.dto.User
 import com.example.jikimi.databinding.FragmentCommunityBinding
 import com.example.jikimi.presentation.activity.MainActivity
 import com.example.jikimi.presentation.adapter.PostAdapter
 import com.example.jikimi.viewmodel.AuthViewModel
 import com.example.jikimi.viewmodel.PostViewModel
 import com.example.jikimi.viewmodel.SharedViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -160,6 +165,42 @@ class CommunityFragment : Fragment() {
             }
         }
     }
+
+
+    // 사용자 정보가 업데이트되었을 때 호출하는 메서드
+//    fun updateUserProfile() {
+//        loadUserProfile()
+//    }
+
+//    private fun loadUserProfile() {
+//        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+//
+//        // Firestore에서 사용자 정보 로드
+//        FirebaseFirestore.getInstance().collection("users").document(userId)
+//            .get()
+//            .addOnSuccessListener { document ->
+//                val user = document.toObject(User::class.java)
+//                user?.let {
+//                    // 닉네임 설정
+//                    binding.tvNickname.text = it.nickname
+//
+//                    // 프로필 이미지 설정
+//                    if (it.profileImageUrl.isNotEmpty()) {
+//                        Glide.with(this)
+//                            .load(it.profileImageUrl)
+//                            .placeholder(R.drawable.ic_launcher_foreground)
+//                            .error(R.drawable.ic_launcher_foreground)
+//                            .circleCrop()
+//                            .into(binding.ivProfile)
+//                    } else {
+//                        binding.ivProfile.setImageResource(R.drawable.ic_launcher_foreground)
+//                    }
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("MainActivity", "사용자 프로필 로드 실패: ${e.message}")
+//            }
+//    }
 
 
     override fun onDestroyView() {
