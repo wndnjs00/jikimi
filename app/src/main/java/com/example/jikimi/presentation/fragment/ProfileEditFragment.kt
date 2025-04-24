@@ -143,6 +143,8 @@ class ProfileEditFragment : Fragment() {
                         }
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
+                            // 로그아웃 성공 시 즉시 BottomNavigationView 숨기기
+                            (activity as MainActivity).hideBottomNavigation()
                             (activity as MainActivity).showToast("로그아웃 되었습니다")
                             findNavController().navigate(R.id.loginFragment)
                         }
@@ -165,6 +167,8 @@ class ProfileEditFragment : Fragment() {
                         }
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
+                            // 회원탈퇴 성공 시 즉시 BottomNavigationView 숨기기
+                            (activity as MainActivity).hideBottomNavigation()
                             (activity as MainActivity).showToast("회원탈퇴가 완료되었습니다")
                             findNavController().navigate(R.id.registerFragment)
                         }
@@ -295,5 +299,7 @@ class ProfileEditFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        (activity as MainActivity)?.showBottomNavigation()
     }
 }

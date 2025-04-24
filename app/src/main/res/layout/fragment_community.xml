@@ -63,6 +63,7 @@
             android:ellipsize="end"
             android:ems="3"
             android:maxLines="1"
+            android:gravity="center"
             android:text="닉네임닉네임"
             android:textColor="@color/black"
             android:textSize="12sp"

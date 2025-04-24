@@ -20,6 +20,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
+    // 로그인/회원가입 관련 Fragment ID 목록
+    private val authFragmentIds = listOf(
+        R.id.loginFragment,
+        R.id.registerFragment
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // splashScreen 실행
         installSplashScreen()
@@ -57,6 +63,14 @@ class MainActivity : AppCompatActivity() {
             NavigationUI.onNavDestinationSelected(item, navController)
             true
         }
+
+        // Fragment 이동 시 BottomNavigationView 표시 여부 처리
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id in authFragmentIds) {
+                // 로그인/회원가입 관련 Fragment에서는 항상 BottomNavigationView 숨김
+                hideBottomNavigation()
+            }
+        }
     }
 
 
@@ -71,7 +85,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showBottomNavigation() {
-        binding.bottomNavBar.visibility = View.VISIBLE
+        // 현재 화면이 로그인/회원가입 관련 Fragment가 아닐 때만 표시
+        val currentDestination = navController.currentDestination?.id
+        if (currentDestination !in authFragmentIds) {
+            binding.bottomNavBar.visibility = View.VISIBLE
+        }
     }
 
     fun showToast(message: String) {
