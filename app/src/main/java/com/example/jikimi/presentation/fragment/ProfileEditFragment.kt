@@ -238,7 +238,7 @@ class ProfileEditFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         // 다이얼로그 텍스트 설정
-        dialogBinding.dialogTv.text = "정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        dialogBinding.dialogTv.text = "정말 탈퇴하시겠습니까? 탈퇴시 모든 정보가 삭제됩니다."
         // 버튼 텍스트 변경
         dialogBinding.dialogDeleteBtn.text = "탈퇴"
 
@@ -295,8 +295,5 @@ class ProfileEditFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
-        // BottomNavigationView 다시 보이게 설정
-        (activity as? MainActivity)?.showBottomNavigation()
     }
 }
