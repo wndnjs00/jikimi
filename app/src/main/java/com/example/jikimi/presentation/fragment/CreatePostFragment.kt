@@ -1,5 +1,6 @@
 package com.example.jikimi.presentation.fragment
 
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.jikimi.R
 import com.example.jikimi.Resource
 import com.example.jikimi.data.model.dto.Post
@@ -130,6 +132,13 @@ class CreatePostFragment : Fragment() {
         binding.rvImages.apply {
             adapter = imageAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+            // 아이템 간 간격 추가 (선택사항)
+//            addItemDecoration(object : RecyclerView.ItemDecoration() {
+//                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+//                    outRect.right = resources.getDimensionPixelSize(R.dimen.item_margin) // 적절한 마진값 리소스 필요
+//                }
+//            })
         }
     }
 
@@ -297,5 +306,7 @@ class CreatePostFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        (activity as MainActivity)?.showBottomNavigation()
     }
 }

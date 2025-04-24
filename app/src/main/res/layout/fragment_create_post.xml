@@ -67,14 +67,14 @@
         android:hint="내용을 입력하세요..."
         android:inputType="textMultiLine"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
+        app:layout_constraintBottom_toTopOf="@+id/imageSelectionContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnerCategory" />
 
-    <!-- 이미지 미리보기를 위한 가로 스크롤 뷰 -->
-    <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
+    <!-- 이미지 선택 영역 컨테이너 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/imageSelectionContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -82,54 +82,53 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+        <!-- 이미지 추가 버튼 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btnAddImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/stroke_pink"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <!-- 이미지 추가 버튼 -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/btnAddImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/white"
-                app:strokeColor="@color/stroke_pink"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:src="@drawable/plus_img"
-                        app:tint="#989595" />
-
-                    <TextView
-                        android:id="@+id/tvImageCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="사진 추가"
-                        android:textColor="#989595" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 이미지 리사이클러뷰 -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvImages"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                tools:listitem="@layout/item_image"/>
-        </LinearLayout>
-    </HorizontalScrollView>
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/plus_img"
+                    app:tint="#989595" />
+
+                <TextView
+                    android:id="@+id/tvImageCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="사진 추가"
+                    android:textColor="#989595" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 이미지 리사이클러뷰 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvImages"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:clipToPadding="false"
+            app:layout_constraintStart_toEndOf="@+id/btnAddImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/item_image" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnPost"
@@ -155,7 +154,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
