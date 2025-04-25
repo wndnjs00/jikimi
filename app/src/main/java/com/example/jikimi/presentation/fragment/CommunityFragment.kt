@@ -50,28 +50,29 @@ class CommunityFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupNickname()
+//        setupNickname()
         setupRecyclerView()
         setupObservers()
         setupListeners()
 
         // 게시물 목록 불러오기
         postViewModel.getPosts()
+        loadUserProfile()
     }
 
 
     // sharedViewModel로 닉네임데이터 관찰해서 표시
-    private fun setupNickname() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                sharedViewModel.userNickname.collect { nickname ->
-                    if (nickname != null) {
-                        binding.tvNickname.text = nickname
-                    }
-                }
-            }
-        }
-    }
+//    private fun setupNickname() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                sharedViewModel.userNickname.collect { nickname ->
+//                    if (nickname != null) {
+//                        binding.tvNickname.text = nickname
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 
     private fun setupRecyclerView() {
@@ -167,40 +168,35 @@ class CommunityFragment : Fragment() {
     }
 
 
-    // 사용자 정보가 업데이트되었을 때 호출하는 메서드
-//    fun updateUserProfile() {
-//        loadUserProfile()
-//    }
+    private fun loadUserProfile() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-//    private fun loadUserProfile() {
-//        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-//
-//        // Firestore에서 사용자 정보 로드
-//        FirebaseFirestore.getInstance().collection("users").document(userId)
-//            .get()
-//            .addOnSuccessListener { document ->
-//                val user = document.toObject(User::class.java)
-//                user?.let {
-//                    // 닉네임 설정
-//                    binding.tvNickname.text = it.nickname
-//
-//                    // 프로필 이미지 설정
-//                    if (it.profileImageUrl.isNotEmpty()) {
-//                        Glide.with(this)
-//                            .load(it.profileImageUrl)
-//                            .placeholder(R.drawable.ic_launcher_foreground)
-//                            .error(R.drawable.ic_launcher_foreground)
-//                            .circleCrop()
-//                            .into(binding.ivProfile)
-//                    } else {
-//                        binding.ivProfile.setImageResource(R.drawable.ic_launcher_foreground)
-//                    }
-//                }
-//            }
-//            .addOnFailureListener { e ->
-//                Log.e("MainActivity", "사용자 프로필 로드 실패: ${e.message}")
-//            }
-//    }
+        // Firestore에서 사용자 정보 로드
+        FirebaseFirestore.getInstance().collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                val user = document.toObject(User::class.java)
+                user?.let {
+                    // 닉네임 설정
+                    binding.tvNickname.text = it.nickname
+
+                    // 프로필 이미지 설정
+                    if (it.profileImageUrl.isNotEmpty()) {
+                        Glide.with(this)
+                            .load(it.profileImageUrl)
+                            .placeholder(R.drawable.jikimi_img)
+                            .error(R.drawable.ic_launcher_foreground)
+                            .circleCrop()
+                            .into(binding.ivProfile)
+                    } else {
+                        binding.ivProfile.setImageResource(R.drawable.jikimi_img)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("MainActivity", "사용자 프로필 로드 실패: ${e.message}")
+            }
+    }
 
 
     override fun onDestroyView() {

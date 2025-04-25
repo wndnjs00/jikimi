@@ -119,7 +119,6 @@ class ProfileEditFragment : Fragment() {
                                 (activity as MainActivity).showToast("프로필이 수정되었습니다")
                                 // CommnunityFragment의 프로필 정보 업데이트!!
 
-
                                 findNavController().navigateUp()
                             }
                         }
@@ -242,7 +241,7 @@ class ProfileEditFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         // 다이얼로그 텍스트 설정
-        dialogBinding.dialogTv.text = "정말 탈퇴하시겠습니까? 탈퇴시 모든 정보가 삭제됩니다."
+        dialogBinding.dialogTv.text = "정말 탈퇴하시겠습니까?"
         // 버튼 텍스트 변경
         dialogBinding.dialogDeleteBtn.text = "탈퇴"
 
@@ -252,6 +251,7 @@ class ProfileEditFragment : Fragment() {
 
         dialogBinding.dialogDeleteBtn.setOnClickListener {
             viewModel.deleteAccount()
+            findNavController().navigate(R.id.registerFragment)
             dialog.dismiss()
         }
 

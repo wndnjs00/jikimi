@@ -4,6 +4,8 @@ package com.example.jikimi.data.repository
 import android.net.Uri
 import android.util.Log
 import com.example.jikimi.Resource
+import com.example.jikimi.data.model.dto.Comment
+import com.example.jikimi.data.model.dto.Post
 import com.example.jikimi.data.model.dto.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -71,46 +73,7 @@ class AuthRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser
                 ?: return@withContext Resource.Error("로그인이 필요합니다.")
 
-            val userId = currentUser.uid
-
-            // 1. 사용자의 프로필 이미지 삭제
-            try {
-                val storageRef = storage.reference.child("profile_images/$userId")
-                storageRef.delete().await()
-            } catch (e: Exception) {
-                Log.w("AuthRepository", "프로필 이미지 삭제 실패: ${e.message}")
-                // 이미지가 없어도 계속 진행
-            }
-
-            // 2. 사용자가 작성한 게시물 삭제
-            val postsSnapshot = firestore.collection("posts")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-
-            val batch = firestore.batch()
-
-            for (document in postsSnapshot.documents) {
-                batch.delete(document.reference)
-            }
-
-            // 3. 사용자가 작성한 댓글 삭제
-            val commentsSnapshot = firestore.collection("comments")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-
-            for (document in commentsSnapshot.documents) {
-                batch.delete(document.reference)
-            }
-
-            // 4. Firestore의 사용자 정보 삭제
-            batch.delete(firestore.collection("users").document(userId))
-
-            // 일괄 삭제 실행
-            batch.commit().await()
-
-            // 5. Firebase Auth에서 사용자 삭제
+            // Firebase Auth에서 사용자 계정만 삭제
             currentUser.delete().await()
 
             return@withContext Resource.Success(true)
