@@ -78,8 +78,10 @@ class RegisterFragment : Fragment() {
             val nickname = binding.etNickname.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
             val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+            val termsChecked = binding.checkboxTerms.isChecked
+            val locationTermsChecked = binding.checkboxTerms2.isChecked
 
-            if (validateInputs(email, nickname, password, confirmPassword)) {
+            if (validateInputs(email, nickname, password, confirmPassword, termsChecked, locationTermsChecked)) {
                 viewModel.signup(email, password, nickname)
             }
         }
@@ -90,7 +92,13 @@ class RegisterFragment : Fragment() {
     }
 
 
-    private fun validateInputs(email: String, nickname: String, password: String, confirmPassword: String): Boolean {
+    private fun validateInputs(email: String,
+                               nickname: String,
+                               password: String,
+                               confirmPassword: String,
+                               termsChecked: Boolean,
+                               locationTermsChecked: Boolean
+    ): Boolean {
         var isValid = true
 
         if (email.isEmpty()) {
@@ -122,6 +130,18 @@ class RegisterFragment : Fragment() {
             isValid = false
         } else {
             binding.tilConfirmPassword.error = null
+        }
+
+        // 이용약관 동의 체크 확인
+        if (!termsChecked) {
+            (activity as MainActivity).showToast("이용약관에 동의해주세요")
+            isValid = false
+        }
+
+        // 위치서비스 이용약관 동의 체크 확인
+        if (!locationTermsChecked) {
+            (activity as MainActivity).showToast("위치서비스 이용약관에 동의해주세요")
+            isValid = false
         }
 
         return isValid

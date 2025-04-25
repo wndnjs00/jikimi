@@ -156,6 +156,47 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/checkbox_all_linearLayout2"
+        android:layout_width="0dp"
+        android:layout_marginTop="14dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_all_linearLayout">
+
+        <CheckBox
+            android:id="@+id/checkboxTerms2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/custom_checkbox"
+            android:button="@null" />
+
+        <TextView
+            android:id="@+id/tvTerms2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="위치서비스 이용약관 동의"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/ivArrow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="180"
+            android:src="@drawable/back_img"
+            app:tint="@color/second_gray" />
+
+    </LinearLayout>
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnRegister"
