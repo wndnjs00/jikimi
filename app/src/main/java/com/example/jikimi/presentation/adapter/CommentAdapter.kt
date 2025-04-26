@@ -13,7 +13,7 @@ import com.example.jikimi.databinding.ItemCommentBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CommentAdapter(
-    private val onOptionsClick: (Comment, Boolean) -> Unit,
+    private val onOptionsClick: (Comment, Boolean, View) -> Unit,
     private val onReplyClick: (Comment) -> Unit,
     private val currentUserId: String
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
@@ -168,8 +168,9 @@ class CommentAdapter(
                 // 내 댓글인지 여부 확인
                 val isUserComment = comment.userId == currentUserId
 
-                btnCommentOptions.setOnClickListener {
-                    onOptionsClick(comment, isUserComment)
+                // 버튼 클릭 시 해당 버튼(view)를 함께 전달
+                btnCommentOptions.setOnClickListener { view ->
+                    onOptionsClick(comment, isUserComment, view)
                 }
 
                 // 답글 버튼은 대댓글에서는 숨김
