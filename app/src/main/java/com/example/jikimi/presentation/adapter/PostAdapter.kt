@@ -80,18 +80,10 @@ class PostAdapter(
                     ivPostImage.visibility = View.GONE
                 }
 
-                // 본인 게시물인 경우에만 삭제 버튼 표시
-//                btnDelete.isVisible = post.userId == currentUserId
-
                 // 아이템 클릭시
                 root.setOnClickListener {
                     onPostClick(post)
                 }
-
-                // 점 버튼 클릭시
-//                btnDelete.setOnClickListener {
-//                    onDeleteClick(post)
-//                }
             }
         }
     }

@@ -23,6 +23,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -164,17 +165,52 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 // 병렬로 수집
-                launch{
-                    // 야외 대피소 데이터 관찰
+                // 야외 대피소 로딩 상태 관찰
+                launch {
+                    outdoorViewModel.isLoading.collect { isLoading ->
+                        binding.progressBar.isVisible = isLoading
+                    }
+                }
+
+                // 야외 대피소 에러 상태 관찰
+                launch {
+                    outdoorViewModel.errorMessage.collect { errorMessage ->
+                        if (!errorMessage.isNullOrEmpty()) {
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                            outdoorViewModel.clearErrorMessage()
+                        }
+                    }
+                }
+
+                // 실내 대피소 로딩 상태 관찰
+                launch {
+                    indoorViewModel.isLoading.collect { isLoading ->
+                        // 이미 outdoorViewModel의 로딩 상태를 사용하므로 추가 로직 필요 없음
+                        // 두 로딩 상태 중 하나라도 true면 progressBar를 표시하도록 하는 로직을 추가할 수 있음
+                    }
+                }
+
+                // 실내 대피소 에러 상태 관찰
+                launch {
+                    indoorViewModel.errorMessage.collect { errorMessage ->
+                        if (!errorMessage.isNullOrEmpty()) {
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                            indoorViewModel.clearErrorMessage()
+                        }
+                    }
+                }
+
+                // 야외 대피소 데이터 관찰
+                launch {
                     outdoorViewModel.shelters.collect { outdoorShelters ->
                         val currentLocation = outdoorViewModel.currentLocation.value
                         if (currentLocation != null && outdoorShelters.isNotEmpty()) {
                             updateOutdoorSheltersOnMap(outdoorShelters, currentLocation)
-                            Toast.makeText(requireContext(), "${outdoorShelters.size} 개의 야외대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "${outdoorShelters.size}개의 야외대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
 
                             // 검색을 위해 DB에 저장
                             saveOutdoorSheltersToDatabase(outdoorShelters)
-                        }else{
+                        } else if (outdoorShelters.isEmpty() && !outdoorViewModel.isLoading.value) {
                             Toast.makeText(requireContext(), "야외대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -190,7 +226,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
                             // 검색을 위해 DB에 저장
                             saveIndoorSheltersToDatabase(indoorShelters)
-                        }else{
+                        } else if (indoorShelters.isEmpty() && !indoorViewModel.isLoading.value) {
                             Toast.makeText(requireContext(), "실내대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -198,6 +234,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
+
 
 
     override fun onMapReady(naverMap: NaverMap) {
@@ -338,7 +375,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                         val bottomSheetFragment = BottomSheetFragment.outdoorNewInstance(outdoorShelter, distance)
 
                         bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
-                        Toast.makeText(requireContext(), "${outdoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(requireContext(), "${outdoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
                         true
                     }
                 }
@@ -380,7 +417,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                         val bottomSheetFragment = BottomSheetFragment.indoorNewInstance(indoorShelter, distance)
 
                         bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
-                        Toast.makeText(requireContext(), "${indoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(requireContext(), "${indoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
                         true
                     }
                 }
@@ -781,5 +818,3 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         lastProcessedLocation = null // 메모리 해제
     }
 }
-
-
