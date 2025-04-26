@@ -13,7 +13,7 @@ import com.example.jikimi.databinding.ItemPostBinding
 
 class PostAdapter(
     private val onPostClick: (Post) -> Unit,
-    private val onDeleteClick: (Post) -> Unit,
+//    private val onDeleteClick: (Post) -> Unit,
     private val currentUserId: String
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
@@ -81,17 +81,17 @@ class PostAdapter(
                 }
 
                 // 본인 게시물인 경우에만 삭제 버튼 표시
-                btnDelete.isVisible = post.userId == currentUserId
+//                btnDelete.isVisible = post.userId == currentUserId
 
-                // 아이템 클릭시(수정하기)
+                // 아이템 클릭시
                 root.setOnClickListener {
                     onPostClick(post)
                 }
 
                 // 점 버튼 클릭시
-                btnDelete.setOnClickListener {
-                    onDeleteClick(post)
-                }
+//                btnDelete.setOnClickListener {
+//                    onDeleteClick(post)
+//                }
             }
         }
     }

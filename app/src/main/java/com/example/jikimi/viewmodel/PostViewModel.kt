@@ -1,16 +1,22 @@
 package com.example.jikimi.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jikimi.Resource
 import com.example.jikimi.data.model.dto.Post
 import com.example.jikimi.data.repository.PostRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -87,6 +93,29 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             val result = postRepository.getPostsByUser(userId)
             _userPosts.value = result
+        }
+    }
+
+    fun getBlockedPostIds(): Flow<List<String>> = flow {
+        try {
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                val querySnapshot = FirebaseFirestore.getInstance().collection("blocked_posts")
+                    .whereEqualTo("userId", currentUser.uid)
+                    .get()
+                    .await()
+
+                val blockedIds = querySnapshot.documents.mapNotNull { doc ->
+                    doc.getString("postId")
+                }
+
+                emit(blockedIds)
+            } else {
+                emit(emptyList())
+            }
+        } catch (e: Exception) {
+            Log.e("PostViewModel", "차단된 게시물 ID 가져오기 실패: ${e.message}")
+            emit(emptyList())
         }
     }
 

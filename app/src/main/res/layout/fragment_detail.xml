@@ -57,7 +57,7 @@
 
                     <!-- 더보기 버튼 (이미지의 ... 버튼) -->
                     <ImageButton
-                        android:id="@+id/btnDelete"
+                        android:id="@+id/btnOption"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
