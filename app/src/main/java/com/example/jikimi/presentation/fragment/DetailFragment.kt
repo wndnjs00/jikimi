@@ -93,8 +93,9 @@ class DetailFragment : Fragment() {
     private fun setupRecyclerView() {
         val currentUserId = authViewModel.getCurrentUser()?.uid ?: ""
         commentAdapter = CommentAdapter(
-            onOptionsClick = { comment, isUserComment ->
-                showCommentOptionsPopup(comment, isUserComment)
+            onOptionsClick = { comment, isUserComment, view ->
+                // view 파라미터 추가 - 클릭된 실제 버튼을 전달받음
+                showCommentOptionsPopup(comment, isUserComment, view)
             },
             onReplyClick = { comment ->
                 // 답글 달기 모드 활성화
@@ -398,7 +399,7 @@ class DetailFragment : Fragment() {
                 }
                 4 -> {
                     // 차단하기
-                    blockPost(post.id, post.content, post.nickname)
+                    showBlockDialog(post.id, post.content, post.nickname, true)
                     true
                 }
                 else -> false
@@ -408,9 +409,10 @@ class DetailFragment : Fragment() {
         popupMenu.show()
     }
 
-    // 댓글 옵션 팝업메뉴 표시
-    private fun showCommentOptionsPopup(comment: Comment, isUserComment: Boolean) {
-        val popupMenu = PopupMenu(requireContext(), binding.btnOption)
+    // 댓글 옵션 팝업메뉴 표시 - 매개변수 추가: View anchorView
+    private fun showCommentOptionsPopup(comment: Comment, isUserComment: Boolean, anchorView: View) {
+        // 매개변수로 전달된 anchorView를 사용하여 팝업 메뉴 표시
+        val popupMenu = PopupMenu(requireContext(), anchorView)
 
         if (isUserComment) {
             // 내 댓글인 경우
@@ -435,7 +437,7 @@ class DetailFragment : Fragment() {
                 }
                 3 -> {
                     // 차단하기
-                    blockComment(comment.id, comment.content, comment.nickname)
+                    showBlockDialog(comment.id, comment.content, comment.nickname, false)
                     true
                 }
                 else -> false
@@ -456,6 +458,22 @@ class DetailFragment : Fragment() {
                     reportPost(id, userId, nickname, content)
                 } else {
                     reportComment(id, userId, nickname, content)
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    // 차단 확인 다이얼로그 표시
+    private fun showBlockDialog(id: String, content: String, nickname: String, isPost: Boolean) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("차단하기")
+            .setMessage("정말 차단하시겠어요?")
+            .setPositiveButton("차단하기") { _, _ ->
+                if (isPost) {
+                    blockPost(id, content, nickname)
+                } else {
+                    blockComment(id, content, nickname)
                 }
             }
             .setNegativeButton("취소", null)
