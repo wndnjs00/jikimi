@@ -85,9 +85,9 @@ class CommunityFragment : Fragment() {
                 }
                 findNavController().navigate(R.id.detailFragment, bundle)
             },
-            onDeleteClick = { post ->
-                postViewModel.deletePost(post.id)
-            },
+//            onDeleteClick = { post ->
+//                postViewModel.deletePost(post.id)
+//            },
             currentUserId = currentUserId
         )
 

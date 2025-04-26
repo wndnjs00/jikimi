@@ -28,9 +28,33 @@ class PostRepositoryImpl @Inject constructor(
                 .await()
 
             val posts = querySnapshot.toObjects(Post::class.java)
-            Resource.Success(posts)
+
+            // 차단된 게시물 필터링
+            val blockedPostIds = getBlockedPostIds()
+            val filteredPosts = posts.filter { post ->
+                !blockedPostIds.contains(post.id)
+            }
+
+            Resource.Success(filteredPosts)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "게시물을 불러오는 중 오류가 발생했습니다.")
+        }
+    }
+
+    // 차단한 게시물 ID 가져오기
+    private suspend fun getBlockedPostIds(): List<String> {
+        val currentUser = firebaseAuth.currentUser ?: return emptyList()
+
+        return try {
+            val querySnapshot = firestore.collection("blocked_posts")
+                .whereEqualTo("userId", currentUser.uid)
+                .get()
+                .await()
+
+            querySnapshot.documents.mapNotNull { it.getString("postId") }
+        } catch (e: Exception) {
+            Log.e("PostRepository", "차단된 게시물 ID 가져오기 실패: ${e.message}")
+            emptyList()
         }
     }
 

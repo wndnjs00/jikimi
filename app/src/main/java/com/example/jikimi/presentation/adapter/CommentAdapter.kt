@@ -2,6 +2,7 @@ package com.example.jikimi.presentation.adapter
 
 import android.text.format.DateUtils
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -9,9 +10,10 @@ import com.bumptech.glide.Glide
 import com.example.jikimi.R
 import com.example.jikimi.data.model.dto.Comment
 import com.example.jikimi.databinding.ItemCommentBinding
+import com.google.firebase.firestore.FirebaseFirestore
 
 class CommentAdapter(
-    private val onDeleteClick: (Comment) -> Unit,
+    private val onOptionsClick: (Comment, Boolean) -> Unit,
     private val onReplyClick: (Comment) -> Unit,
     private val currentUserId: String
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
@@ -19,6 +21,9 @@ class CommentAdapter(
     private val comments = mutableListOf<Comment>()
     private val mainComments = mutableListOf<Comment>()
     private val repliesMap = mutableMapOf<String, MutableList<Comment>>()
+
+    // 차단된 댓글 ID 목록
+    private val blockedCommentIds = mutableSetOf<String>()
 
     fun updateComments(newComments: List<Comment>) {
         comments.clear()
@@ -28,21 +33,53 @@ class CommentAdapter(
         mainComments.clear()
         repliesMap.clear()
 
-        newComments.forEach { comment ->
-            if (comment.parentCommentId.isEmpty()) {
-                // 일반 댓글
-                mainComments.add(comment)
-            } else {
-                // 답글
-                val parentId = comment.parentCommentId
-                if (!repliesMap.containsKey(parentId)) {
-                    repliesMap[parentId] = mutableListOf()
+        // 차단된 댓글 ID 가져오기
+        fetchBlockedComments {
+            newComments.forEach { comment ->
+                // 차단된 댓글 제외
+                if (!blockedCommentIds.contains(comment.id)) {
+                    if (comment.parentCommentId.isEmpty()) {
+                        // 일반 댓글
+                        mainComments.add(comment)
+                    } else {
+                        // 답글
+                        val parentId = comment.parentCommentId
+                        if (!repliesMap.containsKey(parentId)) {
+                            repliesMap[parentId] = mutableListOf()
+                        }
+                        repliesMap[parentId]?.add(comment)
+                    }
                 }
-                repliesMap[parentId]?.add(comment)
             }
+
+            notifyDataSetChanged()
+        }
+    }
+
+    // 차단된 댓글 ID 가져오기
+    private fun fetchBlockedComments(onComplete: () -> Unit) {
+        blockedCommentIds.clear()
+
+        if (currentUserId.isEmpty()) {
+            onComplete()
+            return
         }
 
-        notifyDataSetChanged()
+        FirebaseFirestore.getInstance().collection("blocked_comments")
+            .whereEqualTo("userId", currentUserId)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val commentId = document.getString("commentId") ?: ""
+                    if (commentId.isNotEmpty()) {
+                        blockedCommentIds.add(commentId)
+                    }
+                }
+                onComplete()
+            }
+            .addOnFailureListener {
+                onComplete()
+            }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -125,11 +162,14 @@ class CommentAdapter(
                     ivCommentUserProfile.setImageResource(R.drawable.jikimi_img)
                 }
 
-                // 본인 댓글인 경우에만 삭제 버튼 표시
-                btnCommentOptions.isVisible = comment.userId == currentUserId
+                // 모든 댓글에 옵션 버튼 표시
+                btnCommentOptions.isVisible = true
+
+                // 내 댓글인지 여부 확인
+                val isUserComment = comment.userId == currentUserId
 
                 btnCommentOptions.setOnClickListener {
-                    onDeleteClick(comment)
+                    onOptionsClick(comment, isUserComment)
                 }
 
                 // 답글 버튼은 대댓글에서는 숨김

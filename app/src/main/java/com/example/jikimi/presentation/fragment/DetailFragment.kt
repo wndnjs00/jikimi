@@ -1,14 +1,18 @@
 package com.example.jikimi.presentation.fragment
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -89,8 +93,8 @@ class DetailFragment : Fragment() {
     private fun setupRecyclerView() {
         val currentUserId = authViewModel.getCurrentUser()?.uid ?: ""
         commentAdapter = CommentAdapter(
-            onDeleteClick = { comment ->
-                commentViewModel.deleteComment(comment.id, postId)
+            onOptionsClick = { comment, isUserComment ->
+                showCommentOptionsPopup(comment, isUserComment)
             },
             onReplyClick = { comment ->
                 // 답글 달기 모드 활성화
@@ -297,8 +301,16 @@ class DetailFragment : Fragment() {
             }
 
             val currentUserId = authViewModel.getCurrentUser()?.uid ?: ""
-            btnDelete.isVisible = post.userId == currentUserId
-//            btnEdit.isVisible = post.userId == currentUserId
+            btnOption.isVisible = true // 항상 표시하도록 변경
+            btnOption.setOnClickListener {
+                if (post.userId == currentUserId) {
+                    // 내 게시물인 경우: 수정, 삭제 옵션
+                    showPostOptionsPopup(post, true)
+                } else {
+                    // 타인 게시물인 경우: 신고, 차단 옵션
+                    showPostOptionsPopup(post, false)
+                }
+            }
         }
     }
 
@@ -319,19 +331,9 @@ class DetailFragment : Fragment() {
             }
         }
 
-        binding.btnDelete.setOnClickListener {
+        binding.btnOption.setOnClickListener {
             postViewModel.deletePost(postId)
         }
-
-//        binding.btnEdit.setOnClickListener {
-//            // 게시물 수정을 위해 CreatePostFragment로 이동
-//            post?.let {
-//                val bundle = Bundle().apply {
-//                    putString("postId", post?.id)
-//                }
-//                findNavController().navigate(R.id.createPostFragment, bundle)
-//            }
-//        }
 
         // 답글 취소 버튼
         binding.btnCancelReply.setOnClickListener {
@@ -358,6 +360,205 @@ class DetailFragment : Fragment() {
         binding.replyModeLayout.visibility = View.GONE
         binding.etComment.hint = "댓글을 입력하세요..."
     }
+
+    // 게시물 옵션 팝업메뉴 표시
+    private fun showPostOptionsPopup(post: Post, isUserPost: Boolean) {
+        val popupMenu = PopupMenu(requireContext(), binding.btnOption)
+
+        if (isUserPost) {
+            // 내 게시물인 경우
+            popupMenu.menu.add(Menu.NONE, 1, Menu.NONE, "수정하기")
+            popupMenu.menu.add(Menu.NONE, 2, Menu.NONE, "삭제하기")
+        } else {
+            // 타인 게시물인 경우
+            popupMenu.menu.add(Menu.NONE, 3, Menu.NONE, "신고하기")
+            popupMenu.menu.add(Menu.NONE, 4, Menu.NONE, "차단하기")
+        }
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                1 -> {
+                    // 수정하기
+                    val bundle = Bundle().apply {
+                        putString("postId", post.id)
+                    }
+
+                    findNavController().navigate(R.id.createPostFragment, bundle)
+                    true
+                }
+                2 -> {
+                    // 삭제하기
+                    postViewModel.deletePost(post.id)
+                    true
+                }
+                3 -> {
+                    // 신고하기
+                    showReportDialog(post.id, post.userId, post.nickname, post.content, true)
+                    true
+                }
+                4 -> {
+                    // 차단하기
+                    blockPost(post.id, post.content, post.nickname)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
+    }
+
+    // 댓글 옵션 팝업메뉴 표시
+    private fun showCommentOptionsPopup(comment: Comment, isUserComment: Boolean) {
+        val popupMenu = PopupMenu(requireContext(), binding.btnOption)
+
+        if (isUserComment) {
+            // 내 댓글인 경우
+            popupMenu.menu.add(Menu.NONE, 1, Menu.NONE, "삭제하기")
+        } else {
+            // 타인 댓글인 경우
+            popupMenu.menu.add(Menu.NONE, 2, Menu.NONE, "신고하기")
+            popupMenu.menu.add(Menu.NONE, 3, Menu.NONE, "차단하기")
+        }
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                1 -> {
+                    // 삭제하기
+                    commentViewModel.deleteComment(comment.id, postId)
+                    true
+                }
+                2 -> {
+                    // 신고하기
+                    showReportDialog(comment.id, comment.userId, comment.nickname, comment.content, false)
+                    true
+                }
+                3 -> {
+                    // 차단하기
+                    blockComment(comment.id, comment.content, comment.nickname)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
+    }
+
+
+    // 신고 확인 다이얼로그 표시
+    private fun showReportDialog(id: String, userId: String, nickname: String, content: String, isPost: Boolean) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("신고하기")
+            .setMessage("정말 신고하시겠어요?")
+            .setPositiveButton("신고하기") { _, _ ->
+                if (isPost) {
+                    reportPost(id, userId, nickname, content)
+                } else {
+                    reportComment(id, userId, nickname, content)
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    // 게시물 신고
+    private fun reportPost(postId: String, userId: String, nickname: String, content: String) {
+        val currentUser = authViewModel.getCurrentUser()
+        val report = hashMapOf(
+            "reporterId" to (currentUser?.uid ?: ""),
+            "postId" to postId,
+            "userId" to userId,
+            "nickname" to nickname,
+            "content" to content,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        FirebaseFirestore.getInstance().collection("post_reports")
+            .add(report)
+            .addOnSuccessListener {
+                (activity as MainActivity).showToast("관리자에게 신고가 접수되었습니다")
+            }
+            .addOnFailureListener { e ->
+                (activity as MainActivity).showToast("신고 접수에 실패했습니다: ${e.message}")
+            }
+    }
+
+    // 댓글 신고
+    private fun reportComment(commentId: String, userId: String, nickname: String, content: String) {
+        val currentUser = authViewModel.getCurrentUser()
+        val report = hashMapOf(
+            "reporterId" to (currentUser?.uid ?: ""),
+            "commentId" to commentId,
+            "postId" to postId,
+            "userId" to userId,
+            "nickname" to nickname,
+            "content" to content,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        FirebaseFirestore.getInstance().collection("comment_reports")
+            .add(report)
+            .addOnSuccessListener {
+                (activity as MainActivity).showToast("관리자에게 신고가 접수되었습니다")
+            }
+            .addOnFailureListener { e ->
+                (activity as MainActivity).showToast("신고 접수에 실패했습니다: ${e.message}")
+            }
+    }
+
+    // 게시물 차단 (사용자에게만 해당 게시물 숨기기)
+    private fun blockPost(postId: String, content: String, nickname: String) {
+        val currentUser = authViewModel.getCurrentUser()
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            val blockedPost = hashMapOf(
+                "userId" to userId,
+                "postId" to postId,
+                "content" to content,
+                "nickname" to nickname,
+                "timestamp" to System.currentTimeMillis()
+            )
+
+            FirebaseFirestore.getInstance().collection("blocked_posts")
+                .add(blockedPost)
+                .addOnSuccessListener {
+                    (activity as MainActivity).showToast("게시물을 차단했습니다")
+                    findNavController().navigateUp() // 목록으로 돌아가기
+                }
+                .addOnFailureListener { e ->
+                    (activity as MainActivity).showToast("차단하기에 실패했습니다: ${e.message}")
+                }
+        }
+    }
+
+    // 댓글 차단 (사용자에게만 해당 댓글 숨기기)
+    private fun blockComment(commentId: String, content: String, nickname: String,) {
+        val currentUser = authViewModel.getCurrentUser()
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            val blockedComment = hashMapOf(
+                "userId" to userId,
+                "commentId" to commentId,
+                "content" to content,
+                "postId" to postId,
+                "nickname" to nickname,
+                "timestamp" to System.currentTimeMillis()
+            )
+
+            FirebaseFirestore.getInstance().collection("blocked_comments")
+                .add(blockedComment)
+                .addOnSuccessListener {
+                    (activity as MainActivity).showToast("댓글을 차단했습니다")
+                    commentViewModel.getCommentsByPost(postId) // 댓글 목록 새로고침
+                }
+                .addOnFailureListener { e ->
+                    (activity as MainActivity).showToast("차단하기에 실패했습니다: ${e.message}")
+                }
+        }
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
