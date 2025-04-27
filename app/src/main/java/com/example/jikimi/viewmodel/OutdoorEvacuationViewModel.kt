@@ -95,7 +95,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e("OutdoorEvacuationViewModel", "API request failed: ${e.message}", e)
-                _errorMessage.value = "대피소 정보를 불러오는데 실패했습니다: ${e.message}"
+                _errorMessage.value = "outdoor대피소 정보를 불러오는데 실패했습니다: ${e.message}"
             } finally {
                 _isLoading.value = false
             }

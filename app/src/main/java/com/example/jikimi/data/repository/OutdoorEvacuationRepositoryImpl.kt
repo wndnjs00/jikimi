@@ -9,8 +9,8 @@ import javax.inject.Singleton
 
 @Singleton
 class OutdoorEvacuationRepositoryImpl @Inject constructor(
-    @Named("OutdoorEvacuationService") private val outdoorEvacuationService : OutdoorEvacuationService
-) : OutdoorEvacuationRepository{
+    @Named("OutdoorEvacuationService") private val outdoorEvacuationService: OutdoorEvacuationService
+) : OutdoorEvacuationRepository {
 
     override suspend fun requestOutdoorEvacuation(): EarthquakeOutdoorsShelterResponse {
         return outdoorEvacuationService.getOutdoorEvacuation(pageNo = "1")

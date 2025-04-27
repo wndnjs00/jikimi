@@ -21,41 +21,56 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
         return indoorEvacuationService.getIndoorEvacuation(pageNo = pageNo.toString())
     }
 
-    // 모든 데이터 요청 구현
+    // 모든 데이터 요청 구현 - 수정된 부분
     override suspend fun requestAllIndoorEvacuation(): List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row> {
-        // 첫 페이지 요청하여 총 데이터 개수 확인
-        val firstPageResponse = requestIndoorEvacuationByPage(1)
-        val totalCount = firstPageResponse.earthquakeIndoors?.getOrNull(0)?.head?.getOrNull(0)?.totalCount?.toIntOrNull() ?: 0
-        val itemsPerPage = 100
+        try {
+            // 첫 페이지 요청하여 총 데이터 개수 확인
+            val firstPageResponse = requestIndoorEvacuationByPage(1)
 
-        // 총 페이지 수 계산
-        val totalPages = if (totalCount % itemsPerPage == 0) {
-            totalCount / itemsPerPage
-        } else {
-            (totalCount / itemsPerPage) + 1
-        }
+            // API 응답 구조에 맞게 수정
+            val totalCount = firstPageResponse.earthquakeIndoors[0].head[0].totalCount?.toIntOrNull() ?: 0
+            Log.d("IndoorEvacuationRepo", "총 대피소 개수: $totalCount")
 
-        // 모든 대피소 데이터를 담을 리스트
-        val allRows = mutableListOf<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>()
+            val itemsPerPage = 100
 
-        // 첫 페이지 데이터 추가
-        firstPageResponse.earthquakeIndoors?.getOrNull(0)?.row?.let { rows ->
-            allRows.addAll(rows)
-        }
+            // 총 페이지 수 계산
+            val totalPages = if (totalCount % itemsPerPage == 0) {
+                totalCount / itemsPerPage
+            } else {
+                (totalCount / itemsPerPage) + 1
+            }
 
-        // 나머지 페이지 데이터 요청
-        for (page in 2..totalPages) {
-            try {
-                val response = requestIndoorEvacuationByPage(page)
-                response.earthquakeIndoors?.getOrNull(0)?.row?.let { rows ->
+            // 모든 대피소 데이터를 담을 리스트
+            val allRows = mutableListOf<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>()
+
+            // 첫 페이지 데이터 추가 - row 객체는 두 번째 항목에 있음
+            if (firstPageResponse.earthquakeIndoors.size > 1) {
+                firstPageResponse.earthquakeIndoors[1].row?.let { rows ->
                     allRows.addAll(rows)
                 }
-            } catch (e: Exception) {
-                Log.e("IndoorEvacuationRepo", "페이지 $page 데이터 요청 실패: ${e.message}")
-                // 에러 발생해도 이미 받은 데이터는 사용
-                continue
             }
+
+            // 나머지 페이지 데이터 요청
+            for (page in 2..totalPages) {
+                try {
+                    val response = requestIndoorEvacuationByPage(page)
+                    if (response.earthquakeIndoors.size > 1) {
+                        response.earthquakeIndoors[1].row?.let { rows ->
+                            allRows.addAll(rows)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("IndoorEvacuationRepo", "페이지 $page 데이터 요청 실패: ${e.message}", e)
+                    // 에러 발생해도 이미 받은 데이터는 사용
+                    continue
+                }
+            }
+
+            Log.d("IndoorEvacuationRepo", "총 ${allRows.size}개의 실내 대피소 데이터를 가져왔습니다.")
+            return allRows
+        } catch (e: Exception) {
+            Log.e("IndoorEvacuationRepo", "전체 데이터 요청 중 오류 발생: ${e.message}", e)
+            return emptyList()
         }
-        return allRows
     }
 }
