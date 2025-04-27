@@ -95,7 +95,7 @@ class IndoorEvacuationViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e("IndoorEvacuationViewModel", "API 받아오기 실패: ${e.message}", e)
-                _errorMessage.value = "대피소 정보를 불러오는데 실패했습니다: ${e.message}"
+                _errorMessage.value = "Indoor대피소 정보를 불러오는데 실패했습니다: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
