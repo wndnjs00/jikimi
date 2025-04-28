@@ -6,6 +6,15 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.jikimi.data.local.AppDatabase
 import com.example.jikimi.data.local.dao.ShelterDao
+import com.example.jikimi.data.repository.AuthRepository
+import com.example.jikimi.data.repository.AuthRepositoryImpl
+import com.example.jikimi.data.repository.CommentRepository
+import com.example.jikimi.data.repository.CommentRepositoryImpl
+import com.example.jikimi.data.repository.PostRepository
+import com.example.jikimi.data.repository.PostRepositoryImpl
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +38,20 @@ object RoomModule {
         .build()
 
 
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance() // FirebaseStorage 추가
+
+
+
     @Singleton
     @Provides
     fun provideShelterDao(
@@ -41,4 +64,31 @@ object RoomModule {
             // 테이블을 수정해야 하는 경우 여기에서 수정할 수 있음
         }
     }
+
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+        storage: FirebaseStorage
+    ): AuthRepository = AuthRepositoryImpl(firebaseAuth,firestore, storage)
+
+
+    @Provides
+    @Singleton
+    fun providePostRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+        storage: FirebaseStorage
+    ): PostRepository = PostRepositoryImpl(firebaseAuth, firestore, storage)
+
+
+    @Provides
+    @Singleton
+    fun provideCommentRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): CommentRepository = CommentRepositoryImpl(firebaseAuth, firestore)
+
 }

@@ -1,6 +1,6 @@
 [versions]
 activityKtx = "1.9.1"
-agp = "8.5.1"
+agp = "8.9.2"
 annotation = "0.8.13"
 annotationVersion = "0.8.15"
 coil = "2.6.0"
