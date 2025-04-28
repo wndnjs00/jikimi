@@ -28,7 +28,6 @@ data class EarthquakeOutdoorsShelterResponse(
         @SerializedName("BDONG_CD") val bdongCd: String?,   //법정동코드
         @SerializedName("ARCD") val arcd: String?,  //지역코드
         @SerializedName("HDONG_CD") val hdongCd: String?, //행정동코드
-//        @SerializedName("FCLTY_AR") val fcltyAr: Double?,  //시설면적
         @SerializedName("LA") val la: String?,  //위도
         @SerializedName("ACMDFCLTY_SN") val acmdfcltySn: Int?, //수용시설일련번호
         @SerializedName("EQK_ACMDFCLTY_ADRES") val eqkAcmdfcltyAdres: String?,  //지진옥외대피장소주소

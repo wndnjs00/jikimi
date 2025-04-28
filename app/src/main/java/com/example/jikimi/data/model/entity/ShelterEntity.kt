@@ -13,4 +13,8 @@ data class ShelterEntity(
     val latitude: Double,       // 위도
     val longitude: Double,      // 경도
     val shelterType: String,    // "INDOOR" or "OUTDOOR"
+//    val vtAcmdPsblNmpr: Int,    //수용인원
+//    val acmdfcltyDtlCn: String,  // 시설명,
+//    val mngpsTelno: String,      // 전화번호,
+    val lastUpdated: Long = System.currentTimeMillis(), // 마지막 업데이트 시간
 )
