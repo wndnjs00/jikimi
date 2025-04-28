@@ -18,16 +18,6 @@
   <img src="https://github.com/user-attachments/assets/5e0e6356-3afc-44e7-a892-415ea300e45d" width="180" height="400" />
 </p>
 
-<br/><br/>
-## 🩷 좋아요를 통한 대피소정보 저장
-긴급한 상황에 대비해 미리 좋아요를 표시한뒤 확인이 가능해요
-<br/>좋아요한 대피소를 클릭하면 해당 대피소위치로 이동해요
-<p align="left">
-  <img src="https://github.com/user-attachments/assets/2464ae82-b130-4757-abe0-623c3846bcd6" width="180" height="400" />
-  <img src="https://github.com/user-attachments/assets/2cd6c958-8257-47c9-9ea1-4ac8b6c3d5c3" width="180" height="400" />
-</p>
-
-<br/><br/>
 ## 🚨 다양한 재난행동요령 정보까지!
 지진뿐만 아니라 다양한 재난행동요령 정보까지 확인해 여러 긴급상황에 대비해보세요
 <p align="left">
@@ -62,7 +52,6 @@
 
 - **현재위치 반경 5km이내**의 대피소 위치표시
 - 마커 클릭시, **대피소의 상세정보 제공**
-- 텍스트 또는 음성인식을 통하여 **대피소의 위치 검색** [구현예정]
 - **좋아요**를 통한 대피소정보 저장
 
 ### 재난상식 페이지

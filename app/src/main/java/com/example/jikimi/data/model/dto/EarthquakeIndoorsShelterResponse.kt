@@ -9,15 +9,15 @@ data class EarthquakeIndoorsShelterResponse(
     @SerializedName("EarthquakeIndoors") val earthquakeIndoors: List<EarthquakeIndoor>
 ) {
     data class EarthquakeIndoor(
-        @SerializedName("head") val head: List<Head>,
-        @SerializedName("row") val row: List<Row>
+        @SerializedName("head") val head: List<Head> = emptyList(),
+        @SerializedName("row") val row: List<Row> = emptyList()
     ) {
         data class Head(
             @SerializedName("totalCount") val totalCount: String?,
-            @SerializedName("numOfRows") val numOfRows: String?,
-            @SerializedName("pageNo") val pageNo: String?,
-            @SerializedName("type") val type: String?,
-            @SerializedName("RESULT") val result: RESULT?
+            @SerializedName("numOfRows") val numOfRows: String? = null,
+            @SerializedName("pageNo") val pageNo: String? = null,
+            @SerializedName("type") val type: String? = null,
+            @SerializedName("RESULT") val result: RESULT? = null
         ) {
             data class RESULT(
                 @SerializedName("resultCode") val resultCode: String?,

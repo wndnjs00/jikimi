@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:background="@color/background_pink">
+
+    <!-- 프로필 이미지 -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivCommentUserProfile"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/jikimi_img"
+        app:civ_border_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 댓글 작성자 및 내용 -->
+    <TextView
+        android:id="@+id/tvCommentNickname"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="닉네임"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/btnCommentOptions"
+        app:layout_constraintStart_toEndOf="@+id/ivCommentUserProfile"
+        app:layout_constraintTop_toTopOf="@+id/ivCommentUserProfile" />
+
+    <TextView
+        android:id="@+id/tvCommentTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="1시간 전"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvCommentNickname"
+        app:layout_constraintStart_toStartOf="@+id/tvCommentNickname"
+        app:layout_constraintTop_toBottomOf="@+id/tvCommentNickname" />
+
+    <!-- 댓글 옵션 메뉴 -->
+    <ImageButton
+        android:id="@+id/btnCommentOptions"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_vert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 댓글 내용 -->
+    <TextView
+        android:id="@+id/tvCommentContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="댓글내용"
+        android:layout_marginStart="5dp"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/ivCommentUserProfile"
+        app:layout_constraintTop_toBottomOf="@+id/tvCommentTime" />
+
+    <!-- 답글 표시 (대댓글인 경우) -->
+    <TextView
+        android:id="@+id/tvReply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="답글"
+        android:textColor="@color/main_red"
+        android:textSize="12sp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintStart_toStartOf="@+id/tvCommentContent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCommentContent" />
+
+    <!-- 구분선 -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/line_gray"
+        app:layout_constraintTop_toBottomOf="@+id/tvReply"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

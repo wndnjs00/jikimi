@@ -2,10 +2,32 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Jikimi" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">@color/red</item>
         <item name="android:statusBarColor" >@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.Jikimi" parent="Base.Theme.Jikimi" />
+
+    <!--Floating Button 동그랗게-->
+    <style name="FloatingActionButton" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">32dp</item>
+    </style>
+
+    <!--splash 화면-->
+    <style name="Theme.App.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background_pink</item> <!--배경색-->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash</item>
+        <item name="windowSplashScreenAnimationDuration">500</item>
+        <item name="postSplashScreenTheme">@style/Theme.Jikimi</item>
+    </style>
+
+    <!--스피너-->
+    <style name="Widget.My.Spinner" parent="android:style/Widget.ListView.DropDown">
+        <item name="overlapAnchor">false</item>
+        <item name="android:spinnerMode">dropdown</item>   <!--dropdown-드랍다운 형식으로 표현 / dialog - 팝업형태로 표현-->
+        <item name="android:dropDownWidth">match_parent</item>  <!--드랍다운의 가로길이를 설정-->
+    </style>
+
 </resources>
