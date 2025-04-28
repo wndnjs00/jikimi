@@ -38,7 +38,7 @@ class CreatePostFragment : Fragment() {
     private val authViewModel: AuthViewModel by viewModels()
     private lateinit var imageAdapter: ImageAdapter
     private lateinit var categoryAdapter: ArrayAdapter<String>
-    private val categories = arrayOf("긴급", "정보", "소통")
+    private val categories = arrayOf("긴급", "정보", "소통", "제보")
     private var selectedCategory = "소통" // Default category
 
     // 게시물 수정 모드 관련 변수

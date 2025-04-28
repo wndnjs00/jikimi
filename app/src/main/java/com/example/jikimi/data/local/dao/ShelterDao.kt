@@ -39,15 +39,29 @@ interface ShelterDao {
     @Query("SELECT * FROM ShelterEntity")
     fun getAllShelters(): Flow<List<ShelterEntity>>
 
-    // 중복 제거를 위해 DISTINCT 추가
+    // 검색 (중복 제거를 위해 DISTINCT 추가)
     @Query("SELECT DISTINCT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%'")
     fun searchShelters(query: String): Flow<List<ShelterEntity>>
 
-    // 중복된 대피소가 있는지 확인하기위해
+//    // 검색 메서드
+//    @Query("SELECT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%' OR address LIKE '%' || :query || '%'")
+//    fun searchShelters(query: String): Flow<List<ShelterEntity>>
+
+    // 중복된 대피소가 있는지 확인하기위해 (대피소 이름과 위치로 존재 여부 확인)
     @Query("SELECT * FROM ShelterEntity WHERE vtAcmdfcltyNm = :name AND latitude = :latitude AND longitude = :longitude LIMIT 1")
     suspend fun findShelterByNameAndLocation(name: String, latitude: Double, longitude: Double): ShelterEntity?
 
     // 데이터베이스 초기화 (선택적으로 사용)
     @Query("DELETE FROM ShelterEntity")
     suspend fun clearAllShelters()
+
+
+    @Query("SELECT COUNT(*) FROM ShelterEntity WHERE shelterType = :shelterType")
+    suspend fun getShelterCountByType(shelterType: String): Int
+
+    @Query("SELECT * FROM ShelterEntity WHERE shelterType = :shelterType")
+    fun getSheltersByType(shelterType: String): Flow<List<ShelterEntity>>
+
+    @Query("DELETE FROM ShelterEntity WHERE shelterType = :shelterType")
+    suspend fun deleteSheltersByType(shelterType: String)
 }

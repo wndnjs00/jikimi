@@ -77,7 +77,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private var lastProcessedLocation: Location? = null
     private var lastApiCallTime: Long = 0
     private val MIN_DISTANCE_FOR_UPDATE = 100 // 100m 이상 이동 시 업데이트
-    private val MIN_TIME_BETWEEN_UPDATES = 30000 // 30초 (밀리초 단위)
+    private val MIN_TIME_BETWEEN_UPDATES = 60000 // 60초
 
     private val searchAdapter = ShelterSearchAdapter { shelter ->
         onShelterSearchItemClick(shelter)
@@ -209,8 +209,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                             updateOutdoorSheltersOnMap(outdoorShelters, currentLocation)
                             Toast.makeText(requireContext(), "${outdoorShelters.size}개의 야외대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
 
-                            // 검색을 위해 DB에 저장
-                            saveOutdoorSheltersToDatabase(outdoorShelters)
+                            // Repository에서 이미 캐싱 처리를 하므로 여기서는 중복 저장 작업 제거
                         } else if (outdoorShelters.isEmpty() && !outdoorViewModel.isLoading.value) {
                             Toast.makeText(requireContext(), "야외대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
@@ -225,8 +224,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                             updateIndoorSheltersOnMap(indoorShelters, currentLocation)
                             Toast.makeText(requireContext(), "${indoorShelters.size} 개의 실내 대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
 
-                            // 검색을 위해 DB에 저장
-                            saveIndoorSheltersToDatabase(indoorShelters)
+                            // Repository에서 이미 캐싱 처리를 하므로 여기서는 중복 저장 작업 제거
                         } else if (indoorShelters.isEmpty() && !indoorViewModel.isLoading.value) {
                             Toast.makeText(requireContext(), "실내대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
@@ -247,7 +245,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         // 마커 갱신을 호출하여 지도에 기존 마커를 다시 그림
         observeViewModels()
 
-        // 위치가 변경될때마다 데이터 요청 (개선된 로직)
+        // 위치가 변경될때마다 데이터 요청
         naverMap.addOnLocationChangeListener { location ->
             // 현재 위치
             val currentLocation = Location("current").apply {
@@ -306,7 +304,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             center = LatLng(latitude, longitude)
             radius = 5000.0     // 반경 5km
             map = naverMap
-            color = Color.argb(50, 255, 0, 0) // 투명한 색상 설정
+            color = Color.argb(50, 128, 0, 128) //보라색     //초록색: (50, 0, 165, 0)  // 주황색(50, 255, 165, 0)
         }
     }
 
@@ -468,70 +466,70 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
     // 검색을 위해
     // 야외 대피소를 Room DB에 저장 (중복체크 로직 추가)
-    private fun saveOutdoorSheltersToDatabase(shelters: List<EarthquakeOutdoorsShelterResponse.Shelter>) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val shelterEntities = mutableListOf<ShelterEntity>()
-
-            for (shelter in shelters) {
-                val latitude = shelter.la?.toDoubleOrNull() ?: continue
-                val longitude = shelter.lo?.toDoubleOrNull() ?: continue
-                val name = shelter.vtAcmdfcltyNm ?: "이름 없음"
-
-                // 중복 체크
-                val existingShelter = shelterDao.findShelterByNameAndLocation(name, latitude, longitude)
-                if (existingShelter == null) {
-                    shelterEntities.add(
-                        ShelterEntity(
-                            vtAcmdfcltyNm = name,
-                            address = shelter.eqkAcmdfcltyAdres ?: "주소 없음",
-                            detailAddress = shelter.dtlAdres ?: "",
-                            latitude = latitude,
-                            longitude = longitude,
-                            shelterType = "야외대피장소"
-                        )
-                    )
-                }
-            }
-
-            if (shelterEntities.isNotEmpty()) {
-                shelterDao.insertShelters(shelterEntities)
-                Log.d("EvacuateFragment", "야외 대피소 ${shelterEntities.size}개를 저장했습니다.")
-            }
-        }
-    }
+//    private fun saveOutdoorSheltersToDatabase(shelters: List<EarthquakeOutdoorsShelterResponse.Shelter>) {
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            val shelterEntities = mutableListOf<ShelterEntity>()
+//
+//            for (shelter in shelters) {
+//                val latitude = shelter.la?.toDoubleOrNull() ?: continue
+//                val longitude = shelter.lo?.toDoubleOrNull() ?: continue
+//                val name = shelter.vtAcmdfcltyNm ?: "이름 없음"
+//
+//                // 중복 체크
+//                val existingShelter = shelterDao.findShelterByNameAndLocation(name, latitude, longitude)
+//                if (existingShelter == null) {
+//                    shelterEntities.add(
+//                        ShelterEntity(
+//                            vtAcmdfcltyNm = name,
+//                            address = shelter.eqkAcmdfcltyAdres ?: "주소 없음",
+//                            detailAddress = shelter.dtlAdres ?: "",
+//                            latitude = latitude,
+//                            longitude = longitude,
+//                            shelterType = "야외대피장소"
+//                        )
+//                    )
+//                }
+//            }
+//
+//            if (shelterEntities.isNotEmpty()) {
+//                shelterDao.insertShelters(shelterEntities)
+//                Log.d("EvacuateFragment", "야외 대피소 ${shelterEntities.size}개를 저장했습니다.")
+//            }
+//        }
+//    }
 
     // 실내 대피소를 Room DB에 저장 (중복 체크 로직 추가)
-    private fun saveIndoorSheltersToDatabase(shelters: List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val shelterEntities = mutableListOf<ShelterEntity>()
-
-            for (shelter in shelters) {
-                val latitude = shelter.ycord.toDoubleOrNull() ?: continue
-                val longitude = shelter.xcord.toDoubleOrNull() ?: continue
-                val name = shelter.vtAcmdfcltyNm ?: "이름 없음"
-
-                // 중복 체크
-                val existingShelter = shelterDao.findShelterByNameAndLocation(name, latitude, longitude)
-                if (existingShelter == null) {
-                    shelterEntities.add(
-                        ShelterEntity(
-                            vtAcmdfcltyNm = name,
-                            address = shelter.rnAdres ?: "주소 없음",
-                            detailAddress = shelter.dtlAdres ?: "",
-                            latitude = latitude,
-                            longitude = longitude,
-                            shelterType = "임시주거시설"
-                        )
-                    )
-                }
-            }
-
-            if (shelterEntities.isNotEmpty()) {
-                shelterDao.insertShelters(shelterEntities)
-                Log.d("EvacuateFragment", "실내 대피소 ${shelterEntities.size}개를 저장했습니다.")
-            }
-        }
-    }
+//    private fun saveIndoorSheltersToDatabase(shelters: List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>) {
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            val shelterEntities = mutableListOf<ShelterEntity>()
+//
+//            for (shelter in shelters) {
+//                val latitude = shelter.ycord.toDoubleOrNull() ?: continue
+//                val longitude = shelter.xcord.toDoubleOrNull() ?: continue
+//                val name = shelter.vtAcmdfcltyNm ?: "이름 없음"
+//
+//                // 중복 체크
+//                val existingShelter = shelterDao.findShelterByNameAndLocation(name, latitude, longitude)
+//                if (existingShelter == null) {
+//                    shelterEntities.add(
+//                        ShelterEntity(
+//                            vtAcmdfcltyNm = name,
+//                            address = shelter.rnAdres ?: "주소 없음",
+//                            detailAddress = shelter.dtlAdres ?: "",
+//                            latitude = latitude,
+//                            longitude = longitude,
+//                            shelterType = "임시주거시설"
+//                        )
+//                    )
+//                }
+//            }
+//
+//            if (shelterEntities.isNotEmpty()) {
+//                shelterDao.insertShelters(shelterEntities)
+//                Log.d("EvacuateFragment", "실내 대피소 ${shelterEntities.size}개를 저장했습니다.")
+//            }
+//        }
+//    }
 
 
 

@@ -3,6 +3,7 @@ package com.example.jikimi.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jikimi.data.local.dao.ShelterDao
 import com.example.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.data.repository.OutdoorEvacuationRepository
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OutdoorEvacuationViewModel @Inject constructor(
-    private val outdoorEvacuationRepository: OutdoorEvacuationRepository
+    private val outdoorEvacuationRepository: OutdoorEvacuationRepository,
+    private val shelterDao: ShelterDao
 ) : ViewModel() {
 
     private val _shelters = MutableStateFlow<List<EarthquakeOutdoorsShelterResponse.Shelter>>(emptyList())
@@ -33,11 +35,11 @@ class OutdoorEvacuationViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
-    // API로 currentAddress 데이터를 가져오고 업데이트 (개선된 버전)
+    // API로 currentAddress 데이터를 가져오고 업데이트 (API 호출 최적화)
     fun fetchOutdoorShelters(currentAddress: String) {
         // 이미 로딩 중이면 중복 호출 방지
         if (_isLoading.value) {
-            Log.d("OutdoorEvacuationViewModel", "Already loading data, skipping request")
+            Log.d("OutdoorEvacuationViewModel", "이미 로딩 중입니다")
             return
         }
 
@@ -46,9 +48,9 @@ class OutdoorEvacuationViewModel @Inject constructor(
                 _isLoading.value = true
                 _errorMessage.value = null
 
-                // 모든 페이지의 데이터 요청
+                // 모든 페이지의 데이터 요청(로컬 DB 캐시 활용)
                 val allShelters = outdoorEvacuationRepository.requestAllOutdoorEvacuation()
-                Log.d("OutdoorEvacuationViewModel", "Total shelters retrieved: ${allShelters.size}")
+                Log.d("OutdoorEvacuationViewModel", "가져온 대피소 수: ${allShelters.size}")
 
                 // 현재 위치를 사용할 수 있는 경우 거리별 필터링
                 _currentLocation.value?.let { location ->
@@ -74,9 +76,9 @@ class OutdoorEvacuationViewModel @Inject constructor(
 
                     // 필터링된 데이터로 대피소 업데이트
                     _shelters.value = filteredShelters
-                    Log.d("OutdoorEvacuationViewModel", "Shelters found within 5km: ${filteredShelters.size}")
+                    Log.d("OutdoorEvacuationViewModel", "5km 내 대피소 수: ${filteredShelters.size}")
                 } ?: run {
-                    // 주소 기반 필터링 - 개선된 버전 (Nullable 처리 향상)
+                    // 주소 기반 필터링
                     val adminKeywords = currentAddress.split(" ").filter { it.length >= 2 }
                     val filteredByAddress = if (adminKeywords.isNotEmpty()) {
                         allShelters.filter { shelter ->
@@ -90,11 +92,11 @@ class OutdoorEvacuationViewModel @Inject constructor(
                         allShelters
                     }
                     _shelters.value = filteredByAddress
-                    Log.d("OutdoorEvacuationViewModel", "Shelters filtered by address: ${filteredByAddress.size}")
+                    Log.d("OutdoorEvacuationViewModel", "주소 기준 필터링 결과: ${filteredByAddress.size}")
                 }
 
             } catch (e: Exception) {
-                Log.e("OutdoorEvacuationViewModel", "API request failed: ${e.message}", e)
+                Log.e("OutdoorEvacuationViewModel", "API 요청 실패: ${e.message}", e)
                 _errorMessage.value = "outdoor대피소 정보를 불러오는데 실패했습니다: ${e.message}"
             } finally {
                 _isLoading.value = false
