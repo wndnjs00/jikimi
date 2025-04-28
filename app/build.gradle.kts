@@ -33,6 +33,9 @@ android {
         buildConfigField("String", "INDOOR_EVACUATION_API_BASE", getApiKey("INDOOR_EVACUATION_API_BASE"))
         buildConfigField("String", "INDOOR_EVACUATION_API", getApiKey("INDOOR_EVACUATION_API"))
         buildConfigField("String", "INDOOR_EVACUATION_SERVICE_KEY", getApiKey("INDOOR_EVACUATION_SERVICE_KEY"))
+        buildConfigField("String", "EVACUATION_MESSAGE_API_BASE", getApiKey("EVACUATION_MESSAGE_API_BASE"))
+        buildConfigField("String", "EVACUATION_MESSAGE_API", getApiKey("EVACUATION_MESSAGE_API"))
+        buildConfigField("String", "EVACUATION_MESSAGE_SERVICE_KEY", getApiKey("EVACUATION_MESSAGE_SERVICE_KEY"))
     }
 
     packaging {

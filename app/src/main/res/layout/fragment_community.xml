@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="12dp">
 
             <ImageView
                 android:id="@+id/safety_icon"
@@ -109,18 +109,40 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/loading_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:contentDescription="로딩 아이콘"
+                android:src="@drawable/loading_img" />
+
+
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/date_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginStart="12dp"
+            android:text="날짜~~~"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/message_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
             android:gravity="start"
-            android:padding="12dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="12dp"
             android:text="내용~~~"
             android:textColor="@color/black"
-            android:textSize="12sp" />
+            android:textSize="14sp"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 
