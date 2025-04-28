@@ -13,7 +13,6 @@ import com.example.jikimi.databinding.ItemPostBinding
 
 class PostAdapter(
     private val onPostClick: (Post) -> Unit,
-//    private val onDeleteClick: (Post) -> Unit,
     private val currentUserId: String
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 

@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.example.jikimi.R
 import com.example.jikimi.Resource
@@ -21,12 +22,15 @@ import com.example.jikimi.databinding.FragmentCommunityBinding
 import com.example.jikimi.presentation.activity.MainActivity
 import com.example.jikimi.presentation.adapter.PostAdapter
 import com.example.jikimi.viewmodel.AuthViewModel
+import com.example.jikimi.viewmodel.EvacuationMessageViewModel
 import com.example.jikimi.viewmodel.PostViewModel
 import com.example.jikimi.viewmodel.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class CommunityFragment : Fragment() {
@@ -36,6 +40,7 @@ class CommunityFragment : Fragment() {
 
     private val postViewModel: PostViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
+    private val evacuationMessageViewModel: EvacuationMessageViewModel by viewModels()
 
     private lateinit var postAdapter: PostAdapter
 
@@ -58,6 +63,9 @@ class CommunityFragment : Fragment() {
         // 게시물 목록 불러오기
         postViewModel.getPosts()
         loadUserProfile()
+
+        // 재난 안내문자 데이터 가져오기
+        evacuationMessageViewModel.getLatestEvacuationMessage()
     }
 
 
@@ -85,9 +93,6 @@ class CommunityFragment : Fragment() {
                 }
                 findNavController().navigate(R.id.detailFragment, bundle)
             },
-//            onDeleteClick = { post ->
-//                postViewModel.deletePost(post.id)
-//            },
             currentUserId = currentUserId
         )
 
@@ -151,6 +156,33 @@ class CommunityFragment : Fragment() {
                         }
                     }
                 }
+
+                // 재난 안내문자 상태 관찰
+                launch {
+                    evacuationMessageViewModel.evacuationMessage.collect { resource ->
+                        when (resource) {
+                            is Resource.Loading -> {
+                                binding.dateContent.visibility = View.GONE
+                                binding.messageContent.text = "로딩 중..."
+                            }
+                            is Resource.Success -> {
+                                val message = resource.data
+                                if (message != null) {
+                                    binding.dateContent.visibility = View.VISIBLE
+                                    binding.dateContent.text = message.createdDateTime
+                                    binding.messageContent.text = message.messageContent
+                                } else {
+                                    binding.dateContent.visibility = View.GONE
+                                    binding.messageContent.text = "최근 발령된 재난문자가 없습니다"
+                                }
+                            }
+                            is Resource.Error -> {
+                                binding.dateContent.visibility = View.GONE
+                                binding.messageContent.text = "데이터 로드 실패"
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -163,6 +195,11 @@ class CommunityFragment : Fragment() {
             }
             ivProfile.setOnClickListener {
                 findNavController().navigate(R.id.profileEditFragment)
+            }
+
+            // 로딩아이콘 클릭 시 새로고침 기능 추가
+            loadingIcon.setOnClickListener {
+                evacuationMessageViewModel.refreshEvacuationMessage()
             }
         }
     }
