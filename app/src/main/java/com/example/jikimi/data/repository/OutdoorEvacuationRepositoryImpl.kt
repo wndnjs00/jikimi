@@ -117,7 +117,7 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
                 lo = entity.longitude.toString(),
                 eqkAcmdfcltyAdres = entity.address,
                 dtlAdres = entity.detailAddress,
-                vtAcmdPsblNmpr = 0,
+                vtAcmdPsblNmpr = entity.vtAcmdPsblNmpr,
                 // 기타 필요한 필드는 기본값으로 설정
                 useSeCd = "",
                 rnDtlAdres = "",
@@ -148,7 +148,9 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
                     latitude = latitude,
                     longitude = longitude,
                     shelterType = "야외대피장소",
-//                    vtAcmdPsblNmpr = shelter.vtAcmdPsblNmpr ?: 0,
+                    vtAcmdPsblNmpr = shelter.vtAcmdPsblNmpr ?: "알수없음",
+                    acmdfcltyDtlCn = "",
+                    mngpsTelno = "",
                     lastUpdated = System.currentTimeMillis(),
                 )
             }
