@@ -18,6 +18,8 @@ import com.example.jikimi.presentation.VisibilityView
 import com.example.jikimi.presentation.adapter.LikeAdapter
 import com.example.jikimi.viewmodel.SharedViewModel
 import com.example.jikimi.viewmodel.LikeViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,21 +63,31 @@ class LikeBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        adjustBottomSheetHeight()
         setRecyclerView()
         setObserve()
     }
 
     // 바텀시트 사이즈 조절함수
-//    private fun bottomSheetBehavior(){
-//        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-//        bottomSheet?.let {
-//            val behavior = BottomSheetBehavior.from(it)
-//            behavior.isFitToContents = false
-//            behavior.expandedOffset = 500
-//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-//            behavior.peekHeight = 0
-//        }
-//    }
+    private fun adjustBottomSheetHeight() {
+        dialog?.setOnShowListener { dialogInterface ->
+            val bottomSheet = (dialogInterface as BottomSheetDialog)
+                .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+
+            bottomSheet?.let {
+                // 화면 높이의 75%를 강제로 적용
+                val targetHeight = (resources.displayMetrics.heightPixels * 0.75).toInt()
+                it.layoutParams.height = targetHeight
+                it.requestLayout()
+
+                // BottomSheetBehavior를 적용
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.peekHeight = targetHeight // peekHeight와 동일하게 설정
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.skipCollapsed = true // 중간 상태를 건너뜀
+            }
+        }
+    }
 
 
     private fun setRecyclerView(){
