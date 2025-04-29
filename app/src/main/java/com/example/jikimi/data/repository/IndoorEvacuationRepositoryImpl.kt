@@ -139,10 +139,10 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
                 fcltyAr = "",
                 hdongCd = "",
                 mngpsNm = "",
-                mngpsTelno = "",
-                acmdfcltyDtlCn = "",
+                mngpsTelno = entity.mngpsTelno,
+                acmdfcltyDtlCn = entity.acmdfcltyDtlCn,
                 mngdptNm = "",
-                vtAcmdPsblNmpr = ""
+                vtAcmdPsblNmpr = entity.vtAcmdPsblNmpr
             )
         }
     }
@@ -165,6 +165,9 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
                     latitude = latitude,
                     longitude = longitude,
                     shelterType = "임시주거시설",
+                    vtAcmdPsblNmpr = shelter.vtAcmdPsblNmpr ?: "알수없음",
+                    acmdfcltyDtlCn = shelter.acmdfcltyDtlCn ?: "알수없음",
+                    mngpsTelno = shelter.mngpsTelno ?: "정보없음",
                     lastUpdated = System.currentTimeMillis()
                 )
             }

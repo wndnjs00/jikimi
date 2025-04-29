@@ -31,6 +31,6 @@ data class EarthquakeOutdoorsShelterResponse(
         @SerializedName("LA") val la: String?,  //위도
         @SerializedName("ACMDFCLTY_SN") val acmdfcltySn: Int?, //수용시설일련번호
         @SerializedName("EQK_ACMDFCLTY_ADRES") val eqkAcmdfcltyAdres: String?,  //지진옥외대피장소주소
-        @SerializedName("VT_ACMD_PSBL_NMPR") val vtAcmdPsblNmpr: Int?   //이재민수용가능인원
+        @SerializedName("VT_ACMD_PSBL_NMPR") val vtAcmdPsblNmpr: String?   //이재민수용가능인원
     ) : Parcelable
 }
