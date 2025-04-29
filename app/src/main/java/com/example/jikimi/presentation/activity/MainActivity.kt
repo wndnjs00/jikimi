@@ -21,9 +21,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     // 로그인/회원가입 관련 Fragment ID 목록
-    private val authFragmentIds = listOf(
+    private val hideBottomNavFragments = listOf(
         R.id.loginFragment,
-        R.id.registerFragment
+        R.id.registerFragment,
+        R.id.detailFragment,
+        R.id.createPostFragment,
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,8 +68,8 @@ class MainActivity : AppCompatActivity() {
 
         // Fragment 이동 시 BottomNavigationView 표시 여부 처리
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id in authFragmentIds) {
-                // 로그인/회원가입 관련 Fragment에서는 항상 BottomNavigationView 숨김
+            if (destination.id in hideBottomNavFragments) {
+                // 관련 hideBottomNavFragments에서는 항상 BottomNavigationView 숨김
                 hideBottomNavigation()
             }
         }
@@ -85,9 +87,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showBottomNavigation() {
-        // 현재 화면이 로그인/회원가입 관련 Fragment가 아닐 때만 표시
+        // 현재 화면이 hideBottomNavFragments에 있는 프래그먼트가 아닐 때만 표시
         val currentDestination = navController.currentDestination?.id
-        if (currentDestination !in authFragmentIds) {
+
+        if (currentDestination !in hideBottomNavFragments) {
             binding.bottomNavBar.visibility = View.VISIBLE
         }
     }

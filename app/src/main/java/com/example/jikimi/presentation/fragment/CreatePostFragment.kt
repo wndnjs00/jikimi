@@ -47,6 +47,8 @@ class CreatePostFragment : Fragment() {
     private var postId = ""
     private var existingImageUrls = mutableListOf<String>()
 
+    private var hideBottomNav: Boolean = false
+
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             if (imageAdapter.getImages().size < 5) {
@@ -64,13 +66,16 @@ class CreatePostFragment : Fragment() {
     ): View {
         _binding = FragmentCreatePostBinding.inflate(inflater, container, false)
         return binding.root
+        hideBottomNav = arguments?.getBoolean("hideBottomNav", false) ?: false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // BottomNavigationView 숨기기
-        (activity as? MainActivity)?.hideBottomNavigation()
+        if (hideBottomNav) {
+            (activity as? MainActivity)?.hideBottomNavigation()
+        }
 
         // 로그인 상태 확인
         if (!authViewModel.isLoggedIn()) {
@@ -307,6 +312,8 @@ class CreatePostFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        (activity as MainActivity)?.showBottomNavigation()
+        if (!hideBottomNav) {
+            (activity as? MainActivity)?.showBottomNavigation()
+        }
     }
 }
