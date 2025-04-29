@@ -129,7 +129,9 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
                 ycord = entity.latitude.toString(),
                 rnAdres = entity.address ?: "",
                 dtlAdres = entity.detailAddress ?: "",
-                // 기타 필요한 필드는 기본값으로 설정
+                mngpsTelno = entity.mngpsTelno,
+                acmdfcltyDtlCn = entity.acmdfcltyDtlCn,
+                vtAcmdPsblNmpr = entity.vtAcmdPsblNmpr,
                 arcd = "",
                 acmdfcltySn = "",
                 ctprvnNm = "",
@@ -139,10 +141,7 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
                 fcltyAr = "",
                 hdongCd = "",
                 mngpsNm = "",
-                mngpsTelno = entity.mngpsTelno,
-                acmdfcltyDtlCn = entity.acmdfcltyDtlCn,
                 mngdptNm = "",
-                vtAcmdPsblNmpr = entity.vtAcmdPsblNmpr
             )
         }
     }
