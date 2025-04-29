@@ -1,10 +1,14 @@
 package com.example.jikimi.presentation.fragment
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +21,8 @@ import com.example.jikimi.presentation.activity.MainActivity
 import com.example.jikimi.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -89,6 +95,16 @@ class RegisterFragment : Fragment() {
         binding.tvLogin.setOnClickListener {
             findNavController().navigate(R.id.loginFragment)
         }
+
+        // ivArrow 클릭 시 secret.pdf 열기
+        binding.ivArrow.setOnClickListener {
+            openPdf("secret.pdf")
+        }
+
+        // ivArrow2 클릭 시 map.pdf 열기
+        binding.ivArrow2.setOnClickListener {
+            openPdf("map.pdf")
+        }
     }
 
 
@@ -146,6 +162,39 @@ class RegisterFragment : Fragment() {
 
         return isValid
     }
+
+
+    private fun openPdf(fileName: String) {
+        try {
+            // assets 디렉토리에서 filesDir 디렉토리로 복사
+            val inputStream = requireContext().assets.open(fileName)
+            val outputFile = File(requireContext().filesDir, fileName)
+            val outputStream = FileOutputStream(outputFile)
+
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            // FileProvider를 통해 Uri 생성
+            val uri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                outputFile
+            )
+
+            // Intent를 통해 PDF 열기
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/pdf")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            (activity as MainActivity).showToast("PDF를 열 수 없습니다: ${e.message}")
+        }
+    }
+
 
 
     override fun onDestroyView() {
