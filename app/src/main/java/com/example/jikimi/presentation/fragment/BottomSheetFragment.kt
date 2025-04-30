@@ -96,16 +96,24 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
                 // 주소 데이터 설정
                 shelterAddressTv.text = when {
-                    !outdoorShelter?.rnDtlAdres.isNullOrEmpty() -> outdoorShelter?.rnDtlAdres // rnDtlAdres가 존재하면 사용
-                    !outdoorShelter?.dtlAdres.isNullOrEmpty() -> outdoorShelter?.dtlAdres // dtlAdres가 null이면 dtlAdres 사용
-                    !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres
+                    !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres // 기본 주소 우선
+                    !outdoorShelter.rnDtlAdres.isNullOrEmpty() -> outdoorShelter.rnDtlAdres // rnDtlAdres가 존재하면 사용
+                    !outdoorShelter.dtlAdres.isNullOrEmpty() -> outdoorShelter.dtlAdres // dtlAdres가 null이면 dtlAdres 사용
                     else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
                 }
             }
 
+            // Get the primary address from outdoor shelter
+            val primaryAddress = when {
+                !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres
+                !outdoorShelter.rnDtlAdres.isNullOrEmpty() -> outdoorShelter.rnDtlAdres
+                else -> outdoorShelter.dtlAdres ?: ""
+            }
+
+
             likeEntity = LikeEntity(
                 vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
-                rnAdres = outdoorShelter.rnDtlAdres ?: "",
+                rnAdres = primaryAddress,
                 dtlAdres = outdoorShelter.dtlAdres ?: "",
                 distanceData = String.format("%.2f", distance ?: 0.0),
                 shelterType = "야외대피장소",
