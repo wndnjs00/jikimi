@@ -304,7 +304,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             center = LatLng(latitude, longitude)
             radius = 5000.0     // 반경 5km
             map = naverMap
-            color = Color.argb(50, 128, 0, 128) //보라색     //초록색: (50, 0, 165, 0)  // 주황색(50, 255, 165, 0)
+            color = Color.argb(0, 128, 0, 128) //보라색: (50, 128, 0, 128)     //초록색: (50, 0, 165, 0)  // 주황색(50, 255, 165, 0)
         }
     }
 

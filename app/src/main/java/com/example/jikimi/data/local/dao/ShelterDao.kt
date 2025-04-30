@@ -15,7 +15,7 @@ interface ShelterDao {
     @Query("SELECT * FROM LikeEntity")
     fun getAllData() : Flow<List<LikeEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(likeEntity: LikeEntity)
 
     @Update
@@ -42,10 +42,6 @@ interface ShelterDao {
     // 검색 (중복 제거를 위해 DISTINCT 추가)
     @Query("SELECT DISTINCT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%'")
     fun searchShelters(query: String): Flow<List<ShelterEntity>>
-
-//    // 검색 메서드
-//    @Query("SELECT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%' OR address LIKE '%' || :query || '%'")
-//    fun searchShelters(query: String): Flow<List<ShelterEntity>>
 
     // 중복된 대피소가 있는지 확인하기위해 (대피소 이름과 위치로 존재 여부 확인)
     @Query("SELECT * FROM ShelterEntity WHERE vtAcmdfcltyNm = :name AND latitude = :latitude AND longitude = :longitude LIMIT 1")
