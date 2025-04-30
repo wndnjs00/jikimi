@@ -1,82 +1,59 @@
 # ⚡️지키미⚡️
-지진발생시 주변 대피소 정보를 한눈에 확인할 수 있는 안전지킴이앱!
-<br/><br/>
-<img width="870" alt="image" src="https://github.com/user-attachments/assets/096ba978-f787-447b-bdec-4d12c3cb8113">
-<br/><br/>
+재난발생시 주변 대피소 정보를 한눈에 확인할 수 있는 안전지킴이앱!
+<br/>
 ## 개발 기간
 2024.08.16 ~ 10.04
-<br/><br/>
+
 ## 프로젝트 소개
-갑작스런 지진 발생시에도, 내주변의 대피장소를 빠르게 확인하고 대피하여 인명피해를 최소화하기위한 목적으로 개발했습니다.
-<br/>`지키미`를 통해 지진에 안전하게 대비하고, 재난발생시 행동요령까지 배워보세요!
-<br/><br/><br/>
-## 🧭 내 주변 대피소는 어디? 지키미로 빠르게 확인하세요!
-지도를 통해 쉽게 야외대피장소와 임시주거시설의 위치,정보를 확인해보세요
-<p align="left">
-  <img src="https://github.com/user-attachments/assets/9001cfde-df85-45cc-ad1e-22ff556bc517" width="180" height="400" />
-  <img src="https://github.com/user-attachments/assets/772fe20e-d810-4053-8727-da056ac09d68" width="180" height="400" />
-  <img src="https://github.com/user-attachments/assets/5e0e6356-3afc-44e7-a892-415ea300e45d" width="180" height="400" />
-</p>
-
-## 🚨 다양한 재난행동요령 정보까지!
-지진뿐만 아니라 다양한 재난행동요령 정보까지 확인해 여러 긴급상황에 대비해보세요
-<p align="left">
-  <img src="https://github.com/user-attachments/assets/9950cdb4-36ab-4de1-b7ca-fd9da848d1af" width="180" height="400" />
-  <img src="https://github.com/user-attachments/assets/9007acb0-8190-4016-849c-c83bd83fbeb2" width="180" height="400" />
-  <img src="https://github.com/user-attachments/assets/ef82a37d-bc15-4b3f-bc07-043f36de68f7" width="180" height="400" />
-</p>
-
+갑작스런 재난 발생시에도, 내주변의 대피장소를 빠르게 확인하고 대피하여 인명피해를 최소화하기위한 목적으로 개발했습니다.
+<br/>`지키미`를 통해 필요한 정보를 한눈에 확인하고, 신속하게 대피하세요!
 <br/><br/>
 ## ⚒️기술스택
-|분류|이름|
-|:---:|:---:|
-|언어|<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=Kotlin&logoColor=white">
-|개발 환경|<img src="https://img.shields.io/badge/android studio-3DDC84?style=for-the-badge&logo=androidstudio&logoColor=white">
-|Architecture|<img src="https://img.shields.io/badge/mvvm-221E68?style=for-the-badge&logoColor=white"><img src="https://img.shields.io/badge/repository pattern-221E68?style=for-the-badge&logoColor=white">
-|DI|<img src="https://img.shields.io/badge/hilt-221E68?style=for-the-badge&logoColor=white">
-|비동기 처리|<img src="https://img.shields.io/badge/flow-221E68?style=for-the-badge&logoColor=white"><img src="https://img.shields.io/badge/coroutine-221E68?style=for-the-badge&logoColor=white">
-|Networking Tool|<img src="https://img.shields.io/badge/retrofit-221E68?style=for-the-badge&logoColor=white"><img src="https://img.shields.io/badge/okhttp-221E68?style=for-the-badge&logoColor=white">
-|이미지 로더|<img src="https://img.shields.io/badge/coil-221E68?style=for-the-badge&logoColor=white">
-|지도|<img src="https://img.shields.io/badge/naver map-3DDC84?style=for-the-badge&logo=naver&logoColor=white">
-|Database|<img src="https://img.shields.io/badge/room-221E68?style=for-the-badge&logoColor=white">
-|라이브러리|<img src="https://img.shields.io/badge/paging3[적용예정]-221E68?style=for-the-badge&logoColor=white"><img src="https://img.shields.io/badge/음성인식 라이브러리[적용예정]-221E68?style=for-the-badge&logoColor=white">
-|UI|<img src="https://img.shields.io/badge/xml-221E68?style=for-the-badge&logoColor=white"><img src="https://img.shields.io/badge/navigation-221E68?style=for-the-badge&logoColor=white">
-|협업|<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"><img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+|분류|
+|:---:|
+`kotlin` `MVVM` `CleanArchitecture` `Flow` `Coroutine` `Hilt` `Retrofit` `OkHttp` `Glide` `Room` `Firebase` `NaverMap API` `SpeechRecognizer API(음성인식 API)` `XML` `Navigation` `Metarial3 Desigin`
 
 
 <br/><br/>
 ## 💻 주요기능
+## 주변 대피소 한눈에 확인!
+- 내 위치를 기준으로 반경 5km 이내의 대피소를 빠르게 확인할 수 있어요!
+- 직관적인 UI로 클릭몇번으로 필요한 정보를 즉시 확인할 수 있어요.
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/5a70b008-688f-40e6-bbff-bf0d8cc6d48b" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/4fa8339a-5bbb-4614-a9d1-1a40e5783fe3" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/34b39609-1c85-4315-8650-3fe7d90cede6" width="180" height="400" />
+</p>
+
+## 좋아요로 내 대피소 저장!
+- 재난 상황에서 더 빠르고 안전하게 이동할 수 있도록 도와줍니다.
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/5a7f83d9-02fd-449c-ba82-50b08bf86476" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/67afcedf-339b-4aab-9497-a8c0d455048c" width="180" height="400" />
+</p>
+
+## 텍스트 & 음성 검색
+- 텍스트&음성 검색을 통해서 대피소를 더 쉽게 찾을 수 있도록 도와줍니다.
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/05146d25-f9d5-4bf2-91c2-4398b2dfb128" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/68595931-1d34-42b1-a3f5-6a9e503fbc00" width="180" height="400" />
+</p>
+
+## 재난 커뮤니티로 소식 공유
+- 실시간 재난 소식, 도로 상황, 대피소 현황 등 이웃과 정보를 공유해 보세요.
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/540f6bcc-1a3c-44e7-ae3e-cb791e97593a" width="180" height="400" />
+  <img src="https://github.com/user-attachments/assets/2fa0fc49-ac2f-42be-8548-481905cf7265" width="180" height="400" />
+</p>
 
 
-### 대피 페이지
-
-- **현재위치 반경 5km이내**의 대피소 위치표시
-- 마커 클릭시, **대피소의 상세정보 제공**
-- **좋아요**를 통한 대피소정보 저장
-
-### 재난상식 페이지
-
-- 다양한 **재난행동요령** 제공
 
 <br/><br/>
-## ⚙️기술적 의사결정
+#### * 추후에 아래와 같은 기능이 더 추가될 예정입니다 *
 
-**Single Activity Architecture(SAA) 적용**<br/>
-Acticity는 Fragment에 비해 상대적으로 무겁기때문에 Fragment를 사용하여 메모리 효율성을 높이고, 복잡한 UI에 쉽게 대처하기 위해 SAA방식을 프로젝트에 적용시켰습니다. 
+- 산불현황 확인
+- 지반위험구역 확인
+- 커뮤니티 검색
 
-
-<br/><br/>
-## 🚨트러블슈팅
-
-1) Manifest내에 작성되는 키값을 local.properties로 빼주는 작업시 발생하는 문제
-    - 네이버맵 sdk를 사용해서 맵을 띄울때 client ID는 **Manifest내에 작성되는 키**이기 때문에, **buildConfigField() 대신 addManifestPlaceholders()함수를 사용**해서 해결했습니다.
-<br/>
- 
-2) API 연속호출로 인한 비효율적인 문제 -> 모든 지역의 위경도좌표를 전부 호출하면 **과도한 호출로인한 데이터낭비** 발생
-    - **circleOverlay() 반경을 5km로 지정**하고 **해당반경내에 있는 데이터만 마커로 표시해주는 로직을 적용**하여, **사용자경험을 향상**시키고 **시스템성능을 효율적으로 관리**하도록 해결했습니다.
-<br/>
-
-3) Room을 통해 데이터를 삭제하는 로직이 올바르게 작동하지 않는 문제
-    - **vtAcmdfcltyNm[대피소명]값을 기준**으로 **해당값과 일치할때 삭제하는 로직을 추가**해, 더욱 정확하게 데이터를 삭제하도록하여 해결했습니다.
  
 
