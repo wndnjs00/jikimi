@@ -146,19 +146,30 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 shelterAddressTv.text = when {
                     !indoorShelter.rnAdres.isNullOrEmpty() -> indoorShelter.rnAdres
                     !indoorShelter.dtlAdres.isNullOrEmpty() -> indoorShelter.dtlAdres
-                    else -> "데이터가 없음"
+                    else -> "데이터 없음"
                 }
 
-                // 전화번호 데이터 설정
-                shelterPhoneTv.text = indoorShelter.mngpsTelno ?: "데이터 없음"
-                shelterPhoneTv.paintFlags = Paint.UNDERLINE_TEXT_FLAG  // 밑줄
+                /// 전화번호 데이터 설정
+                val phoneNumber = indoorShelter.mngpsTelno
+                if (!phoneNumber.isNullOrEmpty()) {
+                    // 데이터가 비어있지 않으면
+                    shelterPhoneTv.text = phoneNumber   // 데이터표시
+                    shelterPhoneTv.paintFlags = Paint.UNDERLINE_TEXT_FLAG  // 밑줄
 
-                // 전화앱으로 이동
-                shelterPhoneTv.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_DIAL).apply {
-                        data = Uri.parse("tel:${indoorShelter.mngpsTelno}")
+                    // 전화앱으로 이동
+                    shelterPhoneTv.setOnClickListener {
+                        val intent = Intent(Intent.ACTION_DIAL).apply {
+                            data = Uri.parse("tel:$phoneNumber")
+                        }
+                        startActivity(intent)
                     }
-                    startActivity(intent)
+                } else {
+                    // 전화번호가 null이거나 비어있는 경우 "데이터 없음" 표시
+                    shelterPhoneTv.text = "데이터 없음"
+                    // 클릭 리스너 제거
+                    shelterPhoneTv.setOnClickListener(null)
+                    // 밑줄 제거
+                    shelterPhoneTv.paintFlags = 0
                 }
             }
 
