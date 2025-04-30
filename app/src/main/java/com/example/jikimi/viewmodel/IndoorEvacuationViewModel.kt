@@ -3,6 +3,7 @@ package com.example.jikimi.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jikimi.data.local.dao.ShelterDao
 import com.example.jikimi.data.model.dto.EarthquakeIndoorsShelterResponse
 import com.example.jikimi.data.network.distanceExtention
 import com.example.jikimi.data.repository.IndoorEvacuationRepository
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class IndoorEvacuationViewModel @Inject constructor(
-    private val indoorEvacuationRepository: IndoorEvacuationRepository
+    private val indoorEvacuationRepository: IndoorEvacuationRepository,
+    private val shelterDao: ShelterDao
 ) : ViewModel(){
 
     private val _shelter = MutableStateFlow<List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>>(emptyList())
@@ -37,7 +39,7 @@ class IndoorEvacuationViewModel @Inject constructor(
     fun fetchIndoorShelters(currentAddress: String) {
         // 이미 로딩 중이면 중복 호출 방지
         if (_isLoading.value) {
-            Log.d("IndoorEvacuationViewModel", "Already loading data, skipping request")
+            Log.d("IndoorEvacuationViewModel", "이미 로딩 중입니다")
             return
         }
 
@@ -46,9 +48,9 @@ class IndoorEvacuationViewModel @Inject constructor(
                 _isLoading.value = true
                 _errorMessage.value = null
 
-                // 모든 페이지의 데이터 요청
+                // 모든 페이지의 데이터 요청 (로컬 DB 캐시 활용)
                 val allShelters = indoorEvacuationRepository.requestAllIndoorEvacuation()
-                Log.d("IndoorEvacuationViewModel", "Total shelters retrieved: ${allShelters.size}")
+                Log.d("IndoorEvacuationViewModel", "가져온 대피소 수: ${allShelters.size}")
 
                 // currentLocation이 있는 경우만 거리 기반 필터링 수행
                 _currentLocation.value?.let { location ->
@@ -74,7 +76,7 @@ class IndoorEvacuationViewModel @Inject constructor(
 
                     // 필터링한 대피소데이터를 shelters에 업데이트
                     _shelter.value = filteredShelters
-                    Log.d("IndoorEvacuationViewModel", "Shelters found within 5km: ${filteredShelters.size}")
+                    Log.d("IndoorEvacuationViewModel", "5km 내 대피소 수: ${filteredShelters.size}")
                 } ?: run {
                     // 주소 기반 필터링 - 개선된 버전
                     val adminKeywords = currentAddress.split(" ").filter { it.length >= 2 }
@@ -90,7 +92,7 @@ class IndoorEvacuationViewModel @Inject constructor(
                         allShelters
                     }
                     _shelter.value = filteredByAddress
-                    Log.d("IndoorEvacuationViewModel", "Shelters filtered by address: ${filteredByAddress.size}")
+                    Log.d("IndoorEvacuationViewModel", "주소 기준 필터링 결과: ${filteredByAddress.size}")
                 }
 
             } catch (e: Exception) {

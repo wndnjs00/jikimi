@@ -382,6 +382,7 @@ class DetailFragment : Fragment() {
                     // 수정하기
                     val bundle = Bundle().apply {
                         putString("postId", post.id)
+                        putBoolean("hideBottomNav", true)
                     }
 
                     findNavController().navigate(R.id.createPostFragment, bundle)
