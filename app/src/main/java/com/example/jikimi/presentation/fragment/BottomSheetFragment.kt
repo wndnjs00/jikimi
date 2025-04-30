@@ -1,6 +1,9 @@
 package com.example.jikimi.presentation.fragment
 
+import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -86,7 +89,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 shelterTv.text = "야외대피장소"
                 distanceTv.text = "${String.format("%.2f", distance ?: 0.0)} m"
                 shelterNameTv.text = outdoorShelter.vtAcmdfcltyNm ?: "데이터 없음"
-                // Update this as needed based on what fields are available in the new API
                 shelterClassificationTv.text = outdoorShelter.vtAcmdfcltyNm ?: "데이터 없음"
                 shelterPhoneTv.text = "데이터 없음" // 폰 데이터없음
                 shelterPhoneConstraint.visibility = View.INVISIBLE
@@ -94,16 +96,24 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
                 // 주소 데이터 설정
                 shelterAddressTv.text = when {
-                    !outdoorShelter?.rnDtlAdres.isNullOrEmpty() -> outdoorShelter?.rnDtlAdres // rnDtlAdres가 존재하면 사용
-                    !outdoorShelter?.dtlAdres.isNullOrEmpty() -> outdoorShelter?.dtlAdres // dtlAdres가 null이면 dtlAdres 사용
-                    !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres
+                    !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres // 기본 주소 우선
+                    !outdoorShelter.rnDtlAdres.isNullOrEmpty() -> outdoorShelter.rnDtlAdres // rnDtlAdres가 존재하면 사용
+                    !outdoorShelter.dtlAdres.isNullOrEmpty() -> outdoorShelter.dtlAdres // dtlAdres가 null이면 dtlAdres 사용
                     else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
                 }
             }
 
+            // Get the primary address from outdoor shelter
+            val primaryAddress = when {
+                !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres
+                !outdoorShelter.rnDtlAdres.isNullOrEmpty() -> outdoorShelter.rnDtlAdres
+                else -> outdoorShelter.dtlAdres ?: ""
+            }
+
+
             likeEntity = LikeEntity(
                 vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
-                rnAdres = outdoorShelter.rnDtlAdres ?: "",
+                rnAdres = primaryAddress,
                 dtlAdres = outdoorShelter.dtlAdres ?: "",
                 distanceData = String.format("%.2f", distance ?: 0.0),
                 shelterType = "야외대피장소",
@@ -129,7 +139,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 distanceTv.text = "${String.format("%.2f", distance ?: 0.0)} m"
                 shelterNameTv.text = indoorShelter.vtAcmdfcltyNm ?: "데이터 없음"
                 shelterClassificationTv.text = indoorShelter.acmdfcltyDtlCn ?: "데이터 없음"
-                shelterPhoneTv.text = indoorShelter.mngpsTelno ?: "데이터 없음"
                 shelterPeopleConstraint.visibility = View.VISIBLE
                 shelterPeopleTv.text = "수용인원: ${indoorShelter.vtAcmdPsblNmpr ?: "데이터 없음"}명"
 
@@ -137,7 +146,30 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 shelterAddressTv.text = when {
                     !indoorShelter.rnAdres.isNullOrEmpty() -> indoorShelter.rnAdres
                     !indoorShelter.dtlAdres.isNullOrEmpty() -> indoorShelter.dtlAdres
-                    else -> "데이터가 없음"
+                    else -> "데이터 없음"
+                }
+
+                /// 전화번호 데이터 설정
+                val phoneNumber = indoorShelter.mngpsTelno
+                if (!phoneNumber.isNullOrEmpty()) {
+                    // 데이터가 비어있지 않으면
+                    shelterPhoneTv.text = phoneNumber   // 데이터표시
+                    shelterPhoneTv.paintFlags = Paint.UNDERLINE_TEXT_FLAG  // 밑줄
+
+                    // 전화앱으로 이동
+                    shelterPhoneTv.setOnClickListener {
+                        val intent = Intent(Intent.ACTION_DIAL).apply {
+                            data = Uri.parse("tel:$phoneNumber")
+                        }
+                        startActivity(intent)
+                    }
+                } else {
+                    // 전화번호가 null이거나 비어있는 경우 "데이터 없음" 표시
+                    shelterPhoneTv.text = "데이터 없음"
+                    // 클릭 리스너 제거
+                    shelterPhoneTv.setOnClickListener(null)
+                    // 밑줄 제거
+                    shelterPhoneTv.paintFlags = 0
                 }
             }
 

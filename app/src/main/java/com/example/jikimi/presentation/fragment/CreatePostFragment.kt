@@ -38,7 +38,7 @@ class CreatePostFragment : Fragment() {
     private val authViewModel: AuthViewModel by viewModels()
     private lateinit var imageAdapter: ImageAdapter
     private lateinit var categoryAdapter: ArrayAdapter<String>
-    private val categories = arrayOf("긴급", "정보", "소통")
+    private val categories = arrayOf("긴급", "정보", "소통", "제보")
     private var selectedCategory = "소통" // Default category
 
     // 게시물 수정 모드 관련 변수
@@ -46,6 +46,8 @@ class CreatePostFragment : Fragment() {
     private var postToEdit: Post? = null
     private var postId = ""
     private var existingImageUrls = mutableListOf<String>()
+
+    private var hideBottomNav: Boolean = false
 
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -64,13 +66,16 @@ class CreatePostFragment : Fragment() {
     ): View {
         _binding = FragmentCreatePostBinding.inflate(inflater, container, false)
         return binding.root
+        hideBottomNav = arguments?.getBoolean("hideBottomNav", false) ?: false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // BottomNavigationView 숨기기
-        (activity as? MainActivity)?.hideBottomNavigation()
+        if (hideBottomNav) {
+            (activity as? MainActivity)?.hideBottomNavigation()
+        }
 
         // 로그인 상태 확인
         if (!authViewModel.isLoggedIn()) {
@@ -307,6 +312,8 @@ class CreatePostFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        (activity as MainActivity)?.showBottomNavigation()
+        if (!hideBottomNav) {
+            (activity as? MainActivity)?.showBottomNavigation()
+        }
     }
 }
