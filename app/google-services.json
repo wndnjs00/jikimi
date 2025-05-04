@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:50979871908:android:c378b76d6311af8af65a31",
         "android_client_info": {
-          "package_name": "com.example.jikimi"
+          "package_name": "com.myapp.jikimi"
         }
       },
       "oauth_client": [],
