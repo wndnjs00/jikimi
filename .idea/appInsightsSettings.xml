@@ -23,7 +23,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.example.jikimi" />
+                  <option name="appId" value="com.myapp.jikimi" />
                   <option name="mobileSdkAppId" value="1:50979871908:android:c378b76d6311af8af65a31" />
                   <option name="projectId" value="jikimi-f0378" />
                   <option name="projectNumber" value="50979871908" />

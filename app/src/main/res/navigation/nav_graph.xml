@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/evacuateFragment"
-        android:name="com.example.jikimi.presentation.fragment.EvacuateFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.EvacuateFragment"
         android:label="fragment_evacuate"
         tools:layout="@layout/fragment_evacuate" />
 
     <fragment
         android:id="@+id/commonsenseFragment"
-        android:name="com.example.jikimi.presentation.fragment.CommunityFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.CommunityFragment"
         android:label="fragment_commonsense"
         tools:layout="@layout/fragment_community" >
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.jikimi.presentation.fragment.DetailFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.DetailFragment"
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail">
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.jikimi.presentation.fragment.LoginFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <!-- 로그인 화면에서 evacuateFragment로 이동하는 액션 추가 -->
@@ -51,7 +51,7 @@
 
     <fragment
         android:id="@+id/profileEditFragment"
-        android:name="com.example.jikimi.presentation.fragment.ProfileEditFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.ProfileEditFragment"
         android:label="fragment_profile_edit"
         tools:layout="@layout/fragment_profile_edit" >
         <action
@@ -63,13 +63,13 @@
     </fragment>
     <fragment
         android:id="@+id/createPostFragment"
-        android:name="com.example.jikimi.presentation.fragment.CreatePostFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.CreatePostFragment"
         android:label="fragment_create_post"
         tools:layout="@layout/fragment_create_post" />
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.jikimi.presentation.fragment.RegisterFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register">
         <!-- 회원가입 화면에서 로그인 화면으로 이동하는 액션 추가 -->
