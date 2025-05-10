@@ -553,7 +553,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 binding.noResultsTv.text = "검색어를 입력하세요"
                 binding.noResultsTv.visibility = View.VISIBLE
                 binding.searchResultsRv.visibility = View.GONE
-                searchAdapter.updateShelters(emptyList())
+                searchAdapter.submitList(emptyList())
             }
         }
 
@@ -572,7 +572,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     binding.noResultsTv.text = "검색어를 입력하세요"
                     binding.noResultsTv.visibility = View.VISIBLE
                     binding.searchResultsRv.visibility = View.GONE
-                    searchAdapter.updateShelters(emptyList())
+                    searchAdapter.submitList(emptyList())
                 }
             }
         })
@@ -612,7 +612,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             binding.noResultsTv.text = "검색어를 입력하세요"
             binding.noResultsTv.visibility = View.VISIBLE
             binding.searchResultsRv.visibility = View.GONE
-            searchAdapter.updateShelters(emptyList())
+            searchAdapter.submitList(emptyList())
             return
         }
 
@@ -632,7 +632,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         } else {
             binding.noResultsTv.visibility = View.GONE
             binding.searchResultsRv.visibility = View.VISIBLE
-            searchAdapter.updateShelters(shelters)
+            searchAdapter.submitList(shelters)
         }
     }
 

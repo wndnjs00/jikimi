@@ -119,7 +119,7 @@ class CommunityFragment : Fragment() {
                                 } else {
                                     binding.tvEmpty.visibility = View.GONE
                                     binding.rvPosts.visibility = View.VISIBLE
-                                    postAdapter.updatePosts(posts)
+                                    postAdapter.submitList(posts)
                                 }
                             }
                             is Resource.Error -> {

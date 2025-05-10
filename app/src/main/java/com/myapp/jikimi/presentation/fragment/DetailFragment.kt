@@ -266,7 +266,7 @@ class DetailFragment : Fragment() {
             // 이미지 처리
             if (post.imageUrls.isNotEmpty()) {
                 layoutImages.visibility = View.VISIBLE
-                imageAdapter.updateImages(post.imageUrls)
+                imageAdapter.submitList(post.imageUrls)
                 dotsIndicator.setViewPager2(viewPagerImages)
             } else {
                 layoutImages.visibility = View.GONE
