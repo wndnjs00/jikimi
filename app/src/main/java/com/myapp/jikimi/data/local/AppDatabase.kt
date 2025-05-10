@@ -14,7 +14,6 @@ import com.myapp.jikimi.data.model.entity.ShelterEntity
     version = 2
 )
 
-
 abstract class AppDatabase : RoomDatabase(){
     abstract fun shelterDao() : ShelterDao
 }

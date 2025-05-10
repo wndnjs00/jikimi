@@ -40,6 +40,7 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
     override suspend fun requestAllOutdoorEvacuation(): List<EarthquakeOutdoorsShelterResponse.Shelter> {
         try {
             // 캐시된 데이터가 있고, 갱신 주기가 지나지 않았다면 DB에서 데이터 반환
+            // 데이터를 다시 로드할 필요가 있는지 판단 (sharedPreferences로 캐시에 저장된 데이터가 최신인지 확인하여 불필요한 API 호출을 방지)
             val lastUpdate = sharedPreferences.getLong(KEY_LAST_OUTDOOR_UPDATE, 0)
             val totalCachedCount = sharedPreferences.getInt(KEY_TOTAL_OUTDOOR_COUNT, 0)
             val dbCount = shelterDao.getShelterCountByType("야외대피장소")
@@ -49,7 +50,7 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
 
             if (!needsUpdate && dbCount > 0) {
                 Log.d("OutdoorEvacuationRepo", "야외 대피소 정보를 캐시에서 로드합니다. DB 항목 수: $dbCount")
-                // DB에서 데이터를 가져와 API 응답 형식으로 변환
+                // RoomDB에서 데이터를 가져와 API 응답 형식으로 변환
                 return convertDbToApiFormat(shelterDao.getSheltersByType("야외대피장소").first())
             }
 
