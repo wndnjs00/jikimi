@@ -37,6 +37,19 @@ object RoomModule {
         .addMigrations(MIFGRATION_1_2)
         .build()
 
+    @Singleton
+    @Provides
+    fun provideShelterDao(
+        appDatabase: AppDatabase
+    ) : ShelterDao = appDatabase.shelterDao()
+
+    private val MIFGRATION_1_2 = object : Migration(1, 2){
+        override fun migrate(database: SupportSQLiteDatabase){
+            // 테이블이 이미 올바르게 존재하는 경우 구조적 변경이 필요하지 않음
+            // 테이블을 수정해야 하는 경우 여기에서 수정할 수 있음
+        }
+    }
+
 
     @Provides
     @Singleton
@@ -50,20 +63,6 @@ object RoomModule {
     @Singleton
     fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance() // FirebaseStorage 추가
 
-
-
-    @Singleton
-    @Provides
-    fun provideShelterDao(
-        appDatabase: AppDatabase
-    ) : ShelterDao = appDatabase.shelterDao()
-
-    private val MIFGRATION_1_2 = object : Migration(1, 2){
-        override fun migrate(database: SupportSQLiteDatabase){
-            // 테이블이 이미 올바르게 존재하는 경우 구조적 변경이 필요하지 않음
-            // 테이블을 수정해야 하는 경우 여기에서 수정할 수 있음
-        }
-    }
 
 
     @Provides

@@ -46,7 +46,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                _errorMessage.value = null
+                _errorMessage.value = null  //이전에 남아있을수있는 에러메시지 초기화
 
                 // 모든 페이지의 데이터 요청(로컬 DB 캐시 활용)
                 val allShelters = outdoorEvacuationRepository.requestAllOutdoorEvacuation()
@@ -61,8 +61,8 @@ class OutdoorEvacuationViewModel @Inject constructor(
 
                         if (latitude != 0.0 && longitude != 0.0) {
                             val shelterLocation = LatLng(latitude, longitude)
-                            val distance = location.distanceExtention(shelterLocation)
-                            distance <= 5000.0 // 5km
+                            val distance = location.distanceExtention(shelterLocation)  //현재위치와 대피소간의 거리계산
+                            distance <= 5000.0 // 거리가 5km이하인 대피소만 필터링
                         } else {
                             false
                         }
@@ -77,6 +77,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
                     // 필터링된 데이터로 대피소 업데이트
                     _shelters.value = filteredShelters
                     Log.d("OutdoorEvacuationViewModel", "5km 내 대피소 수: ${filteredShelters.size}")
+
                 } ?: run {
                     // 주소 기반 필터링
                     val adminKeywords = currentAddress.split(" ").filter { it.length >= 2 }

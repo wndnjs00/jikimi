@@ -182,6 +182,21 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                     }
                 }
 
+                // 야외 대피소 데이터 관찰
+                launch {
+                    outdoorViewModel.shelters.collect { outdoorShelters ->
+                        val currentLocation = outdoorViewModel.currentLocation.value
+                        if (currentLocation != null && outdoorShelters.isNotEmpty()) {
+                            updateOutdoorSheltersOnMap(outdoorShelters, currentLocation)
+                            Toast.makeText(requireContext(), "${outdoorShelters.size}개의 야외대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
+
+                            // Repository에서 이미 캐싱 처리를 하므로 여기서는 중복 저장 작업 제거
+                        } else if (outdoorShelters.isEmpty() && !outdoorViewModel.isLoading.value) {
+                            Toast.makeText(requireContext(), "야외대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
                 // 실내 대피소 로딩 상태 관찰
                 launch {
                     indoorViewModel.isLoading.collect { isLoading ->
@@ -196,21 +211,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                         if (!errorMessage.isNullOrEmpty()) {
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                             indoorViewModel.clearErrorMessage()
-                        }
-                    }
-                }
-
-                // 야외 대피소 데이터 관찰
-                launch {
-                    outdoorViewModel.shelters.collect { outdoorShelters ->
-                        val currentLocation = outdoorViewModel.currentLocation.value
-                        if (currentLocation != null && outdoorShelters.isNotEmpty()) {
-                            updateOutdoorSheltersOnMap(outdoorShelters, currentLocation)
-                            Toast.makeText(requireContext(), "${outdoorShelters.size}개의 야외대피소를 찾았습니다.", Toast.LENGTH_SHORT).show()
-
-                            // Repository에서 이미 캐싱 처리를 하므로 여기서는 중복 저장 작업 제거
-                        } else if (outdoorShelters.isEmpty() && !outdoorViewModel.isLoading.value) {
-                            Toast.makeText(requireContext(), "야외대피소 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -803,6 +803,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
+
 
 
     override fun onDestroyView() {

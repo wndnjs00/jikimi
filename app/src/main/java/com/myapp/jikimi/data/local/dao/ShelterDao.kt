@@ -18,46 +18,32 @@ interface ShelterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(likeEntity: LikeEntity)
 
-    @Update
-    suspend fun updataData(likeEntity: LikeEntity)
-
     @Delete
     suspend fun deleteData(likeEntity: LikeEntity)
 
-    // vtAcmdfcltyNm와 일치하는값 찾아서 1개만 반환
+    // vtAcmdfcltyNm(대피소명)을 기준으로 일치하는 첫번쨰값만 반환
     @Query("SELECT * FROM LikeEntity WHERE vtAcmdfcltyNm = :shelterName LIMIT 1")
     suspend fun deleteDataFromShelterName(shelterName: String): LikeEntity?
 
-
     // 대피소 검색기능
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertShelter(shelterEntity: ShelterEntity)
-
+    // 다수의 대피소정보 삽입
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertShelters(shelters: List<ShelterEntity>)
-
-    @Query("SELECT * FROM ShelterEntity")
-    fun getAllShelters(): Flow<List<ShelterEntity>>
 
     // 검색 (중복 제거를 위해 DISTINCT 추가)
     @Query("SELECT DISTINCT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%'")
     fun searchShelters(query: String): Flow<List<ShelterEntity>>
 
-    // 중복된 대피소가 있는지 확인하기위해 (대피소 이름과 위치로 존재 여부 확인)
-    @Query("SELECT * FROM ShelterEntity WHERE vtAcmdfcltyNm = :name AND latitude = :latitude AND longitude = :longitude LIMIT 1")
-    suspend fun findShelterByNameAndLocation(name: String, latitude: Double, longitude: Double): ShelterEntity?
-
-    // 데이터베이스 초기화 (선택적으로 사용)
-    @Query("DELETE FROM ShelterEntity")
-    suspend fun clearAllShelters()
-
-
+    // shelterType(대피소유형-"임시주거시설" 또는 "야외대피장소")의 대피소수를 계산
+    // 특정유형의 대피소가 얼마나 저장되었는지 확인할때 사용
     @Query("SELECT COUNT(*) FROM ShelterEntity WHERE shelterType = :shelterType")
     suspend fun getShelterCountByType(shelterType: String): Int
 
+    // shelterType(대피소유형-"임시주거시설" 또는 "야외대피장소")의 특정 유형의 대피소만 표시할 때 사용
     @Query("SELECT * FROM ShelterEntity WHERE shelterType = :shelterType")
     fun getSheltersByType(shelterType: String): Flow<List<ShelterEntity>>
 
+    // shelterType(대피소유형-"임시주거시설" 또는 "야외대피장소")의 특정 유형의 대피소를 삭제하는데 사용
     @Query("DELETE FROM ShelterEntity WHERE shelterType = :shelterType")
     suspend fun deleteSheltersByType(shelterType: String)
 }
