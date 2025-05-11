@@ -11,7 +11,7 @@ import com.myapp.jikimi.data.model.entity.ShelterEntity
         LikeEntity::class,
         ShelterEntity::class,
     ],
-    version = 2
+    version = 3
 )
 
 abstract class AppDatabase : RoomDatabase(){
