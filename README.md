@@ -3,6 +3,9 @@
 <br/>
 ## 개발 기간
 2024.08.16 ~ 10.04
+<br/>
+## PlayStore 다운로드 링크 ⬇️
+[PalyStore 바로가기 [4.4버전]](https://play.google.com/store/apps/details?id=com.myapp.jikimi)
 
 ## 프로젝트 소개
 갑작스런 재난 발생시에도, 내주변의 대피장소를 빠르게 확인하고 대피하여 인명피해를 최소화하기위한 목적으로 개발했습니다.
