@@ -34,7 +34,7 @@ object RoomModule {
         AppDatabase::class.java,
         "app.db"
     )
-        .addMigrations(MIFGRATION_1_2, MIGRATION_2_3)
+        .addMigrations(MIFGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4,MIGRATION_4_5)
         .build()
 
     @Singleton
@@ -56,6 +56,19 @@ object RoomModule {
             // 데이터베이스 버전 2에서 3으로 업그레이드하는 데 필요한 스키마 변경사항 구현
             // 실제 변경사항이 무엇인지 알 수 없어 비어있는 구현을 제공합니다.
             // 필요한 테이블 변경, 생성 등의 SQL 쿼리를 여기에 추가해야 합니다.
+        }
+    }
+
+    // 3에서 4으로의 마이그레이션 추가
+    private val MIGRATION_3_4 = object : Migration(3, 4){
+        override fun migrate(database: SupportSQLiteDatabase){
+
+        }
+    }
+
+    private val MIGRATION_4_5 = object : Migration(4, 5){
+        override fun migrate(database: SupportSQLiteDatabase){
+
         }
     }
 
