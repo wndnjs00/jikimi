@@ -1,11 +1,22 @@
 package com.myapp.jikimi.data.network
 
-import android.location.Location
+import kotlin.math.*
 import com.naver.maps.geometry.LatLng
 
-// 두지점간의 거리 계산 확장함수
-fun LatLng.distanceExtention(other: LatLng): Double {
-    val results = FloatArray(1)
-    Location.distanceBetween(this.latitude, this.longitude, other.latitude, other.longitude, results)
-    return results[0].toDouble()
+// 하버사인 공식
+fun LatLng.haversineDistance(other: LatLng): Double {
+    val earthRadius = 6371e3 // 지구 반지름 (미터)
+    val lat1 = this.latitude.toRadians()
+    val lat2 = other.latitude.toRadians()
+    val deltaLat = (other.latitude - this.latitude).toRadians()
+    val deltaLon = (other.longitude - this.longitude).toRadians()
+
+    val a = sin(deltaLat / 2).pow(2) +
+            cos(lat1) * cos(lat2) * sin(deltaLon / 2).pow(2)
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return earthRadius * c // 미터 단위로 반환
 }
+
+// Double의 확장 함수로 도 단위를 라디안으로 변환
+fun Double.toRadians(): Double = Math.toRadians(this)

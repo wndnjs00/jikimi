@@ -136,6 +136,7 @@ class DetailFragment : Fragment() {
                                 findNavController().navigateUp()
                             }
                             null -> { /* Initial state, do nothing */ }
+                            else -> {}
                         }
                     }
                 }
@@ -163,6 +164,8 @@ class DetailFragment : Fragment() {
                             is Resource.Error -> {
                                 (activity as MainActivity).showToast(resource.message ?: "댓글을 불러오는데 실패했습니다")
                             }
+
+                            else -> {}
                         }
                     }
                 }
@@ -190,6 +193,8 @@ class DetailFragment : Fragment() {
                                     // 상태 리셋
                                     commentViewModel.resetAddCommentStatus()
                                 }
+
+                                else -> {}
                             }
                         }
                     }
@@ -214,6 +219,8 @@ class DetailFragment : Fragment() {
                                     // 상태 리셋
                                     commentViewModel.resetDeleteCommentStatus()
                                 }
+
+                                else -> {}
                             }
                         }
                     }
@@ -241,6 +248,8 @@ class DetailFragment : Fragment() {
                                     // 상태 리셋
                                     postViewModel.resetDeletePostStatus()
                                 }
+
+                                else -> {}
                             }
                         }
                     }

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.jikimi.data.local.dao.ShelterDao
 import com.myapp.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
-import com.myapp.jikimi.data.network.distanceExtention
+import com.myapp.jikimi.data.network.haversineDistance
 import com.myapp.jikimi.data.repository.OutdoorEvacuationRepository
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,7 +61,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
 
                         if (latitude != 0.0 && longitude != 0.0) {
                             val shelterLocation = LatLng(latitude, longitude)
-                            val distance = location.distanceExtention(shelterLocation)  //현재위치와 대피소간의 거리계산
+                            val distance = location.haversineDistance(shelterLocation)  //현재위치와 대피소간의 거리계산
                             distance <= 5000.0 // 거리가 5km이하인 대피소만 필터링
                         } else {
                             false
@@ -71,7 +71,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
                         val latitude = shelter.la?.toDoubleOrNull() ?: 0.0
                         val longitude = shelter.lo?.toDoubleOrNull() ?: 0.0
                         val shelterLocation = LatLng(latitude, longitude)
-                        location.distanceExtention(shelterLocation)
+                        location.haversineDistance(shelterLocation)
                     }
 
                     // 필터링된 데이터로 대피소 업데이트
