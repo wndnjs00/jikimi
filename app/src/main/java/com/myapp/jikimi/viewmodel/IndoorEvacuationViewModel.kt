@@ -17,7 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class IndoorEvacuationViewModel @Inject constructor(
     private val indoorEvacuationRepository: IndoorEvacuationRepository,
-    private val shelterDao: ShelterDao
 ) : ViewModel(){
 
     private val _shelter = MutableStateFlow<List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>>(emptyList())

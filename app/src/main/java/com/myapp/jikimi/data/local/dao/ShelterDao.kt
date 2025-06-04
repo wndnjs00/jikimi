@@ -25,14 +25,14 @@ interface ShelterDao {
     @Query("SELECT * FROM LikeEntity WHERE vtAcmdfcltyNm = :shelterName LIMIT 1")
     suspend fun deleteDataFromShelterName(shelterName: String): LikeEntity?
 
+    // 검색 (중복 제거를 위해 DISTINCT 추가)
+    @Query("SELECT DISTINCT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%'")
+    fun searchShelters(query: String): Flow<List<ShelterEntity>>
+
     // 대피소 검색기능
     // 다수의 대피소정보 삽입
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertShelters(shelters: List<ShelterEntity>)
-
-    // 검색 (중복 제거를 위해 DISTINCT 추가)
-    @Query("SELECT DISTINCT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%'")
-    fun searchShelters(query: String): Flow<List<ShelterEntity>>
 
     // shelterType(대피소유형-"임시주거시설" 또는 "야외대피장소")의 대피소수를 계산
     // 특정유형의 대피소가 얼마나 저장되었는지 확인할때 사용
