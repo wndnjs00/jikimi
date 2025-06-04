@@ -39,14 +39,16 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
     // 모든 데이터 요청 구현
     override suspend fun requestAllIndoorEvacuation(): List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row> {
         try {
-            // 캐시된 데이터가 있고, 갱신 주기가 지나지 않았다면 DB에서 데이터 반환
-            val lastUpdate = sharedPreferences.getLong(KEY_LAST_INDOOR_UPDATE, 0)
-            val totalCachedCount = sharedPreferences.getInt(KEY_TOTAL_INDOOR_COUNT, 0)
-            val dbCount = shelterDao.getShelterCountByType("임시주거시설")
+            // 데이터를 다시 로드할 필요가 있는지 판단 (sharedPreferences로 캐시에 저장된 데이터가 최신인지 확인하여, 불필요한 API 호출을 방지)
+            val lastUpdate = sharedPreferences.getLong(KEY_LAST_INDOOR_UPDATE, 0) //마지막 업데이트 시간
+            val totalCachedCount = sharedPreferences.getInt(KEY_TOTAL_INDOOR_COUNT, 0) //전체 대피소의 개수
+            val dbCount = shelterDao.getShelterCountByType("임시주거시설") //"야외대피장소"의 대피소수
 
             val currentTime = System.currentTimeMillis()
+            // 마지막 업데이트 이후 30일이 지났는지 or DB에 저장된 데이터수가 API에서 가져온 전체데이터의 90% 이상인지
             val needsUpdate = currentTime - lastUpdate > UPDATE_INTERVAL || dbCount < totalCachedCount * 0.9
 
+            // 만족하지않으면(갱신필요하지 않으면)
             if (!needsUpdate && dbCount > 0) {
                 Log.d("IndoorEvacuationRepo", "실내 대피소 정보를 캐시에서 로드합니다. DB 항목 수: $dbCount")
                 // DB에서 데이터를 가져와 API 응답 형식으로 변환
@@ -58,7 +60,6 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
             val firstPageResponse = requestIndoorEvacuationByPage(1)
             val totalCount = firstPageResponse.earthquakeIndoors[0].head[0].totalCount?.toIntOrNull() ?: 0
             Log.d("IndoorEvacuationRepo", "총 대피소 개수: $totalCount")
-
             val itemsPerPage = 100
 
             // 총 페이지 수 계산
@@ -93,15 +94,14 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
                 }
             }
 
-            // 데이터를 DB에 저장
+            // 데이터를 RoomDB에 저장
             saveIndoorSheltersToDB(allRows)
 
-            // 마지막 업데이트 시간과 총 항목 수 저장
+            // 마지막 업데이트시간과 총항목수 sharedPreferences로 저장
             sharedPreferences.edit()
                 .putLong(KEY_LAST_INDOOR_UPDATE, System.currentTimeMillis())
                 .putInt(KEY_TOTAL_INDOOR_COUNT, totalCount)
                 .apply()
-
             Log.d("IndoorEvacuationRepo", "총 ${allRows.size}개의 실내 대피소 데이터를 저장했습니다")
             return allRows
         } catch (e: Exception) {
@@ -146,13 +146,13 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
         }
     }
 
-    // 실내 대피소 데이터 저장 (기존 데이터 삭제 후 새로 저장)
+    // 실내 대피소 데이터 RoomDB에 저장 (기존 데이터 삭제 후 새로 저장)
     private suspend fun saveIndoorSheltersToDB(shelters: List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>) {
         withContext(Dispatchers.IO) {
-            // 기존 실내 대피소 데이터 삭제
+            // 기존 실내대피소 데이터 삭제
             shelterDao.deleteSheltersByType("임시주거시설")
 
-            // 새 데이터를 엔티티로 변환하여 저장
+            // 새 데이터를 ShelterEntity형식으로 변환하여 저장
             val entities = shelters.mapNotNull { shelter ->
                 val latitude = shelter.ycord.toDoubleOrNull() ?: return@mapNotNull null
                 val longitude = shelter.xcord.toDoubleOrNull() ?: return@mapNotNull null
