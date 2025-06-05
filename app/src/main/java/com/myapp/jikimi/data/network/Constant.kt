@@ -29,8 +29,8 @@ object Constant{
 
 // SharedPreferences에서 사용할 키 상수
 const val PREF_NAME = "EarthquakeShelterPrefs"
-const val KEY_LAST_INDOOR_UPDATE = "last_indoor_update"
-const val KEY_LAST_OUTDOOR_UPDATE = "last_outdoor_update"
-const val KEY_TOTAL_INDOOR_COUNT = "total_indoor_count"
-const val KEY_TOTAL_OUTDOOR_COUNT = "total_outdoor_count"
+const val KEY_LAST_INDOOR_UPDATE = "last_indoor_update"     // 마지막 업데이트 시간
+const val KEY_LAST_OUTDOOR_UPDATE = "last_outdoor_update"   // 마지막 업데이트 시간
+const val KEY_TOTAL_INDOOR_COUNT = "total_indoor_count"     // API를 통해 가져온 대피소 데이터의 총 개수
+const val KEY_TOTAL_OUTDOOR_COUNT = "total_outdoor_count"   // API를 통해 가져온 대피소 데이터의 총 개수
 const val UPDATE_INTERVAL = 30 * 24 * 60 * 60 * 1000L // 30일

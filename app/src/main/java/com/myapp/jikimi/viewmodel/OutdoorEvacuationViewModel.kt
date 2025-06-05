@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.jikimi.data.local.dao.ShelterDao
 import com.myapp.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
-import com.myapp.jikimi.data.network.distanceExtention
+import com.myapp.jikimi.data.network.haversineDistance
 import com.myapp.jikimi.data.repository.OutdoorEvacuationRepository
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class OutdoorEvacuationViewModel @Inject constructor(
     private val outdoorEvacuationRepository: OutdoorEvacuationRepository,
-    private val shelterDao: ShelterDao
 ) : ViewModel() {
 
     private val _shelters = MutableStateFlow<List<EarthquakeOutdoorsShelterResponse.Shelter>>(emptyList())
@@ -46,7 +45,7 @@ class OutdoorEvacuationViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                _errorMessage.value = null
+                _errorMessage.value = null  //이전에 남아있을수있는 에러메시지 초기화
 
                 // 모든 페이지의 데이터 요청(로컬 DB 캐시 활용)
                 val allShelters = outdoorEvacuationRepository.requestAllOutdoorEvacuation()
@@ -61,8 +60,8 @@ class OutdoorEvacuationViewModel @Inject constructor(
 
                         if (latitude != 0.0 && longitude != 0.0) {
                             val shelterLocation = LatLng(latitude, longitude)
-                            val distance = location.distanceExtention(shelterLocation)
-                            distance <= 5000.0 // 5km
+                            val distance = location.haversineDistance(shelterLocation)  //현재위치와 대피소간의 거리계산
+                            distance <= 5000.0 // 거리가 5km이하인 대피소만 필터링
                         } else {
                             false
                         }
@@ -71,12 +70,13 @@ class OutdoorEvacuationViewModel @Inject constructor(
                         val latitude = shelter.la?.toDoubleOrNull() ?: 0.0
                         val longitude = shelter.lo?.toDoubleOrNull() ?: 0.0
                         val shelterLocation = LatLng(latitude, longitude)
-                        location.distanceExtention(shelterLocation)
+                        location.haversineDistance(shelterLocation)
                     }
 
                     // 필터링된 데이터로 대피소 업데이트
                     _shelters.value = filteredShelters
                     Log.d("OutdoorEvacuationViewModel", "5km 내 대피소 수: ${filteredShelters.size}")
+
                 } ?: run {
                     // 주소 기반 필터링
                     val adminKeywords = currentAddress.split(" ").filter { it.length >= 2 }

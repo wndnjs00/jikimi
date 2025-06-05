@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myapp.jikimi.R
@@ -16,44 +18,60 @@ class CommentAdapter(
     private val onOptionsClick: (Comment, Boolean, View) -> Unit,
     private val onReplyClick: (Comment) -> Unit,
     private val currentUserId: String
-) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
-
-    private val comments = mutableListOf<Comment>()
-    private val mainComments = mutableListOf<Comment>()
-    private val repliesMap = mutableMapOf<String, MutableList<Comment>>()
+) : ListAdapter<CommentAdapter.CommentItem, CommentAdapter.CommentViewHolder>(CommentDiffUtil) {
 
     // 차단된 댓글 ID 목록
     private val blockedCommentIds = mutableSetOf<String>()
 
+    // 댓글 데이터 클래스
+    sealed class CommentItem {
+        data class MainComment(val comment: Comment) : CommentItem()
+        data class ReplyComment(val comment: Comment) : CommentItem()
+    }
+
     fun updateComments(newComments: List<Comment>) {
-        comments.clear()
-        comments.addAll(newComments)
-
-        // 메인 댓글과 답글 분리
-        mainComments.clear()
-        repliesMap.clear()
-
         // 차단된 댓글 ID 가져오기
         fetchBlockedComments {
-            newComments.forEach { comment ->
-                // 차단된 댓글 제외
-                if (!blockedCommentIds.contains(comment.id)) {
-                    if (comment.parentCommentId.isEmpty()) {
-                        // 일반 댓글
-                        mainComments.add(comment)
-                    } else {
-                        // 답글
-                        val parentId = comment.parentCommentId
-                        if (!repliesMap.containsKey(parentId)) {
-                            repliesMap[parentId] = mutableListOf()
-                        }
-                        repliesMap[parentId]?.add(comment)
+            val newDisplayItems = processComments(newComments)
+            submitList(newDisplayItems)
+        }
+    }
+
+    // 댓글 목록을 처리하여 표시 항목으로 변환
+    private fun processComments(comments: List<Comment>): List<CommentItem> {
+        val result = mutableListOf<CommentItem>()
+        val mainComments = mutableListOf<Comment>()
+        val repliesMap = mutableMapOf<String, MutableList<Comment>>()
+
+        // 메인 댓글과 답글 분리
+        comments.forEach { comment ->
+            // 차단된 댓글 제외
+            if (!blockedCommentIds.contains(comment.id)) {
+                if (comment.parentCommentId.isEmpty()) {
+                    // 일반 댓글
+                    mainComments.add(comment)
+                } else {
+                    // 답글
+                    val parentId = comment.parentCommentId
+                    if (!repliesMap.containsKey(parentId)) {
+                        repliesMap[parentId] = mutableListOf()
                     }
+                    repliesMap[parentId]?.add(comment)
                 }
             }
-
-            notifyDataSetChanged()
         }
+
+        // 항목 목록 구성: 메인 댓글 다음에 해당 답글이 오도록
+        mainComments.forEach { mainComment ->
+            result.add(CommentItem.MainComment(mainComment))
+
+            // 해당 메인 댓글에 대한 답글 추가
+            repliesMap[mainComment.id]?.forEach { reply ->
+                result.add(CommentItem.ReplyComment(reply))
+            }
+        }
+
+        return result
     }
 
     // 차단된 댓글 ID 가져오기
@@ -91,42 +109,22 @@ class CommentAdapter(
         return CommentViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        var totalCount = mainComments.size
-
-        // 각 부모 댓글에 대한 답글 수를 더함
-        repliesMap.values.forEach { replies ->
-            totalCount += replies.size
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is CommentItem.MainComment -> VIEW_TYPE_MAIN_COMMENT
+            is CommentItem.ReplyComment -> VIEW_TYPE_REPLY_COMMENT
         }
-
-        return totalCount
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
-        var currentPos = 0
-
-        // 적절한 댓글 또는 답글 찾기
-        for (i in mainComments.indices) {
-            val mainComment = mainComments[i]
-
-            if (currentPos == position) {
-                // 메인 댓글
-                holder.bind(mainComment, false)
-                return
-            }
-            currentPos++
-
-            // 해당 메인 댓글에 대한 답글이 있는 경우
-            val replies = repliesMap[mainComment.id] ?: emptyList()
-            for (j in replies.indices) {
-                if (currentPos == position) {
-                    // 답글
-                    holder.bind(replies[j], true)
-                    return
-                }
-                currentPos++
-            }
+        val item = getItem(position)
+        val comment = when (item) {
+            is CommentItem.MainComment -> item.comment
+            is CommentItem.ReplyComment -> item.comment
         }
+
+        val isReply = item is CommentItem.ReplyComment
+        holder.bind(comment, isReply)
     }
 
     inner class CommentViewHolder(private val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -177,6 +175,34 @@ class CommentAdapter(
                 tvReply.isVisible = !isReply
                 tvReply.setOnClickListener {
                     onReplyClick(comment)
+                }
+            }
+        }
+    }
+
+    // DiffUtil 구현
+    companion object {
+        private const val VIEW_TYPE_MAIN_COMMENT = 0
+        private const val VIEW_TYPE_REPLY_COMMENT = 1
+
+        object CommentDiffUtil : DiffUtil.ItemCallback<CommentItem>() {
+            override fun areItemsTheSame(oldItem: CommentItem, newItem: CommentItem): Boolean {
+                return when {
+                    oldItem is CommentItem.MainComment && newItem is CommentItem.MainComment ->
+                        oldItem.comment.id == newItem.comment.id
+                    oldItem is CommentItem.ReplyComment && newItem is CommentItem.ReplyComment ->
+                        oldItem.comment.id == newItem.comment.id
+                    else -> false
+                }
+            }
+
+            override fun areContentsTheSame(oldItem: CommentItem, newItem: CommentItem): Boolean {
+                return when {
+                    oldItem is CommentItem.MainComment && newItem is CommentItem.MainComment ->
+                        oldItem.comment == newItem.comment
+                    oldItem is CommentItem.ReplyComment && newItem is CommentItem.ReplyComment ->
+                        oldItem.comment == newItem.comment
+                    else -> false
                 }
             }
         }
