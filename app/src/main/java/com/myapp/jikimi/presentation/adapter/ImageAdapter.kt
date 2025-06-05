@@ -3,57 +3,76 @@ package com.myapp.jikimi.presentation.adapter
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myapp.jikimi.databinding.ItemImageBinding
 
-// 이미지 업로드를 위한 어댑터
+// 이미지 업로드를 위한 어댑터 (DiffUtil 적용)
 class ImageAdapter(
     private val onDeleteClick: (Int) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : ListAdapter<ImageAdapter.ImageItem, RecyclerView.ViewHolder>(ImageDiffUtil) {
 
-    // 로컬 Uri 이미지
-    private val images = mutableListOf<Uri>()
-    // Firebase URL 이미지 (수정 모드에서 사용)
-    private val firebaseImages = mutableListOf<String>()
+    // 이미지 아이템을 나타내는 sealed class
+    sealed class ImageItem {
+        data class LocalImage(val uri: Uri) : ImageItem()
+        data class FirebaseImage(val url: String) : ImageItem()
+    }
 
     companion object {
         private const val VIEW_TYPE_LOCAL = 0
         private const val VIEW_TYPE_FIREBASE = 1
+        private const val MAX_IMAGES = 5
+
+        // DiffUtil 구현
+        object ImageDiffUtil : DiffUtil.ItemCallback<ImageItem>() {
+            override fun areItemsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean {
+                return when {
+                    oldItem is ImageItem.LocalImage && newItem is ImageItem.LocalImage ->
+                        oldItem.uri == newItem.uri
+                    oldItem is ImageItem.FirebaseImage && newItem is ImageItem.FirebaseImage ->
+                        oldItem.url == newItem.url
+                    else -> false
+                }
+            }
+
+            override fun areContentsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean {
+                return areItemsTheSame(oldItem, newItem)
+            }
+        }
     }
 
     fun addImage(uri: Uri) {
-        if (images.size < 5) { // 최대 5장 제한
-            images.add(uri)
-            notifyItemInserted(images.size - 1)
+        if (currentList.size < MAX_IMAGES) {
+            val newList = currentList.toMutableList().apply {
+                add(ImageItem.LocalImage(uri))
+            }
+            submitList(newList)
         }
     }
 
     fun addFirebaseImage(url: String) {
-        if (getItemCount() < 5) { // 최대 5장 제한
-            firebaseImages.add(url)
-            notifyItemInserted(getItemCount() - 1)
+        if (currentList.size < MAX_IMAGES) {
+            val newList = currentList.toMutableList().apply {
+                add(ImageItem.FirebaseImage(url))
+            }
+            submitList(newList)
         }
     }
-
 
     fun removeImage(position: Int) {
-        val firebaseSize = firebaseImages.size
-
-        if (position < firebaseSize) {
-            // Firebase 이미지 삭제(수정모드에서 사용)
-            firebaseImages.removeAt(position)
-        } else {
-            // 로컬 이미지 삭제
-            images.removeAt(position - firebaseSize)
+        if (position in 0 until currentList.size) {
+            val newList = currentList.toMutableList().apply {
+                removeAt(position)
+            }
+            submitList(newList)
         }
-
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, getItemCount())
     }
 
-    fun getImages(): List<Uri> = images
-    fun getFirebaseImages(): List<String> = firebaseImages
+    fun getImages(): List<Uri> = currentList.filterIsInstance<ImageItem.LocalImage>().map { it.uri }
+
+    fun getFirebaseImages(): List<String> = currentList.filterIsInstance<ImageItem.FirebaseImage>().map { it.url }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ItemImageBinding.inflate(
@@ -69,24 +88,21 @@ class ImageAdapter(
         }
     }
 
-    override fun getItemCount() = firebaseImages.size + images.size
-
     override fun getItemViewType(position: Int): Int {
-        return if (position < firebaseImages.size) {
-            VIEW_TYPE_FIREBASE
-        } else {
-            VIEW_TYPE_LOCAL
+        return when (getItem(position)) {
+            is ImageItem.LocalImage -> VIEW_TYPE_LOCAL
+            is ImageItem.FirebaseImage -> VIEW_TYPE_FIREBASE
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position)
         when (holder) {
             is LocalImageViewHolder -> {
-                val localPosition = position - firebaseImages.size
-                holder.bind(images[localPosition])
+                holder.bind(item as ImageItem.LocalImage)
             }
             is FirebaseImageViewHolder -> {
-                holder.bind(firebaseImages[position])
+                holder.bind(item as ImageItem.FirebaseImage)
             }
         }
     }
@@ -101,9 +117,9 @@ class ImageAdapter(
             }
         }
 
-        fun bind(uri: Uri) {
+        fun bind(item: ImageItem.LocalImage) {
             Glide.with(binding.root.context)
-                .load(uri)
+                .load(item.uri)
                 .centerCrop()
                 .into(binding.ivImage)
         }
@@ -119,9 +135,9 @@ class ImageAdapter(
             }
         }
 
-        fun bind(url: String) {
+        fun bind(item: ImageItem.FirebaseImage) {
             Glide.with(binding.root.context)
-                .load(url)
+                .load(item.url)
                 .centerCrop()
                 .into(binding.ivImage)
         }

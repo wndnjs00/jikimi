@@ -39,25 +39,27 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
     // 모든 데이터 요청 구현
     override suspend fun requestAllOutdoorEvacuation(): List<EarthquakeOutdoorsShelterResponse.Shelter> {
         try {
-            // 캐시된 데이터가 있고, 갱신 주기가 지나지 않았다면 DB에서 데이터 반환
-            val lastUpdate = sharedPreferences.getLong(KEY_LAST_OUTDOOR_UPDATE, 0)
-            val totalCachedCount = sharedPreferences.getInt(KEY_TOTAL_OUTDOOR_COUNT, 0)
-            val dbCount = shelterDao.getShelterCountByType("야외대피장소")
+            // 데이터를 다시 로드할 필요가 있는지 판단 (sharedPreferences로 캐시에 저장된 데이터가 최신인지 확인하여, 불필요한 API 호출을 방지)
+            val lastUpdate = sharedPreferences.getLong(KEY_LAST_OUTDOOR_UPDATE, 0)  //마지막 업데이트 시간
+            val totalCachedCount = sharedPreferences.getInt(KEY_TOTAL_OUTDOOR_COUNT, 0) //전체 대피소의 개수
+            val dbCount = shelterDao.getShelterCountByType("야외대피장소")    //"야외대피장소"의 대피소수
 
             val currentTime = System.currentTimeMillis()
+            // 마지막 업데이트 이후 30일이 지났는지 or DB에 저장된 데이터수가 API에서 가져온 전체데이터의 90% 이상인지
             val needsUpdate = currentTime - lastUpdate > UPDATE_INTERVAL || dbCount < totalCachedCount * 0.9
 
+            // 만족하지않으면(갱신필요하지 않으면)
             if (!needsUpdate && dbCount > 0) {
                 Log.d("OutdoorEvacuationRepo", "야외 대피소 정보를 캐시에서 로드합니다. DB 항목 수: $dbCount")
-                // DB에서 데이터를 가져와 API 응답 형식으로 변환
+                // RoomDB에서 데이터를 반환
                 return convertDbToApiFormat(shelterDao.getSheltersByType("야외대피장소").first())
             }
 
-            // API에서 첫 페이지 요청하여 총 데이터 개수 확인
+            // API에서 첫 페이지 요청하여 전체데이터 개수 확인
             Log.d("OutdoorEvacuationRepo", "야외 대피소 API 호출을 시작합니다")
             val firstPageResponse = requestOutdoorEvacuationByPage(1)
             val totalCount = firstPageResponse.totalCount
-
+            Log.d("OutdoorEvacuationRepo", "총 대피소 개수: $totalCount")
             val itemsPerPage = 100
 
             // 총 페이지 수 계산
@@ -67,7 +69,7 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
                 (totalCount / itemsPerPage) + 1
             }
 
-            // 첫 페이지 데이터 저장
+            // 첫 페이지 데이터 추가
             val allShelters = firstPageResponse.body.toMutableList()
 
             // 나머지 페이지 데이터 요청
@@ -81,15 +83,14 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
                 }
             }
 
-            // 데이터를 DB에 저장
+            // 데이터를 RoomDB에 저장
             saveOutdoorSheltersToDB(allShelters)
 
-            // 마지막 업데이트 시간과 총 항목 수 저장
+            // 마지막 업데이트시간과 총항목수 sharedPreferences로 저장
             sharedPreferences.edit()
                 .putLong(KEY_LAST_OUTDOOR_UPDATE, System.currentTimeMillis())
                 .putInt(KEY_TOTAL_OUTDOOR_COUNT, totalCount)
                 .apply()
-
             Log.d("OutdoorEvacuationRepo", "총 ${allShelters.size}개의 야외 대피소 데이터를 저장했습니다")
             return allShelters
         } catch (e: Exception) {
@@ -129,13 +130,13 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
         }
     }
 
-    // 야외 대피소 데이터 저장 (기존 데이터 삭제 후 새로 저장)
+    // 야외 대피소 데이터 RoomDB에 저장 (기존 데이터 삭제 후 새로 저장)
     private suspend fun saveOutdoorSheltersToDB(shelters: List<EarthquakeOutdoorsShelterResponse.Shelter>) {
         withContext(Dispatchers.IO) {
-            // 기존 야외 대피소 데이터 삭제
+            // 기존 야외대피소 데이터 삭제
             shelterDao.deleteSheltersByType("야외대피장소")
 
-            // 새 데이터를 엔티티로 변환하여 저장
+            // 새 데이터를 ShelterEntity형식으로 변환하여 저장
             val entities = shelters.mapNotNull { shelter ->
                 val latitude = shelter.la?.toDoubleOrNull() ?: return@mapNotNull null
                 val longitude = shelter.lo?.toDoubleOrNull() ?: return@mapNotNull null

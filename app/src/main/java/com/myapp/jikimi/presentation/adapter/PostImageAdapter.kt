@@ -4,19 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myapp.jikimi.R
 
-class PostImageAdapter : RecyclerView.Adapter<PostImageAdapter.ImageViewHolder>() {
-
-    private val images = mutableListOf<String>()
-
-    fun updateImages(newImages: List<String>) {
-        images.clear()
-        images.addAll(newImages)
-        notifyDataSetChanged()
-    }
+class PostImageAdapter(
+    private val onClick: (String, Int) -> Unit = { _, _ -> },
+    private val onLongClick: (String, Int) -> Unit = { _, _ -> }
+) : ListAdapter<String, PostImageAdapter.ImageViewHolder>(ImageDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -24,13 +21,21 @@ class PostImageAdapter : RecyclerView.Adapter<PostImageAdapter.ImageViewHolder>(
         return ImageViewHolder(view)
     }
 
-    override fun getItemCount() = images.size
-
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.bind(images[position])
+        val item = getItem(position)
+        holder.bind(item)
+
+        holder.itemView.setOnClickListener {
+            onClick(item, position)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onLongClick(item, position)
+            true
+        }
     }
 
-    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView: ImageView = itemView.findViewById(R.id.ivPostDetailImage)
 
         fun bind(imageUrl: String) {
@@ -38,6 +43,16 @@ class PostImageAdapter : RecyclerView.Adapter<PostImageAdapter.ImageViewHolder>(
                 .load(imageUrl)
                 .centerCrop()
                 .into(imageView)
+        }
+    }
+
+    object ImageDiffCallback : DiffUtil.ItemCallback<String>() {
+        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+            return oldItem == newItem
         }
     }
 }

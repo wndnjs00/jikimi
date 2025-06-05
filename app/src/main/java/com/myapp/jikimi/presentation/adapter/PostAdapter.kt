@@ -4,6 +4,8 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myapp.jikimi.R
@@ -13,15 +15,7 @@ import com.myapp.jikimi.databinding.ItemPostBinding
 class PostAdapter(
     private val onPostClick: (Post) -> Unit,
     private val currentUserId: String
-) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
-
-    private val posts = mutableListOf<Post>()
-
-    fun updatePosts(newPosts: List<Post>) {
-        posts.clear()
-        posts.addAll(newPosts)
-        notifyDataSetChanged()
-    }
+) : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = ItemPostBinding.inflate(
@@ -32,10 +26,8 @@ class PostAdapter(
         return PostViewHolder(binding)
     }
 
-    override fun getItemCount() = posts.size
-
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = posts[position]
+        val post = getItem(position)
         holder.bind(post)
     }
 
@@ -83,6 +75,19 @@ class PostAdapter(
                     onPostClick(post)
                 }
             }
+        }
+    }
+
+    // DiffUtil 구현
+    object PostDiffCallback : DiffUtil.ItemCallback<Post>() {
+        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+            // 포스트 ID를 사용하여 동일 아이템인지 확인
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+            // Post 클래스의 equals 메서드를 사용하거나, 필요한 필드 비교
+            return oldItem == newItem
         }
     }
 }

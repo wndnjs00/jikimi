@@ -81,8 +81,10 @@ class CommunityFragment : Fragment() {
 
 
     private fun setupRecyclerView() {
+        // 로그인한 user의 uid를 가져옴
         val currentUserId = authViewModel.getCurrentUser()?.uid ?: ""
 
+        // 게시물클릭시, postId전달하면서 detailFragment로 이동
         postAdapter = PostAdapter(
             onPostClick = { post ->
                 val bundle = Bundle().apply {
@@ -119,13 +121,15 @@ class CommunityFragment : Fragment() {
                                 } else {
                                     binding.tvEmpty.visibility = View.GONE
                                     binding.rvPosts.visibility = View.VISIBLE
-                                    postAdapter.updatePosts(posts)
+                                    postAdapter.submitList(posts)
                                 }
                             }
                             is Resource.Error -> {
                                 binding.progressBar.visibility = View.GONE
                                 (activity as MainActivity).showToast(resource.message ?: "게시물을 불러오는데 실패했습니다")
                             }
+
+                            else -> {}
                         }
                     }
                 }
@@ -149,6 +153,8 @@ class CommunityFragment : Fragment() {
                                     (activity as MainActivity).showToast(resource.message ?: "게시물 삭제에 실패했습니다")
                                     postViewModel.resetDeletePostStatus() // 상태 리셋
                                 }
+
+                                else -> {}
                             }
                         }
                     }
@@ -177,6 +183,8 @@ class CommunityFragment : Fragment() {
                                 binding.dateContent.visibility = View.GONE
                                 binding.messageContent.text = "데이터 로드 실패"
                             }
+
+                            else -> {}
                         }
                     }
                 }
