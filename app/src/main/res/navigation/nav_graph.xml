@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_evacuate" />
 
     <fragment
-        android:id="@+id/commonsenseFragment"
+        android:id="@+id/communityFragment"
         android:name="com.myapp.jikimi.presentation.fragment.CommunityFragment"
         android:label="fragment_commonsense"
         tools:layout="@layout/fragment_community" >
@@ -79,5 +79,10 @@
             app:popUpTo="@id/registerFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/commonsenseFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.CommonsenseFragment"
+        android:label="fragment_commonsense"
+        tools:layout="@layout/fragment_commonsense" />
 
 </navigation>

@@ -50,7 +50,7 @@
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:maxLines="1"
-        android:padding="8dp"
+        android:padding="12dp"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_15"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
