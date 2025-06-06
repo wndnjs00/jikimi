@@ -13,7 +13,7 @@ import com.myapp.jikimi.data.model.entity.ShelterEntity
 @Dao
 interface ShelterDao {
     @Query("SELECT * FROM LikeEntity")
-    fun getAllData() : Flow<List<LikeEntity>>
+    suspend fun getAllData() : Flow<List<LikeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(likeEntity: LikeEntity)
@@ -27,7 +27,7 @@ interface ShelterDao {
 
     // 검색 (중복 제거를 위해 DISTINCT 추가)
     @Query("SELECT DISTINCT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%'")
-    fun searchShelters(query: String): Flow<List<ShelterEntity>>
+    suspend fun searchShelters(query: String): Flow<List<ShelterEntity>>
 
     // 대피소 검색기능
     // 다수의 대피소정보 삽입
@@ -41,7 +41,7 @@ interface ShelterDao {
 
     // shelterType(대피소유형-"임시주거시설" 또는 "야외대피장소")의 특정 유형의 대피소만 표시할 때 사용
     @Query("SELECT * FROM ShelterEntity WHERE shelterType = :shelterType")
-    fun getSheltersByType(shelterType: String): Flow<List<ShelterEntity>>
+    suspend fun getSheltersByType(shelterType: String): Flow<List<ShelterEntity>>
 
     // shelterType(대피소유형-"임시주거시설" 또는 "야외대피장소")의 특정 유형의 대피소를 삭제하는데 사용
     @Query("DELETE FROM ShelterEntity WHERE shelterType = :shelterType")
