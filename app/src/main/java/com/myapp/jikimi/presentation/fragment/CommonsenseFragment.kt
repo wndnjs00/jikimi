@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.myapp.jikimi.R
 import com.myapp.jikimi.data.model.dto.CommonsenseItem
@@ -32,7 +33,7 @@ class CommonsenseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        // 임의의 데이터 생성
+        // 임의의 데이터 생성 (삭제할것)
         val sampleData = listOf(
             CommonsenseItem("지진 발생 시 대처방법", "갑작스런 지진 상황에서의 생존 가이드", "긴급재해", "위험도: 높음"),
             CommonsenseItem("화재 발생 시 대처방법", "아파트 화재 대처법과 안전한 대피 방법", "긴급재해", "위험도: 중간"),
@@ -43,6 +44,10 @@ class CommonsenseFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = CommonsenseAdapter(sampleData)
 
+        // 임시로 글씨클릭했을때 detail로 이동하도록
+        binding.titleTv.setOnClickListener {
+            findNavController().navigate(R.id.commonsenseDetailFragment)
+        }
     }
 
 
