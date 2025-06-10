@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.OutdoorEvacuation
 
 import android.content.Context
 import android.util.Log

@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.Comment
 
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.Comment

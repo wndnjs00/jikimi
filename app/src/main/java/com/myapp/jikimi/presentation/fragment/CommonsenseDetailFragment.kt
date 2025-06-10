@@ -5,11 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import com.myapp.jikimi.R
-import com.myapp.jikimi.databinding.FragmentCommonsenseBinding
 import com.myapp.jikimi.databinding.FragmentCommonsenseDetailBinding
-import com.myapp.jikimi.presentation.adapter.CommonsenseAdapter
 
 class CommonsenseDetailFragment : Fragment() {
     private val binding get() = _binding!!

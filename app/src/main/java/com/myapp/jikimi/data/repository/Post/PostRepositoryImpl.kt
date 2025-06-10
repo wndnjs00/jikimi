@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.Post
 
 import android.net.Uri
 import android.util.Log

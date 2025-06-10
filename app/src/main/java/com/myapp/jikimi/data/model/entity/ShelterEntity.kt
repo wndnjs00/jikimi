@@ -3,7 +3,6 @@ package com.myapp.jikimi.data.model.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-// 검색 기능을 위한 Entitiy
 @Entity
 data class ShelterEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.Comment
-import com.myapp.jikimi.data.repository.CommentRepository
+import com.myapp.jikimi.data.repository.Comment.CommentRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

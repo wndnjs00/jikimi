@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.OutdoorEvacuation
 
 import dagger.Binds
 import dagger.Module

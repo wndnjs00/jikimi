@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.OutdoorEvacuation
 
 import com.myapp.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 

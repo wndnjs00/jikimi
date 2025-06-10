@@ -3,10 +3,9 @@ package com.myapp.jikimi.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.myapp.jikimi.data.local.dao.ShelterDao
 import com.myapp.jikimi.data.model.dto.EarthquakeIndoorsShelterResponse
 import com.myapp.jikimi.data.network.haversineDistance
-import com.myapp.jikimi.data.repository.IndoorEvacuationRepository
+import com.myapp.jikimi.data.repository.IndoorEvacuation.IndoorEvacuationRepository
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

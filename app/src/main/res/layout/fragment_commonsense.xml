@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            tools:listitem="@layout/item_commonsense"
+            tools:listitem="@layout/item_disaster"
             tools:itemCount="3"/>
 
     </LinearLayout>
