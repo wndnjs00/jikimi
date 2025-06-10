@@ -4,6 +4,7 @@ import com.myapp.jikimi.data.network.EVACUATION_MESSAGE_API_BASE
 import com.myapp.jikimi.data.network.INDOOR_EVACUATION_API_BASE
 import com.myapp.jikimi.data.network.service.IndoorEvacuationService
 import com.myapp.jikimi.data.network.OUTDOOR_EVACUATION_API_BASE
+import com.myapp.jikimi.data.network.CHATGPT_API_BASE
 import com.myapp.jikimi.data.network.service.EvacuationMessageService
 import com.myapp.jikimi.data.network.service.OutdoorEvacuationService
 import com.google.gson.GsonBuilder

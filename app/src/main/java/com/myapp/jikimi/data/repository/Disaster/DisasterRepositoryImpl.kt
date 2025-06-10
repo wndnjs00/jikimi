@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException
 import com.myapp.jikimi.data.model.dto.chatgpt.ChatGPTRequest
 import com.myapp.jikimi.data.model.dto.chatgpt.DisasterResponse
 import com.myapp.jikimi.data.model.dto.chatgpt.Message
+import com.myapp.jikimi.data.network.CHATGPT_API_SERVICE_KEY
 import com.myapp.jikimi.data.network.service.ChatGPTApiService
 import javax.inject.Inject
 import javax.inject.Named
@@ -17,9 +18,6 @@ class DisasterRepositoryImpl @Inject constructor(
 
     private val gson = Gson()
 
-    // ChatGPT API 키를 여기에 입력하세요
-    private val apiKey = "your_chatgpt_api_key_here"
-
     override suspend fun getTodayDisasterTips(): Result<List<DisasterResponse>> {
         return try {
             val prompt = createTodayDisasterPrompt()
@@ -30,7 +28,7 @@ class DisasterRepositoryImpl @Inject constructor(
                 )
             )
 
-            val response = apiService.getChatCompletion("Bearer $apiKey", request)
+            val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
             if (response.isSuccessful) {
                 val content = response.body()?.choices?.firstOrNull()?.message?.content
                 content?.let { parseDisasterResponse(it, 3) }?.let { Result.success(it) }
@@ -53,7 +51,7 @@ class DisasterRepositoryImpl @Inject constructor(
                 )
             )
 
-            val response = apiService.getChatCompletion("Bearer $apiKey", request)
+            val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
             if (response.isSuccessful) {
                 val content = response.body()?.choices?.firstOrNull()?.message?.content
                 content?.let { parseDisasterResponse(it, 1) }?.firstOrNull()?.let { Result.success(it) }
