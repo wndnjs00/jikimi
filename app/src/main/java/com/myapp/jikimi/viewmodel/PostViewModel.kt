@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.Post
-import com.myapp.jikimi.data.repository.PostRepository
+import com.myapp.jikimi.data.repository.Post.PostRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel

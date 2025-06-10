@@ -210,6 +210,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun liked(){
         viewLifecycleOwner.lifecycleScope.launch {
+            // 모든데이터 실시간으로 가져옴(변경될즉시 가져옴)
             likeViewModel.likeEntity.collect{ like ->
                 // vtAcmdfcltyNm가 일치하는지 확인 (vtAcmdfcltyNm로 좋아요 여부확인)
                 val isLiked = like.any {it.vtAcmdfcltyNm == likeEntity?.vtAcmdfcltyNm}

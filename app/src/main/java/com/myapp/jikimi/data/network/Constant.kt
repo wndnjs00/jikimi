@@ -1,5 +1,4 @@
 package com.myapp.jikimi.data.network
-
 import com.myapp.jikimi.BuildConfig
 
 // 행정안전부_지진 옥외대피장소
@@ -18,6 +17,12 @@ const val EVACUATION_MESSAGE_API = BuildConfig.EVACUATION_MESSAGE_API
 const val EVACUATION_MESSAGE_SERVICE_KEY = BuildConfig.EVACUATION_MESSAGE_SERVICE_KEY
 
 
+// 챗지피티
+const val CHATGPT_API_BASE = BuildConfig.CHATGPT_API_BASE
+const val CHATGPT_API = BuildConfig.CHATGPT_API
+const val CHATGPT_API_SERVICE_KEY = BuildConfig.CHATGPT_API_SERVICE_KEY
+
+
 
 object Constant{
     // 공유되는 데이터
@@ -33,4 +38,4 @@ const val KEY_LAST_INDOOR_UPDATE = "last_indoor_update"     // 마지막 업데�
 const val KEY_LAST_OUTDOOR_UPDATE = "last_outdoor_update"   // 마지막 업데이트 시간
 const val KEY_TOTAL_INDOOR_COUNT = "total_indoor_count"     // API를 통해 가져온 대피소 데이터의 총 개수
 const val KEY_TOTAL_OUTDOOR_COUNT = "total_outdoor_count"   // API를 통해 가져온 대피소 데이터의 총 개수
-const val UPDATE_INTERVAL = 30 * 24 * 60 * 60 * 1000L // 30일
+const val UPDATE_INTERVAL = 90 * 24 * 60 * 60 * 1000L // 90일

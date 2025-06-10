@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.Auth
 
 import android.net.Uri
 import com.myapp.jikimi.Resource

@@ -723,7 +723,7 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
     companion object {
         // 위치 업데이트 관련 상수
-        private const val MIN_DISTANCE_FOR_UPDATE = 100 // 100m 이상 이동 시 업데이트
+        private const val MIN_DISTANCE_FOR_UPDATE = 4000 // 4000m (4km-약1시간 걸었을때) 이상 이동 시 업데이트
         private const val MIN_TIME_BETWEEN_UPDATES = 3600000L // 1시간
 
         // 권한 요청 코드 (위치, 음성인식)

@@ -27,7 +27,7 @@
             android:layout_marginBottom="8dp">
 
             <TextView
-                android:id="@+id/tvTitle"
+                android:id="@+id/tv_disaster_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -72,14 +72,14 @@
         </LinearLayout>
 
         <!-- 설명 텍스트 -->
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="갑작스런 지진 상황에서의 생존 가이드"
-            android:textColor="#666666"
-            android:textSize="14sp"
-            android:layout_marginBottom="12dp" />
+<!--        <TextView-->
+<!--            android:id="@+id/tvDescription"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="갑작스런 지진 상황에서의 생존 가이드"-->
+<!--            android:textColor="#666666"-->
+<!--            android:textSize="14sp"-->
+<!--            android:layout_marginBottom="12dp" />-->
 
         <!-- 태그들과 화살표 -->
         <LinearLayout
@@ -104,7 +104,7 @@
                     android:layout_marginEnd="8dp">
 
                     <TextView
-                        android:id="@+id/tvUrgency"
+                        android:id="@+id/tv_disaster_category"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="긴급재해"
@@ -123,7 +123,7 @@
                     app:cardBackgroundColor="#FFF8E1">
 
                     <TextView
-                        android:id="@+id/tvRisk"
+                        android:id="@+id/tv_risk_level"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="위험도: 높음"

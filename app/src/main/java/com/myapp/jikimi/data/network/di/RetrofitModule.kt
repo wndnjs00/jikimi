@@ -7,6 +7,7 @@ import com.myapp.jikimi.data.network.OUTDOOR_EVACUATION_API_BASE
 import com.myapp.jikimi.data.network.service.EvacuationMessageService
 import com.myapp.jikimi.data.network.service.OutdoorEvacuationService
 import com.google.gson.GsonBuilder
+import com.myapp.jikimi.data.network.service.ChatGPTApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -103,5 +104,29 @@ object RetrofitModule {
         @Named("EvacuationMessage") retrofit: Retrofit
     ): EvacuationMessageService {
         return retrofit.create(EvacuationMessageService::class.java)
+    }
+
+
+    // ChatGPT API 관련 추가
+    @Singleton
+    @Provides
+    @Named("ChatGPT")
+    fun provideChatGPTRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val gson = GsonBuilder().setLenient().create()
+
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+            .baseUrl(CHATGPT_API_BASE)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @Named("ChatGPTService")
+    fun provideChatGPTService(
+        @Named("ChatGPT") retrofit: Retrofit
+    ): ChatGPTApiService {
+        return retrofit.create(ChatGPTApiService::class.java)
     }
 }
