@@ -102,6 +102,7 @@ class CreatePostFragment : Fragment() {
         setupListeners()
         setupRecyclerView()
         setupSpinner()
+        setupBackButton()
     }
 
     private fun setupSpinner() {
@@ -173,7 +174,7 @@ class CreatePostFragment : Fragment() {
                                     binding.btnPost.isEnabled = true
                                     (activity as MainActivity).showToast("게시물이 작성되었습니다")
 
-                                    findNavController().navigate(R.id.commonsenseFragment)
+                                    findNavController().navigate(R.id.communityFragment)
                                     (activity as MainActivity).showBottomNavigation()
 
                                     viewModel.resetCreatePostStatus()
@@ -203,7 +204,7 @@ class CreatePostFragment : Fragment() {
                                     binding.btnPost.isEnabled = true
                                     (activity as MainActivity).showToast("게시물이 수정되었습니다")
 
-                                    findNavController().navigate(R.id.commonsenseFragment)
+                                    findNavController().navigate(R.id.communityFragment)
                                     (activity as MainActivity).showBottomNavigation()
 
                                     viewModel.resetUpdatePostStatus()
@@ -303,6 +304,12 @@ class CreatePostFragment : Fragment() {
                 val images = imageAdapter.getImages()
                 viewModel.createPost(content, images, selectedCategory)
             }
+        }
+    }
+
+    private fun setupBackButton() {
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
