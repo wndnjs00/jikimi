@@ -1,12 +1,18 @@
 package com.myapp.jikimi.presentation.fragment
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.myapp.jikimi.R
+import com.myapp.jikimi.data.network.dpToPx
 import com.myapp.jikimi.databinding.FragmentDisasterDetailBinding
 
 class DisasterDetailFragment : Fragment() {
@@ -55,7 +61,7 @@ class DisasterDetailFragment : Fragment() {
         val riskColor = when (disasterRiskLevel) {
             "낮음" -> android.R.color.holo_green_light
             "보통" -> android.R.color.holo_orange_light
-            "높음" -> android.R.color.holo_red_light
+            "높음" -> android.R.color.white
             else -> android.R.color.darker_gray
         }
         binding.riskLevelTv.setTextColor(requireContext().getColor(riskColor))
@@ -64,9 +70,56 @@ class DisasterDetailFragment : Fragment() {
         setupDetailedSteps()
     }
 
-    // 상세 대처방안 설정해야함
     private fun setupDetailedSteps() {
+        val container = binding.linearLayoutSteps
+        container.removeAllViews() // 기존 뷰 제거
 
+        disasterSteps?.forEachIndexed { index, stepText ->
+            val context = requireContext()
+
+            // 외부 LinearLayout 생성
+            val stepLayout = LinearLayout(context).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 8, 0, 8)
+                }
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(12.dpToPx(context), 12.dpToPx(context), 12.dpToPx(context), 12.dpToPx(context))
+                gravity = Gravity.CENTER_VERTICAL
+            }
+
+            // 숫자 동그라미 TextView 생성
+            val numberTextView = TextView(context).apply {
+                layoutParams = LinearLayout.LayoutParams(24.dpToPx(context), 24.dpToPx(context))
+                text = (index + 1).toString()
+                gravity = Gravity.CENTER
+                setTextColor(Color.WHITE)
+                setBackgroundResource(R.drawable.circle_bg_red)
+                setTypeface(null, Typeface.BOLD)
+                textSize = 12f
+            }
+
+            // 설명 텍스트 TextView 생성
+            val stepTextView = TextView(context).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+                ).apply {
+                    setMargins(16.dpToPx(context), 0, 0, 0)
+                }
+                text = stepText
+                setTextColor(Color.parseColor("#333333"))
+                textSize = 16f
+            }
+
+            stepLayout.addView(numberTextView)
+            stepLayout.addView(stepTextView)
+
+            container.addView(stepLayout)
+        }
     }
 
     private fun setupBackButton() {
