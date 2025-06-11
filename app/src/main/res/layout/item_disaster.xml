@@ -6,7 +6,7 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
     android:layout_marginBottom="8dp"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
     android:layout_marginTop="4dp"
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="지진 발생 시 대처방법"
-                android:textColor="#333333"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#5A67D8">
+                app:cardBackgroundColor="@color/dark_blue2">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="AI"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
@@ -70,16 +70,6 @@
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
-
-        <!-- 설명 텍스트 -->
-<!--        <TextView-->
-<!--            android:id="@+id/tvDescription"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="갑작스런 지진 상황에서의 생존 가이드"-->
-<!--            android:textColor="#666666"-->
-<!--            android:textSize="14sp"-->
-<!--            android:layout_marginBottom="12dp" />-->
 
         <!-- 태그들과 화살표 -->
         <LinearLayout
@@ -100,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="#FFEBEE"
+                    app:cardBackgroundColor="@color/background_pink"
                     android:layout_marginEnd="8dp">
 
                     <TextView
@@ -108,7 +98,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="긴급재해"
-                        android:textColor="#E74C3C"
+                        android:textColor="@color/red"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:padding="6dp" />
@@ -120,14 +110,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="#FFF8E1">
+                    app:cardBackgroundColor="@color/background_orange">
 
                     <TextView
                         android:id="@+id/tv_risk_level"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="위험도: 높음"
-                        android:textColor="#FF9800"
+                        android:textColor="@color/risk_level_orange"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:padding="6dp" />

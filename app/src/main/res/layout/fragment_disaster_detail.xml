@@ -75,7 +75,7 @@
                             android:text="지진 발생 시 대처방법"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="#333333" />
+                            android:textColor="@color/black" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -89,7 +89,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="자연재해"
                                 android:textSize="12sp"
-                                android:textColor="#666666" />
+                                android:textColor="@color/dark_gray" />
 
                             <TextView
                                 android:id="@+id/risk_level_tv"
@@ -139,14 +139,14 @@
                         android:text="AI 생성 콘텐츠"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="#8B5CF6" />
+                        android:textColor="@color/purple" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="이 내용은 AI가 분석하여 생성한 맞춤형 대처방안입니다.실제 상황에서는 전문가의 조언을 우선시 바랍니다."
                         android:textSize="12sp"
-                        android:textColor="#666666"
+                        android:textColor="@color/dark_gray"
                         android:layout_marginTop="4dp" />
 
                 </LinearLayout>
@@ -180,7 +180,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_shield"
-                            app:tint="#E53E3E" />
+                            app:tint="@color/dark_red" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -188,7 +188,7 @@
                             android:text="상세 대처방안"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="#333333"
+                            android:textColor="@color/black"
                             android:layout_marginStart="8dp" />
 
                     </LinearLayout>
@@ -224,7 +224,7 @@
                                 android:layout_weight="1"
                                 android:text="즉시 탁자나 책상 아래로 몸을 피하세요"
                                 android:textSize="16sp"
-                                android:textColor="#333333"
+                                android:textColor="@color/black"
                                 android:layout_marginStart="16dp" />
 
                         </LinearLayout>
@@ -253,7 +253,7 @@
                                 android:layout_weight="1"
                                 android:text="문을 열어 피난로를 확보하세요"
                                 android:textSize="16sp"
-                                android:textColor="#333333"
+                                android:textColor="@color/black"
                                 android:layout_marginStart="16dp" />
 
                         </LinearLayout>
@@ -282,7 +282,7 @@
                                 android:layout_weight="1"
                                 android:text="가스와 전기를 차단하세요"
                                 android:textSize="16sp"
-                                android:textColor="#333333"
+                                android:textColor="@color/black"
                                 android:layout_marginStart="16dp" />
 
                         </LinearLayout>
@@ -311,7 +311,7 @@
                                 android:layout_weight="1"
                                 android:text="엘리베이터 사용을 금지하세요"
                                 android:textSize="16sp"
-                                android:textColor="#333333"
+                                android:textColor="@color/black"
                                 android:layout_marginStart="16dp" />
 
                         </LinearLayout>
@@ -340,7 +340,7 @@
                                 android:layout_weight="1"
                                 android:text="건물 밖으로 대피할 때는 계단을 이용하세요"
                                 android:textSize="16sp"
-                                android:textColor="#333333"
+                                android:textColor="@color/black"
                                 android:layout_marginStart="16dp" />
 
                         </LinearLayout>
@@ -357,7 +357,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="#FFF5F5">
+                app:cardBackgroundColor="@color/background_pink">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -377,7 +377,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_warning"
-                            app:tint="#E53E3E" />
+                            app:tint="@color/dark_red" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -385,7 +385,7 @@
                             android:text="긴급 상황 시 연락처"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="#333333"
+                            android:textColor="@color/black"
                             android:layout_marginStart="8dp" />
 
                     </LinearLayout>
@@ -411,7 +411,7 @@
                                 android:text="종합상황실 (제보신고)"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textColor="#333333" />
+                                android:textColor="@color/black" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -419,14 +419,14 @@
                                 android:text="119"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
-                                android:textColor="#E53E3E" />
+                                android:textColor="@color/red" />
 
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="2dp"
-                            android:background="#E7E7E7"
+                            android:background="@color/line_grays"
                             android:layout_marginVertical="4dp" />
 
                         <!-- 경찰신고 -->
@@ -444,7 +444,7 @@
                                 android:text="경찰신고"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
-                                android:textColor="#333333" />
+                                android:textColor="@color/black" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -452,14 +452,14 @@
                                 android:text="112"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
-                                android:textColor="#E53E3E" />
+                                android:textColor="@color/red" />
 
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="2dp"
-                            android:background="#E7E7E7"
+                            android:background="@color/line_grays"
                             android:layout_marginVertical="4dp" />
 
                         <!-- 민원상담 -->
@@ -477,7 +477,7 @@
                                 android:text="민원상담"
                                 android:textStyle="bold"
                                 android:textSize="16sp"
-                                android:textColor="#333333" />
+                                android:textColor="@color/black" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -485,7 +485,7 @@
                                 android:text="110"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
-                                android:textColor="#E53E3E" />
+                                android:textColor="@color/red" />
 
                         </LinearLayout>
 
