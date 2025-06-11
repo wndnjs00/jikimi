@@ -63,6 +63,7 @@ class ProfileEditFragment : Fragment() {
         setupObservers()
         setupListeners()
         loadUserProfile()
+        setupBackButton()
     }
 
     private fun loadUserProfile() {
@@ -293,6 +294,12 @@ class ProfileEditFragment : Fragment() {
         }
     }
 
+
+    private fun setupBackButton() {
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
 
 
     override fun onDestroyView() {

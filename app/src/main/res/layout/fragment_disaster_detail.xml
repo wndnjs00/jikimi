@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F5F5F5"
-    tools:context=".presentation.fragment.CommonsenseDetailFragment">
+    tools:context=".presentation.fragment.DisasterDetailFragment">
 
     <!-- 상단 헤더 -->
     <LinearLayout
@@ -18,6 +18,7 @@
         android:gravity="center_vertical">
 
         <ImageView
+            android:id="@+id/btn_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_arrow_back"
@@ -68,6 +69,7 @@
                         android:layout_marginStart="16dp">
 
                         <TextView
+                            android:id="@+id/disaster_title_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="지진 발생 시 대처방법"
@@ -82,6 +84,7 @@
                             android:layout_marginTop="4dp">
 
                             <TextView
+                                android:id="@+id/disaster_category_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="자연재해"
@@ -89,6 +92,7 @@
                                 android:textColor="#666666" />
 
                             <TextView
+                                android:id="@+id/risk_level_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="높음"
@@ -100,14 +104,6 @@
                                 android:layout_marginStart="8dp" />
 
                         </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="갑자스런 지진 상황에서의 생존 가이드"
-                            android:textSize="14sp"
-                            android:textColor="#666666"
-                            android:layout_marginTop="8dp" />
 
                     </LinearLayout>
 
@@ -199,6 +195,7 @@
 
                     <!-- 대처방안 리스트 -->
                     <LinearLayout
+                        android:id="@+id/linear_layoutSteps"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">

@@ -2,6 +2,7 @@ package com.myapp.jikimi.data.repository.Disaster
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.chatgpt.ChatGPTRequest
 import com.myapp.jikimi.data.model.dto.chatgpt.DisasterResponse
 import com.myapp.jikimi.data.model.dto.chatgpt.Message
@@ -18,7 +19,7 @@ class DisasterRepositoryImpl @Inject constructor(
 
     private val gson = Gson()
 
-    override suspend fun getTodayDisasterTips(): Result<List<DisasterResponse>> {
+    override suspend fun getTodayDisasterTips(): Resource<List<DisasterResponse>> {
         return try {
             val prompt = createTodayDisasterPrompt()
             val request = ChatGPTRequest(
@@ -31,17 +32,18 @@ class DisasterRepositoryImpl @Inject constructor(
             val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
             if (response.isSuccessful) {
                 val content = response.body()?.choices?.firstOrNull()?.message?.content
-                content?.let { parseDisasterResponse(it, 3) }?.let { Result.success(it) }
-                    ?: Result.failure(Exception("응답을 파싱할 수 없습니다"))
+                content?.let { parseDisasterResponse(it, 3) }?.let {
+                    Resource.Success(it)
+                } ?: Resource.Error("응답을 파싱할 수 없습니다")
             } else {
-                Result.failure(Exception("API 호출 실패: ${response.code()}"))
+                Resource.Error("API 호출 실패: ${response.code()}")
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Resource.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
         }
     }
 
-    override suspend fun searchDisasterTips(query: String): Result<DisasterResponse> {
+    override suspend fun searchDisasterTips(query: String): Resource<DisasterResponse> {
         return try {
             val prompt = createSearchPrompt(query)
             val request = ChatGPTRequest(
@@ -54,19 +56,21 @@ class DisasterRepositoryImpl @Inject constructor(
             val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
             if (response.isSuccessful) {
                 val content = response.body()?.choices?.firstOrNull()?.message?.content
-                content?.let { parseDisasterResponse(it, 1) }?.firstOrNull()?.let { Result.success(it) }
-                    ?: Result.failure(Exception("응답을 파싱할 수 없습니다"))
+                content?.let { parseDisasterResponse(it, 1) }?.firstOrNull()?.let {
+                    Resource.Success(it)
+                } ?: Resource.Error("응답을 파싱할 수 없습니다")
             } else {
-                Result.failure(Exception("API 호출 실패: ${response.code()}"))
+                Resource.Error("API 호출 실패: ${response.code()}")
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Resource.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
         }
     }
 
     private fun getSystemPrompt(): String {
         return """
-        당신은 재난 안전 전문가입니다. 사용자의 요청에 따라 재난 대처 방법을 정확하고 실용적으로 제공해야 합니다.
+        당신은 재난 안전 전문가입니다. 
+        한국 정부의 재난 대응 매뉴얼을 기준으로 사용자의 질문에 실용적인 재난 대응법을 JSON 형식으로 제공합니다.
         
         응답 형식:
         1. 반드시 JSON 형식으로만 응답하세요.
@@ -85,15 +89,15 @@ class DisasterRepositoryImpl @Inject constructor(
                 "단계별 대처 방법 4",
                 "단계별 대처 방법 5"
               ],
-//              "emergencyContact": "긴급연락처 정보"
             }
           ]
         }
         
         3. 모든 정보는 한국어로 제공하세요.
         4. 단계별 대처방법은 5개 이내로 제한하세요.
-        5. 단계별 대처방법은 실제 상황에서 실용적으로 활용할 수 있는 내용으로 구성하세요.
-        6. title은 "재난명" 빌셍시 대처방법 의 구조로 응답하세요.
+        5. 단계별 대처방법은 실제 상황에서 실용적으로 활용할 수 있는 내용으로, 30글자 이내로 구성하세요.
+        6. title은 "'재난명' 빌셍시 대처방법" 의 구조로 응답하세요.
+        7. 대처방법은 "~합니다" 로 끝나도록하세요.
         """.trimIndent()
     }
 

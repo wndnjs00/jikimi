@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_pink"
     android:orientation="vertical"
-    tools:context=".presentation.fragment.CommonsenseFragment">
+    tools:context=".presentation.fragment.DisasterFragment">
 
     <!-- 상단 헤더 -->
     <LinearLayout

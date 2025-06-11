@@ -80,18 +80,18 @@
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
-        android:id="@+id/commonsenseFragment"
-        android:name="com.myapp.jikimi.presentation.fragment.CommonsenseFragment"
+        android:id="@+id/disasterFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.DisasterFragment"
         android:label="fragment_commonsense"
-        tools:layout="@layout/fragment_commonsense" >
+        tools:layout="@layout/fragment_disaster" >
         <action
-            android:id="@+id/action_commonsenseFragment_to_commonsenseDetailFragment"
-            app:destination="@id/commonsenseDetailFragment" />
+            android:id="@+id/action_disasterFragment_to_cdisasterDetailFragment"
+            app:destination="@id/disasterDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/commonsenseDetailFragment"
-        android:name="com.myapp.jikimi.presentation.fragment.CommonsenseDetailFragment"
-        android:label="fragment_commonsense_detail"
-        tools:layout="@layout/fragment_commonsense_detail" />
+        android:id="@+id/disasterDetailFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.DisasterDetailFragment"
+        android:label="fragment_disaster_detail"
+        tools:layout="@layout/fragment_disaster_detail" />
 
 </navigation>

@@ -6,7 +6,7 @@
         android:title="대피"/>
 
     <item
-        android:id="@+id/commonsenseFragment"
+        android:id="@+id/disasterFragment"
         android:icon="@drawable/ic_nav_commonsense"
         android:title="대처방법"/>
 
