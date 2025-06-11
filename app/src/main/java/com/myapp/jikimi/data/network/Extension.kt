@@ -1,5 +1,6 @@
 package com.myapp.jikimi.data.network
 
+import android.content.Context
 import kotlin.math.*
 import com.naver.maps.geometry.LatLng
 
@@ -20,3 +21,8 @@ fun LatLng.haversineDistance(other: LatLng): Double {
 
 // Double의 확장 함수로 도 단위를 라디안으로 변환
 fun Double.toRadians(): Double = Math.toRadians(this)
+
+
+// dp 단위를 픽셀로 변환하는 유틸 함수
+fun Int.dpToPx(context: Context): Int =
+    (this * context.resources.displayMetrics.density).toInt()
