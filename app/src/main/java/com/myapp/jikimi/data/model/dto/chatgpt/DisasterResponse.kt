@@ -4,7 +4,5 @@ data class DisasterResponse(
     val title: String = "",
     val category: String= "",
     val riskLevel: String= "",
-//    val shortDescription: String= "",
     val detailedSteps: List<String> = emptyList(),
-//    val emergencyContact: String = "",
 )
