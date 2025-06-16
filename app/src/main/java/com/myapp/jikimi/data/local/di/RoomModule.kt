@@ -15,6 +15,7 @@ import com.myapp.jikimi.data.repository.Post.PostRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.myapp.jikimi.data.local.dao.DisasterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,7 +35,7 @@ object RoomModule {
         AppDatabase::class.java,
         "app.db"
     )
-        .addMigrations(MIFGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4,MIGRATION_4_5)
+        .addMigrations(MIFGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4,MIGRATION_4_5, MIGRATION_5_6)
         .build()
 
     @Singleton
@@ -42,6 +43,12 @@ object RoomModule {
     fun provideShelterDao(
         appDatabase: AppDatabase
     ) : ShelterDao = appDatabase.shelterDao()
+
+    @Provides
+    fun provideDisasterDao(
+        appDatabase: AppDatabase
+    ): DisasterDao = appDatabase.disasterDao()
+
 
     private val MIFGRATION_1_2 = object : Migration(1, 2){
         override fun migrate(database: SupportSQLiteDatabase){
@@ -72,6 +79,23 @@ object RoomModule {
         }
     }
 
+    // DisasterEntity 테이블 추가를 위한 마이그레이션
+    private val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("""
+                CREATE TABLE IF NOT EXISTS disaster_tips (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    title TEXT NOT NULL,
+                    subtitle TEXT NOT NULL,
+                    category TEXT NOT NULL,
+                    riskLevel TEXT NOT NULL,
+                    detailedSteps TEXT NOT NULL,
+                    createdAt INTEGER NOT NULL,
+                    type TEXT NOT NULL
+                )
+            """)
+        }
+    }
 
     @Provides
     @Singleton
