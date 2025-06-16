@@ -136,13 +136,6 @@ class CreatePostFragment : Fragment() {
         binding.rvImages.apply {
             adapter = imageAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-            // 아이템 간 간격 추가 (선택사항)
-//            addItemDecoration(object : RecyclerView.ItemDecoration() {
-//                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-//                    outRect.right = resources.getDimensionPixelSize(R.dimen.item_margin) // 적절한 마진값 리소스 필요
-//                }
-//            })
         }
     }
 

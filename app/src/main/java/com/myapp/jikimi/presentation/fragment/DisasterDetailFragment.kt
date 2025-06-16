@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.myapp.jikimi.R
 import com.myapp.jikimi.data.network.dpToPx
 import com.myapp.jikimi.databinding.FragmentDisasterDetailBinding
+import com.myapp.jikimi.presentation.activity.MainActivity
 
 class DisasterDetailFragment : Fragment() {
     private val binding get() = _binding!!
@@ -47,6 +48,8 @@ class DisasterDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // BottomNavigationView 숨기기
+        (activity as? MainActivity)?.hideBottomNavigation()
         setupUI()
         setupBackButton()
     }
@@ -126,5 +129,7 @@ class DisasterDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        (activity as MainActivity)?.showBottomNavigation()
     }
 }
