@@ -70,7 +70,7 @@ class DisasterRepositoryImpl @Inject constructor(
     private fun getSystemPrompt(): String {
         return """
         당신은 재난 안전 전문가입니다.
-        한국 정부의 재난 대처 매뉴얼을 기준으로 사용자의 질문에 실제로 해당재난이 일어났을때의 대처방법을 JSON 형식으로 제공합니다.
+        한국정부의 재난 대피 매뉴얼을 기준으로, 해당 재난발생시 즉시 취해야할 행동가이드를 JSON 형식으로 제공합니다.
         
         응답 형식:
         1. 반드시 JSON 형식으로만 응답하세요.
@@ -80,6 +80,7 @@ class DisasterRepositoryImpl @Inject constructor(
           "disasters": [
             {
               "title": "재난 이름",
+              "subtitle": "재난상황과 관련한 한줄 설명",
               "category": "자연재해/위험도",
               "riskLevel": "낮음/보통/높음",
               "detailedSteps": [
@@ -96,15 +97,18 @@ class DisasterRepositoryImpl @Inject constructor(
         3. 모든 정보는 한국어로 제공하세요.
         4. 단계별 대처방법은 5개 이내로 제한하세요.
         5. 단계별 대처방법은 실제 상황에서 실질적으로 대처할 수 있는 내용으로, 30글자 이내로 구성하세요.
-        6. title은 "'재난명' 대처방법" 의 구조로 응답하세요.
-        7. 대처방법은 "~합니다" 로 끝나도록하세요.
+        6. 단계별 대처방법은 최대한 구체적이고 정확한 정보로 제공하세요. (사람이 할수없는 '순간이동'같은 행동은 제공하지마세요.)
+        7. title은 "'재난명' 대처방법" 의 구조로 응답하세요.
+        8. 대처방법은 "합니다" 로 끝나도록하세요.
+        9. 위험도는 사망률이 20%이하면 낮음, 40%이하면 보통, 90%이하면 높음으로 구분하세요.
+        10. subtitle은 20글자 이내로 표시하고, 반드시 명사로 끝나도록하세요.
+        11. subtitle 구성방식에 대한 예시: 재난상황 = "지진", subtitle ="갑작스런 지진 상황에서의 생존가이드"
         """.trimIndent()
     }
 
     private fun createTodayDisasterPrompt(): String {
         return """
         한국에서 발생할 수 있는 주요 재난 3가지에 대한 대처방법을 랜덤으로 제공해주세요.
-        현재 계절과 날씨를 고려하여 자주 발생할 것 같은 재난으로 선정해주세요.
         각각 서로 다른 카테고리의 재난으로 구성해주세요.
         """.trimIndent()
     }
@@ -112,9 +116,7 @@ class DisasterRepositoryImpl @Inject constructor(
     private fun createSearchPrompt(query: String): String {
         return """
         다음 키워드와 관련된 재난 대처방법 1개를 제공해주세요: "$query"
-        
-        키워드와 가장 관련성이 높은 재난 상황을 선택하여 상세한 대처방법을 알려주세요.
-        실제 상황에서 바로 활용할 수 있는 구체적이고 실용적인 내용으로 구성해주세요.
+        getSystemPrompt()에서 명령한 JSON형식과 똑같이 제공해주세요.
         """.trimIndent()
     }
 

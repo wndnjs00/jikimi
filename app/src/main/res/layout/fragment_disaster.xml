@@ -37,7 +37,7 @@
             android:drawableStart="@drawable/search_img"
             android:drawableEnd="@drawable/close_img"
             android:drawablePadding="8dp"
-            android:hint="AI에게 대처방법 물어보기.(예.가스누출,아파트 화재..)"
+            android:hint="AI에게 대처방법 물어보기.(예.지진,아파트 화재..)"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1"
@@ -125,7 +125,46 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             tools:listitem="@layout/item_disaster"
-            tools:itemCount="3"/>
+            tools:itemCount="3"
+            android:visibility="visible"/>
+
+        <!-- 로딩 레이아웃 -->
+        <LinearLayout
+            android:id="@+id/loadingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#F5F3FF"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- 로딩 스피너 -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="24dp"
+                android:indeterminateTint="#8B5CF6" />
+
+            <!-- AI가 분석 중... 텍스트 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="AI가 분석 중..."
+                android:textColor="#8B5CF6"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- 설명 텍스트 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="맞춤형 대처방안을 생성하고 있습니다"
+                android:textColor="#6B7280"
+                android:textSize="14sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

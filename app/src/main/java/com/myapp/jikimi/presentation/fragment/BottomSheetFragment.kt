@@ -102,7 +102,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 }
             }
 
-            // Get the primary address from outdoor shelter
             val primaryAddress = when {
                 !outdoorShelter.eqkAcmdfcltyAdres.isNullOrEmpty() -> outdoorShelter.eqkAcmdfcltyAdres
                 !outdoorShelter.rnDtlAdres.isNullOrEmpty() -> outdoorShelter.rnDtlAdres

@@ -105,6 +105,15 @@
 
                         </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/disaster_subtitle_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="갑작스런 지진 상황에서의 생존 가이드"
+                            android:textSize="14sp"
+                            android:textColor="@color/dark_gray"
+                            android:layout_marginTop="8dp" />
+
                     </LinearLayout>
 
                 </LinearLayout>
@@ -408,7 +417,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="종합상황실 (제보신고)"
+                                android:text="긴급신고"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 android:textColor="@color/black" />

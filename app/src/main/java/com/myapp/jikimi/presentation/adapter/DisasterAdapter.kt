@@ -36,7 +36,8 @@ class DisasterAdapter(
             with(binding) {
                 tvDisasterTitle.text = disaster.title
                 tvDisasterCategory.text = disaster.category
-                tvRiskLevel.text = disaster.riskLevel
+                disasterSubtitleTv.text = disaster.subtitle
+                tvRiskLevel.text = "위험도 :${disaster.riskLevel}"
 
                 // 위험도에 따른 색상 설정
                 val riskColor = when (disaster.riskLevel) {

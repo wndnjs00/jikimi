@@ -71,6 +71,15 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/disaster_subtitle_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="갑작스런 지진 상황에서의 생존가이드"
+            android:textColor="@color/dark_gray"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+
         <!-- 태그들과 화살표 -->
         <LinearLayout
             android:layout_width="match_parent"
