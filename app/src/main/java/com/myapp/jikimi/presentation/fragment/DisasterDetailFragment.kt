@@ -20,6 +20,7 @@ class DisasterDetailFragment : Fragment() {
     private var _binding: FragmentDisasterDetailBinding? = null
 
     private var disasterTitle: String? = null
+    private var disasterSubTitle: String? = null
     private var disasterCategory: String? = null
     private var disasterRiskLevel: String? = null
     private var disasterSteps: ArrayList<String>? = null
@@ -28,6 +29,7 @@ class DisasterDetailFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             disasterTitle = it.getString("disaster_title")
+            disasterSubTitle = it.getString("disaster_subtitle")
             disasterCategory = it.getString("disaster_category")
             disasterRiskLevel = it.getString("disaster_risk_level")
             disasterSteps = it.getStringArrayList("disaster_steps")
@@ -52,19 +54,11 @@ class DisasterDetailFragment : Fragment() {
     private fun setupUI() {
         // 제목 설정
         binding.disasterTitleTv.text = disasterTitle
+        binding.disasterSubtitleTv.text = disasterSubTitle
 
         // 카테고리와 위험도 설정
         binding.disasterCategoryTv.text = disasterCategory
         binding.riskLevelTv.text = disasterRiskLevel
-
-        // 위험도에 따른 색상 설정
-        val riskColor = when (disasterRiskLevel) {
-            "낮음" -> android.R.color.holo_green_light
-            "보통" -> android.R.color.holo_orange_light
-            "높음" -> android.R.color.white
-            else -> android.R.color.darker_gray
-        }
-        binding.riskLevelTv.setTextColor(requireContext().getColor(riskColor))
 
         // 상세 대처방안 설정
         setupDetailedSteps()
