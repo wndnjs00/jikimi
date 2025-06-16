@@ -1,6 +1,10 @@
 package com.myapp.jikimi.data.network
 
 import android.content.Context
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.myapp.jikimi.data.model.dto.chatgpt.DisasterResponse
+import com.myapp.jikimi.data.model.entity.DisasterEntity
 import kotlin.math.*
 import com.naver.maps.geometry.LatLng
 
@@ -26,3 +30,35 @@ fun Double.toRadians(): Double = Math.toRadians(this)
 // dp 단위를 픽셀로 변환하는 유틸 함수
 fun Int.dpToPx(context: Context): Int =
     (this * context.resources.displayMetrics.density).toInt()
+
+
+
+
+fun DisasterResponse.toEntity(type: String): DisasterEntity {
+    return DisasterEntity(
+        id = 0, // auto-increment이므로 0으로 설정
+        title = title,
+        subtitle = subtitle,
+        category = category,
+        riskLevel = riskLevel,
+        detailedSteps = Gson().toJson(detailedSteps),
+        createdAt = System.currentTimeMillis(),
+        type = type
+    )
+}
+
+fun DisasterEntity.toDisasterResponse(): DisasterResponse {
+    val steps = try {
+        Gson().fromJson(detailedSteps, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+    } catch (e: Exception) {
+        emptyList<String>()
+    }
+
+    return DisasterResponse(
+        title = title,
+        subtitle = subtitle,
+        category = category,
+        riskLevel = riskLevel,
+        detailedSteps = steps
+    )
+}

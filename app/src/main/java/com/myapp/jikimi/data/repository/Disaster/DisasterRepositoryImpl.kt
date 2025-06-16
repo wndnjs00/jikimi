@@ -3,70 +3,152 @@ package com.myapp.jikimi.data.repository.Disaster
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.myapp.jikimi.Resource
+import com.myapp.jikimi.data.local.dao.DisasterDao
 import com.myapp.jikimi.data.model.dto.chatgpt.ChatGPTRequest
 import com.myapp.jikimi.data.model.dto.chatgpt.DisasterResponse
 import com.myapp.jikimi.data.model.dto.chatgpt.Message
 import com.myapp.jikimi.data.network.CHATGPT_API_SERVICE_KEY
 import com.myapp.jikimi.data.network.service.ChatGPTApiService
+import com.myapp.jikimi.data.network.toDisasterResponse
+import com.myapp.jikimi.data.network.toEntity
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class DisasterRepositoryImpl @Inject constructor(
-    @Named("ChatGPTService") private val apiService: ChatGPTApiService
+    @Named("ChatGPTService") private val apiService: ChatGPTApiService,
+    private val disasterDao: DisasterDao
 ) : DisasterRepository {
-
     private val gson = Gson()
+
+    companion object {
+        private const val CACHE_VALIDITY_DURATION = 7 * 24 * 60 * 60 * 1000L // 7일
+        private const val CLEANUP_THRESHOLD = 30 * 24 * 60 * 60 * 1000L // 30일
+    }
 
     override suspend fun getTodayDisasterTips(): Resource<List<DisasterResponse>> {
         return try {
-            val prompt = createTodayDisasterPrompt()
-            val request = ChatGPTRequest(
-                messages = listOf(
-                    Message("system", getSystemPrompt()),
-                    Message("user", prompt)
-                )
-            )
+            // 1. 먼저 로컬 DB에서 데이터 확인
+            val lastUpdateTime = disasterDao.getLastUpdateTime()
+            val currentTime = System.currentTimeMillis()
 
-            val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
-            if (response.isSuccessful) {
-                val content = response.body()?.choices?.firstOrNull()?.message?.content
-                content?.let { parseDisasterResponse(it, 3) }?.let {
-                    Resource.Success(it)
-                } ?: Resource.Error("응답을 파싱할 수 없습니다")
-            } else {
-                Resource.Error("API 호출 실패: ${response.code()}")
+            // 2. 캐시가 유효한지 확인 (7일 이내)
+            val isCacheValid = lastUpdateTime?.let {
+                currentTime - it < CACHE_VALIDITY_DURATION
+            } ?: false
+
+            if (isCacheValid) {
+                // 캐시된 데이터 반환
+                val cachedData = disasterDao.getTodayDisasters()
+                if (cachedData.isNotEmpty()) {
+                    val disasters = cachedData.map { it.toDisasterResponse() }
+                    return Resource.Success(disasters)
+                }
             }
+
+            // 3. 캐시가 없거나 만료된 경우 API 호출
+            val apiResult = fetchTodayDisastersFromApi()
+            if (apiResult is Resource.Success) {
+                // 4. API 결과를 DB에 저장
+                apiResult.data?.let { saveTodayDisastersToDb(it) }
+
+                // 5. 오래된 데이터 정리
+                cleanupOldData()
+            }
+
+            apiResult
         } catch (e: Exception) {
-            Resource.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
+            // API 호출 실패시 캐시된 데이터 반환
+            val cachedData = disasterDao.getTodayDisasters()
+            if (cachedData.isNotEmpty()) {
+                val disasters = cachedData.map { it.toDisasterResponse() }
+                Resource.Success(disasters)
+            } else {
+                Resource.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
+            }
         }
     }
 
     override suspend fun searchDisasterTips(query: String): Resource<DisasterResponse> {
         return try {
-            val prompt = createSearchPrompt(query)
-            val request = ChatGPTRequest(
-                messages = listOf(
-                    Message("system", getSystemPrompt()),
-                    Message("user", prompt)
-                )
-            )
-
-            val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
-            if (response.isSuccessful) {
-                val content = response.body()?.choices?.firstOrNull()?.message?.content
-                content?.let { parseDisasterResponse(it, 1) }?.firstOrNull()?.let {
-                    Resource.Success(it)
-                } ?: Resource.Error("응답을 파싱할 수 없습니다")
-            } else {
-                Resource.Error("API 호출 실패: ${response.code()}")
+            // 1. 먼저 로컬 DB에서 검색
+            val cachedResult = disasterDao.searchDisaster(query)
+            if (cachedResult != null) {
+                return Resource.Success(cachedResult.toDisasterResponse())
             }
+
+            // 2. 로컬에 없으면 API 호출
+            val apiResult = fetchSearchResultFromApi(query)
+            if (apiResult is Resource.Success) {
+                // 3. 검색 결과를 DB에 저장
+                val entity = apiResult.data?.toEntity("search")
+                entity?.let { disasterDao.insertDisaster(it) }
+            }
+            apiResult
         } catch (e: Exception) {
             Resource.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
         }
     }
 
+    private suspend fun fetchTodayDisastersFromApi(): Resource<List<DisasterResponse>> {
+        val prompt = createTodayDisasterPrompt()
+        val request = ChatGPTRequest(
+            messages = listOf(
+                Message("system", getSystemPrompt()),
+                Message("user", prompt)
+            )
+        )
+
+        val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
+        return if (response.isSuccessful) {
+            val content = response.body()?.choices?.firstOrNull()?.message?.content
+            content?.let { parseDisasterResponse(it, 3) }?.let {
+                Resource.Success(it)
+            } ?: Resource.Error("응답을 파싱할 수 없습니다")
+        } else {
+            Resource.Error("API 호출 실패: ${response.code()}")
+        }
+    }
+
+    private suspend fun fetchSearchResultFromApi(query: String): Resource<DisasterResponse> {
+        val prompt = createSearchPrompt(query)
+        val request = ChatGPTRequest(
+            messages = listOf(
+                Message("system", getSystemPrompt()),
+                Message("user", prompt)
+            )
+        )
+
+        val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
+        return if (response.isSuccessful) {
+            val content = response.body()?.choices?.firstOrNull()?.message?.content
+            val parsedResponse = content?.let { parseDisasterResponse(it, 1) }
+            val firstDisaster = parsedResponse?.firstOrNull()
+
+            firstDisaster?.let {
+                Resource.Success(it)
+            } ?: Resource.Error("응답을 파싱할 수 없습니다")
+        } else {
+            Resource.Error("API 호출 실패: ${response.code()}")
+        }
+    }
+
+    private suspend fun saveTodayDisastersToDb(disasters: List<DisasterResponse>) {
+        // 기존 오늘의 재난 데이터 삭제
+        disasterDao.clearTodayDisasters()
+
+        // 새로운 데이터 저장
+        val entities = disasters.map { it.toEntity("today") }
+        disasterDao.insertDisasters(entities)
+    }
+
+    private suspend fun cleanupOldData() {
+        val cleanupThreshold = System.currentTimeMillis() - CLEANUP_THRESHOLD
+        disasterDao.deleteOldData(cleanupThreshold)
+    }
+
+    // 기존 메서드들 (변경 없음)
     private fun getSystemPrompt(): String {
         return """
         당신은 재난 안전 전문가입니다.
