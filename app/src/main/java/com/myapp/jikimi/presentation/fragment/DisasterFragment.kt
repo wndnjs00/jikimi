@@ -77,15 +77,18 @@ class DisasterFragment : Fragment() {
                 when (resource) {
                     is Resource.Loading -> {
                         showLoading(true)
+                        showEmptyResult(false)
                     }
 
                     is Resource.Success -> {
                         showLoading(false)
+                        showEmptyResult(false)
                         disasterAdapter.submitList(resource.data)
                     }
 
                     is Resource.Error -> {
                         showLoading(false)
+                        showEmptyResult(false)
                         Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -99,13 +102,16 @@ class DisasterFragment : Fragment() {
                 when (resource) {
                     is Resource.Loading -> {
                         showLoading(true)
+                        showEmptyResult(false)
                     }
                     is Resource.Success -> {
                         showLoading(false)
+                        showEmptyResult(false)
                         disasterAdapter.submitList(listOf(resource.data))
                     }
                     is Resource.Error -> {
                         showLoading(false)
+                        showEmptyResult(false)
                         Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
                     }
                     null -> {
@@ -120,6 +126,17 @@ class DisasterFragment : Fragment() {
                 }
             }
         }
+            // 검색 결과 없음 상태 관찰
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.isSearchEmpty.collect { isEmpty ->
+                    if (isEmpty) {
+                        showLoading(false)
+                        showEmptyResult(true)
+                    }else{
+                        showEmptyResult(false)
+                    }
+                }
+            }
     }
 
 
@@ -203,6 +220,16 @@ class DisasterFragment : Fragment() {
         } else {
             binding.loadingLayout.visibility = View.GONE
             binding.recyclerView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showEmptyResult(isEmpty: Boolean) {
+        if (isEmpty) {
+            binding.emptyResultLayout.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+            binding.loadingLayout.visibility = View.GONE
+        } else {
+            binding.emptyResultLayout.visibility = View.GONE
         }
     }
 
