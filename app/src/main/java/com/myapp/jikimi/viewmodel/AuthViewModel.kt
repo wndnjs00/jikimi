@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.User
-import com.myapp.jikimi.data.repository.AuthRepository
+import com.myapp.jikimi.data.repository.Auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -3,12 +3,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="main_red">#FF8D74</color>
+    <color name="background_red">#FFC4B7</color>
     <color name="gray">#B3B3B3</color>
     <color name="red">#FF4F33</color>
     <color name="line_gray">#E9E9E9</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="dark_gray">#666666</color>
+    <color name="dark_red">#E53E3E</color>
     <color name="blue">#B7CFFF</color>
     <color name="dark_blue">#0053FF</color>
+    <color name="shelter_blue">#3733FF</color>
+    <color name="dark_blue2">#5A67D8</color>
     <color name="corner_stroke_gray">#DEDEDE</color>
     <color name="chip_stroke_gray">#C8C7C7</color>
     <color name="chip_text_not_clicked">#606060</color>
@@ -17,4 +22,12 @@
     <color name="no_gray">#A5A5A5</color>
     <color name="comment_gray">#888888</color>
     <color name="second_gray">#ABABAB</color>
+    <color name="line_grays">#E7E7E7</color>
+    <color name="disaster_purple_gradation">#BE33FF</color>
+    <color name="purple">#8B5CF6</color>
+    <color name="white_purple">#E8D5FF</color>
+    <color name="background_purple">#F8F0FF</color>
+    <color name="risk_level_orange">#FF9800</color>
+    <color name="background_orange">#FFF8E1</color>
+    <color name="bottomsheet_gray">#CACACA</color>
 </resources>

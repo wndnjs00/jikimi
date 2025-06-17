@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.EvacuationMessage
 
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.EvacuationMessage
@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class EvacuationMessageRepositoryImpl @Inject constructor(
     @Named("EvacuationMessageService") private val evacuationMessageService: EvacuationMessageService
-) : EvacuationMessageRepository{
+) : EvacuationMessageRepository {
 
     override suspend fun getLatestEvacuationMessage(date: String): Resource<EvacuationMessage> {
         return try {

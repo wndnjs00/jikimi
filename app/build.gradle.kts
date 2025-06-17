@@ -26,7 +26,7 @@ android {
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        addManifestPlaceholders(mapOf("NAVERMAP_CLIENT_ID" to getApiKey("NAVERMAP_CLIENT_ID")))
+        addManifestPlaceholders(mapOf("NCP_KEY_ID" to getApiKey("NCP_KEY_ID")))
         buildConfigField("String", "OUTDOOR_EVACUATION_API_BASE", getApiKey("OUTDOOR_EVACUATION_API_BASE"))
         buildConfigField("String", "OUTDOOR_EVACUATION_API", getApiKey("OUTDOOR_EVACUATION_API"))
         buildConfigField("String", "OUTDOOR_EVACUATION_SERVICE_KEY", getApiKey("OUTDOOR_EVACUATION_SERVICE_KEY"))
@@ -36,6 +36,9 @@ android {
         buildConfigField("String", "EVACUATION_MESSAGE_API_BASE", getApiKey("EVACUATION_MESSAGE_API_BASE"))
         buildConfigField("String", "EVACUATION_MESSAGE_API", getApiKey("EVACUATION_MESSAGE_API"))
         buildConfigField("String", "EVACUATION_MESSAGE_SERVICE_KEY", getApiKey("EVACUATION_MESSAGE_SERVICE_KEY"))
+        buildConfigField("String", "CHATGPT_API_BASE", getApiKey("CHATGPT_API_BASE"))
+        buildConfigField("String", "CHATGPT_API", getApiKey("CHATGPT_API"))
+        buildConfigField("String", "CHATGPT_API_SERVICE_KEY", getApiKey("CHATGPT_API_SERVICE_KEY"))
     }
 
     packaging {

@@ -237,7 +237,7 @@ class DetailFragment : Fragment() {
                                 is Resource.Success -> {
                                     binding.progressBar.visibility = View.GONE
                                     (activity as MainActivity).showToast("게시물이 삭제되었습니다")
-                                    findNavController().navigate(R.id.commonsenseFragment)
+                                    findNavController().navigate(R.id.communityFragment)
 //                                    (activity as MainActivity).showBottomNavigation()
                                     // 상태 리셋
                                     postViewModel.resetDeletePostStatus()

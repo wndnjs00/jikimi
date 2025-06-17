@@ -1,4 +1,4 @@
-package com.myapp.jikimi.data.repository
+package com.myapp.jikimi.data.repository.IndoorEvacuation
 
 import android.content.Context
 import android.util.Log
@@ -23,7 +23,7 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
     @Named("IndoorEvacuationService") private val indoorEvacuationService: IndoorEvacuationService,
     private val shelterDao: ShelterDao,
     @ApplicationContext private val context: Context
-) : IndoorEvacuationRepository{
+) : IndoorEvacuationRepository {
 
     private val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
@@ -45,7 +45,7 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
             val dbCount = shelterDao.getShelterCountByType("임시주거시설") //"야외대피장소"의 대피소수
 
             val currentTime = System.currentTimeMillis()
-            // 마지막 업데이트 이후 30일이 지났는지 or DB에 저장된 데이터수가 API에서 가져온 전체데이터의 90% 이상인지
+            // 마지막 업데이트 이후 90일이 지났는지 or DB에 저장된 데이터수가 API에서 가져온 전체데이터의 90% 이상인지
             val needsUpdate = currentTime - lastUpdate > UPDATE_INTERVAL || dbCount < totalCachedCount * 0.9
 
             // 만족하지않으면(갱신필요하지 않으면)
