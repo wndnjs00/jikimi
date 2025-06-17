@@ -25,6 +25,10 @@ class DisasterViewModel @Inject constructor(
     private val _searchResult = MutableStateFlow<Resource<DisasterResponse>?>(null)
     val searchResult: StateFlow<Resource<DisasterResponse>?> = _searchResult.asStateFlow()
 
+    // 검색 결과가 없음을 나타내는 상태 추가
+    private val _isSearchEmpty = MutableStateFlow(false)
+    val isSearchEmpty: StateFlow<Boolean> = _isSearchEmpty.asStateFlow()
+
     init {
         loadTodayDisasters()
     }
@@ -40,15 +44,25 @@ class DisasterViewModel @Inject constructor(
 
     fun searchDisaster(query: String) {
         if (query.isBlank()) {
-            _searchResult.value = null // 초기 상태로 리셋
+            _searchResult.value = null
+            _isSearchEmpty.value = false
             return
         }
 
         viewModelScope.launch {
             _searchResult.value = Resource.Loading()
+            _isSearchEmpty.value = false
 
             val result = repository.searchDisasterTips(query)
-            _searchResult.value = result
+
+            if (result is Resource.Error && result.message == "재난과 관련된 키워드를 입력해주세요") {
+                // 재난 관련 키워드가 아닌 경우
+                _searchResult.value = null
+                _isSearchEmpty.value = true
+            } else {
+                _searchResult.value = result
+                _isSearchEmpty.value = false
+            }
         }
     }
 

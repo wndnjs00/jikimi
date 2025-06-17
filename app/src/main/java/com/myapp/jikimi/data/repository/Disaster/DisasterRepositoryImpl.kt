@@ -70,18 +70,52 @@ class DisasterRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun validateDisasterKeyword(query: String): Resource<Boolean> {
+        return try {
+            val prompt = createValidationPrompt(query)
+            val request = ChatGPTRequest(
+                messages = listOf(
+                    Message("system", getValidationSystemPrompt()),
+                    Message("user", prompt)
+                )
+            )
+
+            val response = apiService.getChatCompletion("Bearer $CHATGPT_API_SERVICE_KEY", request)
+            if (response.isSuccessful) {
+                val content = response.body()?.choices?.firstOrNull()?.message?.content?.trim()
+                val isValid = content?.equals("true", ignoreCase = true) == true
+                Resource.Success(isValid)
+            } else {
+                Resource.Error("키워드 검증 실패: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "키워드 검증 중 오류가 발생했습니다")
+        }
+    }
+
     override suspend fun searchDisasterTips(query: String): Resource<DisasterResponse> {
         return try {
-            // 1. 먼저 로컬 DB에서 검색
+            // 1. 먼저 재난 관련 키워드인지 검증
+            val validationResult = validateDisasterKeyword(query)
+            if (validationResult is Resource.Error) {
+                return Resource.Error(validationResult.message ?: "키워드 검증 실패")
+            }
+
+            val isValidKeyword = (validationResult as? Resource.Success)?.data ?: false
+            if (!isValidKeyword) {
+                return Resource.Error("재난과 관련된 키워드를 입력해주세요")
+            }
+
+            // 2. 로컬 DB에서 검색
             val cachedResult = disasterDao.searchDisaster(query)
             if (cachedResult != null) {
                 return Resource.Success(cachedResult.toDisasterResponse())
             }
 
-            // 2. 로컬에 없으면 API 호출
+            // 3. 로컬에 없으면 API 호출
             val apiResult = fetchSearchResultFromApi(query)
             if (apiResult is Resource.Success) {
-                // 3. 검색 결과를 DB에 저장
+                // 4. 검색 결과를 DB에 저장
                 val entity = apiResult.data?.toEntity("search")
                 entity?.let { disasterDao.insertDisaster(it) }
             }
@@ -148,7 +182,25 @@ class DisasterRepositoryImpl @Inject constructor(
         disasterDao.deleteOldData(cleanupThreshold)
     }
 
-    // 기존 메서드들 (변경 없음)
+    private fun getValidationSystemPrompt(): String {
+        return """
+        당신은 재난 관련 키워드 검증 전문가입니다.
+        사용자가 입력한 키워드가 재난, 안전, 응급상황과 관련된 내용인지 판단해주세요.
+        
+        재난 관련 키워드 예시:
+        - 자연재해: 지진, 태풍, 홍수, 산사태, 가뭄, 폭설, 화산폭발 등
+        - 인공재난: 화재, 가스누출, 교통사고, 건물붕괴, 정전 등
+        - 사회재난: 테러, 감염병, 사이버 공격 등
+        - 응급상황: 응급처치, 구조, 대피, 안전 등
+        
+        응답 규칙:
+        1. 재난과 관련된 키워드라면 "true"만 응답하세요.
+        2. 재난과 관련없는 키워드라면 "false"만 응답하세요.
+        3. 다른 설명이나 문장은 절대 포함하지 마세요.
+        4. 오직 "true" 또는 "false"만 응답하세요.
+        """.trimIndent()
+    }
+
     private fun getSystemPrompt(): String {
         return """
         당신은 재난 안전 전문가입니다.
@@ -199,6 +251,12 @@ class DisasterRepositoryImpl @Inject constructor(
         return """
         다음 키워드와 관련된 재난 대처방법 1개를 제공해주세요: "$query"
         getSystemPrompt()에서 명령한 JSON형식과 똑같이 제공해주세요.
+        """.trimIndent()
+    }
+
+    private fun createValidationPrompt(query: String): String {
+        return """
+        다음 키워드가 재난, 안전, 응급상황과 관련된 내용인지 판단해주세요: "$query"
         """.trimIndent()
     }
 
