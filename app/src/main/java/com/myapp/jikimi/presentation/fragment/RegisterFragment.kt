@@ -56,7 +56,7 @@ class RegisterFragment : Fragment() {
                 viewModel.signupStatus.collect { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-//                            binding.progressBar.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.VISIBLE
                         }
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
@@ -65,10 +65,13 @@ class RegisterFragment : Fragment() {
                             findNavController().navigate(R.id.loginFragment)
                         }
                         is Resource.Error -> {
-                            binding.progressBar.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.GONE
                             (activity as MainActivity).showToast(resource.message ?: "회원가입 실패")
                         }
-                        else -> {}
+                        null ->{
+                            // 초기 상태
+                            binding.progressBar.visibility = View.GONE
+                        }
                     }
                 }
             }

@@ -99,6 +99,10 @@ class ProfileEditFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                             (activity as MainActivity).showToast(resource.message ?: "프로필을 불러오는데 실패했습니다")
                         }
+                        null->{
+                            // 초기 상태
+                            binding.progressBar.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -127,6 +131,10 @@ class ProfileEditFragment : Fragment() {
 //                            binding.btnSave.isEnabled = true
                             (activity as MainActivity).showToast(resource.message ?: "프로필 수정에 실패했습니다")
                         }
+                        null -> {
+                            // 초기 상태
+                            binding.progressBar.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -151,6 +159,10 @@ class ProfileEditFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                             (activity as MainActivity).showToast(resource.message ?: "로그아웃에 실패했습니다")
                         }
+                        null -> {
+                            // 초기 상태
+                            binding.progressBar.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -174,6 +186,10 @@ class ProfileEditFragment : Fragment() {
                         is Resource.Error -> {
                             binding.progressBar.visibility = View.GONE
                             (activity as MainActivity).showToast(resource.message ?: "회원탈퇴에 실패했습니다")
+                        }
+                        null->{
+                            // 초기 상태
+                            binding.progressBar.visibility = View.GONE
                         }
                     }
                 }
