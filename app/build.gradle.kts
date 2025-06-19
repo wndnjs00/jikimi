@@ -21,8 +21,8 @@ android {
         applicationId = "com.myapp.jikimi"
         minSdk = 24
         targetSdk = 36
-        versionCode = 9
-        versionName = "4.5"
+        versionCode = 10
+        versionName = "4.5.1"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.findNavController
+import com.myapp.jikimi.BuildConfig
 import com.myapp.jikimi.R
 import com.myapp.jikimi.databinding.FragmentLikeBottomSheetBinding
 import com.myapp.jikimi.databinding.FragmentSettingBinding
@@ -41,6 +42,7 @@ class SettingFragment : Fragment() {
         (activity as? MainActivity)?.hideBottomNavigation()
         setupBackButton()
         setupDarkModeSwitch()
+        setupAppVersion()
     }
 
     private fun setupBackButton() {
@@ -75,6 +77,11 @@ class SettingFragment : Fragment() {
 
         // 액티비티 재생성하여 테마 적용
         activity?.recreate()
+    }
+
+    private fun setupAppVersion() {
+        // BuildConfig에서 앱 버전 정보 가져오기
+        binding.appVersion.text = BuildConfig.VERSION_NAME
     }
 
     override fun onDestroyView() {
