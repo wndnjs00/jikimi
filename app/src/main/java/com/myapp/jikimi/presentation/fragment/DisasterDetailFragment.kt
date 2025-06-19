@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.myapp.jikimi.R
 import com.myapp.jikimi.data.network.dpToPx
@@ -108,7 +109,7 @@ class DisasterDetailFragment : Fragment() {
                     setMargins(16.dpToPx(context), 0, 0, 0)
                 }
                 text = stepText
-                setTextColor(Color.parseColor("#333333"))
+                setTextColor(ContextCompat.getColor(context, R.color.black))
                 textSize = 16f
             }
 

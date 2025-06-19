@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:text="재난상식"
-            android:textColor="@color/white"
+            android:textColor="@color/white_only"
             android:textSize="28sp"
             android:textStyle="bold" />
 
@@ -91,7 +91,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="AI 추천"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_only"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 

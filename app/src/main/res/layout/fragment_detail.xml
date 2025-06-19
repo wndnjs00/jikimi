@@ -29,7 +29,7 @@
                 android:layout_margin="8dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:background="@android:color/white">
+                    android:background="@color/white_background">
 
                     <!-- 카테고리 표시 (소통) -->
                     <TextView
@@ -87,7 +87,7 @@
                         android:layout_marginStart="8dp"
                         android:text="닉네임"
                         android:textSize="16sp"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/black"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/ivUserProfile"
@@ -114,7 +114,7 @@
                         android:layout_marginTop="16dp"
                         android:text="게시물 내용"
                         android:textSize="14sp"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/black"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/ivUserProfile" />
@@ -165,7 +165,7 @@
                 android:layout_marginTop="16dp"
                 android:text="댓글"
                 android:textSize="16sp"
-                android:textColor="@android:color/black"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardPost" />
@@ -205,7 +205,7 @@
         android:id="@+id/layoutAddComment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@color/white"
         android:elevation="8dp"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -231,7 +231,7 @@
                 android:layout_weight="1"
                 android:text="답글 작성 중"
                 android:textSize="14sp"
-                android:textColor="@android:color/black"/>
+                android:textColor="@color/black"/>
 
             <ImageButton
                 android:id="@+id/btnCancelReply"
@@ -256,7 +256,7 @@
             android:padding="12dp"
             android:textSize="14sp"
             android:background="@drawable/corner_like"
-            android:backgroundTint="@color/background_pink"
+            android:backgroundTint="@color/background_pinks"
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnSendComment"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/disaster_detail_background"
     tools:context=".presentation.fragment.DisasterDetailFragment">
 
     <!-- 상단 헤더 -->
@@ -22,14 +22,14 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_arrow_back"
-            app:tint="@android:color/white" />
+            app:tint="@color/white_only" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="재난대처방안"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white_only"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginStart="16dp" />
@@ -52,7 +52,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -97,7 +98,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="높음"
                                 android:textSize="12sp"
-                                android:textColor="@android:color/white"
+                                android:textColor="@color/white_only"
                                 android:background="@drawable/rounded_red_bg"
                                 android:paddingHorizontal="8dp"
                                 android:paddingVertical="2dp"
@@ -169,7 +170,7 @@
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -221,7 +222,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:text="1"
-                                android:textColor="@android:color/white"
+                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
                                 android:textStyle="bold"
@@ -230,11 +231,11 @@
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
                                 android:layout_weight="1"
                                 android:text="즉시 탁자나 책상 아래로 몸을 피하세요"
-                                android:textSize="16sp"
                                 android:textColor="@color/black"
-                                android:layout_marginStart="16dp" />
+                                android:textSize="16sp" />
 
                         </LinearLayout>
 
@@ -250,7 +251,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:text="2"
-                                android:textColor="@android:color/white"
+                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
                                 android:textStyle="bold"
@@ -279,7 +280,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:text="3"
-                                android:textColor="@android:color/white"
+                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
                                 android:textStyle="bold"
@@ -308,7 +309,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:text="4"
-                                android:textColor="@android:color/white"
+                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
                                 android:textStyle="bold"
@@ -337,7 +338,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:text="5"
-                                android:textColor="@android:color/white"
+                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
                                 android:textStyle="bold"
@@ -366,7 +367,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/background_pink">
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"

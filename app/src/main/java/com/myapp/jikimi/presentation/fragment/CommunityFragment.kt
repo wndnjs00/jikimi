@@ -184,6 +184,10 @@ class CommunityFragment : Fragment() {
                 findNavController().navigate(R.id.profileEditFragment)
             }
 
+            ivSetting.setOnClickListener {
+                findNavController().navigate(R.id.settingFragment)
+            }
+
             // 로딩아이콘 클릭 시 새로고침 기능 추가
             loadingIcon.setOnClickListener {
                 evacuationMessageViewModel.refreshEvacuationMessage()
