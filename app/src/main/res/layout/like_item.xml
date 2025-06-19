@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/fragment_margin_3"
             android:text="@string/shelter_tv"
-            android:textColor="@color/black"
+            android:textColor="#FF000000"
             android:textSize="@dimen/text_size_10"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

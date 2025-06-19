@@ -93,7 +93,7 @@
         android:id="@+id/search_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/white_background"
         android:layout_marginTop="16dp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/search_et"

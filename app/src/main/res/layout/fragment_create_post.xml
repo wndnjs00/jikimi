@@ -137,7 +137,7 @@
         android:background="@drawable/grey_stroke_corner"
         android:backgroundTint="@color/red"
         android:text="게시하기"
-        android:textColor="@color/white"
+        android:textColor="@color/white_only"
         android:textStyle="bold"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="AI"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_only"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
@@ -99,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="@color/background_pink"
+                    app:cardBackgroundColor="@color/background_pink_only"
                     android:layout_marginEnd="8dp">
 
                     <TextView
