@@ -18,22 +18,22 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _signupStatus = MutableStateFlow<Resource<User>>(Resource.Loading(null))
+    private val _signupStatus = MutableStateFlow<Resource<User>?>(null)
     val signupStatus = _signupStatus.asStateFlow()
 
-    private val _loginStatus = MutableStateFlow<Resource<User>>(Resource.Loading(null))
+    private val _loginStatus = MutableStateFlow<Resource<User>?>(null)
     val loginStatus = _loginStatus.asStateFlow()
 
-    private val _logoutStatus = MutableStateFlow<Resource<Boolean>>(Resource.Loading(null))
+    private val _logoutStatus = MutableStateFlow<Resource<Boolean>?>(null)
     val logoutStatus = _logoutStatus.asStateFlow()
 
-    private val _userProfile = MutableStateFlow<Resource<User>>(Resource.Loading(null))
+    private val _userProfile = MutableStateFlow<Resource<User>?>(null)
     val userProfile = _userProfile.asStateFlow()
 
-    private val _updateProfileStatus = MutableStateFlow<Resource<User>>(Resource.Loading(null))
+    private val _updateProfileStatus = MutableStateFlow<Resource<User>?>(null)
     val updateProfileStatus = _updateProfileStatus.asStateFlow()
 
-    private val _deleteAccountStatus = MutableStateFlow<Resource<Boolean>>(Resource.Loading(null))
+    private val _deleteAccountStatus = MutableStateFlow<Resource<Boolean>?>(null)
     val deleteAccountStatus = _deleteAccountStatus.asStateFlow()
 
 

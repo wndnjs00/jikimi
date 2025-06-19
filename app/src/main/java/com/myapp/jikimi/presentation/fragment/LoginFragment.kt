@@ -55,7 +55,7 @@ class LoginFragment : Fragment() {
                 viewModel.loginStatus.collect { resource ->
                     when (resource) {
                         is Resource.Loading -> {
-//                            binding.progressBar.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.VISIBLE
                         }
                         is Resource.Success -> {
                             binding.progressBar.visibility = View.GONE
@@ -72,10 +72,13 @@ class LoginFragment : Fragment() {
 
                         }
                         is Resource.Error -> {
-                            binding.progressBar.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.GONE
                             (activity as MainActivity).showToast(resource.message ?: "로그인 실패")
                         }
-                        else -> {} // StateFlow는 초기값이 필요하므로 null이나 기본 상태를 처리
+                        null -> {
+                            // 초기 상태
+                            binding.progressBar.visibility = View.GONE
+                        }
                     }
                 }
             }
