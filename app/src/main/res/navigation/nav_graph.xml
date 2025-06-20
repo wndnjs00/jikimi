@@ -93,5 +93,10 @@
         android:name="com.myapp.jikimi.presentation.fragment.DisasterDetailFragment"
         android:label="fragment_disaster_detail"
         tools:layout="@layout/fragment_disaster_detail" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.myapp.jikimi.presentation.fragment.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
 
 </navigation>

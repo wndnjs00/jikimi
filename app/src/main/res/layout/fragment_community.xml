@@ -29,7 +29,7 @@
         app:layout_constraintGuide_end="@dimen/fragment_margin_20" />
 
     <ImageView
-        android:id="@+id/setting_iv"
+        android:id="@+id/iv_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/setting"
@@ -158,6 +158,59 @@
 
     </LinearLayout>
 
+
+    <!-- 카테고리 칩 그룹 추가 -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupCategory"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:chipSpacingHorizontal="8dp"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintEnd_toEndOf="@+id/gl_end"
+        app:layout_constraintTop_toBottomOf="@+id/safety_linear">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAll"
+            style="@style/Widget.jikimi.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체"
+            android:checked="true" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipEmergency"
+            style="@style/Widget.jikimi.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="긴급" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipInfo"
+            style="@style/Widget.jikimi.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="정보" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCommunication"
+            style="@style/Widget.jikimi.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="소통" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipReport"
+            style="@style/Widget.jikimi.Chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="제보" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPosts"
         android:layout_width="0dp"
@@ -166,9 +219,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gl_end"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/safety_linear"
-        tools:listitem="@layout/item_post"
-        tools:itemCount="5"/>
+        app:layout_constraintTop_toBottomOf="@+id/chipGroupCategory"
+        tools:listitem="@layout/item_post" />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -179,7 +231,7 @@
         android:backgroundTint="@color/red"
         android:layout_marginBottom="30dp"
         android:src="@drawable/plus_img"
-        app:tint="@android:color/white"
+        app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/gl_end" />
 

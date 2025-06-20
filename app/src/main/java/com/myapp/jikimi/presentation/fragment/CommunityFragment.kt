@@ -26,6 +26,7 @@ import com.myapp.jikimi.viewmodel.PostViewModel
 import com.myapp.jikimi.viewmodel.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.myapp.jikimi.data.model.dto.Post
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,13 +34,16 @@ import kotlinx.coroutines.launch
 class CommunityFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentCommunityBinding? = null
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private val postViewModel: PostViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
     private val evacuationMessageViewModel: EvacuationMessageViewModel by viewModels()
 
     private lateinit var postAdapter: PostAdapter
+
+    // 카테고리 관련 변수
+    private var allPosts = listOf<Post>()
+    private var currentFilter = "전체"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,10 +56,10 @@ class CommunityFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        setupNickname()
         setupRecyclerView()
         setupObservers()
         setupListeners()
+        setupChipGroup()
 
         // 게시물 목록 불러오기
         postViewModel.getPosts()
@@ -64,20 +68,6 @@ class CommunityFragment : Fragment() {
         // 재난 안내문자 데이터 가져오기
         evacuationMessageViewModel.getLatestEvacuationMessage()
     }
-
-
-    // sharedViewModel로 닉네임데이터 관찰해서 표시
-//    private fun setupNickname() {
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                sharedViewModel.userNickname.collect { nickname ->
-//                    if (nickname != null) {
-//                        binding.tvNickname.text = nickname
-//                    }
-//                }
-//            }
-//        }
-//    }
 
 
     private fun setupRecyclerView() {
@@ -109,20 +99,12 @@ class CommunityFragment : Fragment() {
                     postViewModel.posts.collect { resource ->
                         when (resource) {
                             is Resource.Loading -> {
-//                                binding.progressBar.visibility = View.VISIBLE
+                                binding.progressBar.visibility = View.VISIBLE
                             }
                             is Resource.Success -> {
                                 binding.progressBar.visibility = View.GONE
-                                val posts = resource.data ?: emptyList()
-
-                                if (posts.isEmpty()) {
-                                    binding.tvEmpty.visibility = View.VISIBLE
-                                    binding.rvPosts.visibility = View.GONE
-                                } else {
-                                    binding.tvEmpty.visibility = View.GONE
-                                    binding.rvPosts.visibility = View.VISIBLE
-                                    postAdapter.submitList(posts)
-                                }
+                                allPosts = resource.data ?: emptyList()
+                                filterPosts() // 필터링 적용
                             }
                             is Resource.Error -> {
                                 binding.progressBar.visibility = View.GONE
@@ -202,6 +184,10 @@ class CommunityFragment : Fragment() {
                 findNavController().navigate(R.id.profileEditFragment)
             }
 
+            ivSetting.setOnClickListener {
+                findNavController().navigate(R.id.settingFragment)
+            }
+
             // 로딩아이콘 클릭 시 새로고침 기능 추가
             loadingIcon.setOnClickListener {
                 evacuationMessageViewModel.refreshEvacuationMessage()
@@ -237,6 +223,52 @@ class CommunityFragment : Fragment() {
             .addOnFailureListener { e ->
                 Log.e("MainActivity", "사용자 프로필 로드 실패: ${e.message}")
             }
+    }
+
+
+    private fun setupChipGroup() {
+        binding.chipGroupCategory.setOnCheckedStateChangeListener { group, checkedIds ->
+            if (checkedIds.isNotEmpty()) {
+                val checkedChipId = checkedIds[0]
+                currentFilter = when (checkedChipId) {
+                    R.id.chipAll -> "전체"
+                    R.id.chipEmergency -> "긴급"
+                    R.id.chipInfo -> "정보"
+                    R.id.chipCommunication -> "소통"
+                    R.id.chipReport -> "제보"
+                    else -> "전체"
+                }
+                filterPosts()
+            }
+        }
+    }
+
+
+    private fun filterPosts() {
+        val filteredPosts = if (currentFilter == "전체") {
+            allPosts
+        } else {
+            allPosts.filter { it.category == currentFilter }
+        }
+
+        updateRecyclerView(filteredPosts)
+    }
+
+
+    private fun updateRecyclerView(posts: List<Post>) {
+        if (posts.isEmpty()) {
+            binding.tvEmpty.visibility = View.VISIBLE
+            binding.rvPosts.visibility = View.GONE
+            binding.tvEmpty.text = if (currentFilter == "전체") {
+                "게시물이 없습니다"
+            } else {
+                "${currentFilter} 카테고리의 게시물이 없습니다"
+            }
+        } else {
+            binding.tvEmpty.visibility = View.GONE
+            binding.rvPosts.visibility = View.VISIBLE
+            postAdapter.submitList(posts)
+        }
     }
 
 
