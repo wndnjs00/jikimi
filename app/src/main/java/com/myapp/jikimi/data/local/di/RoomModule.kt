@@ -82,18 +82,20 @@ object RoomModule {
     // DisasterEntity 테이블 추가를 위한 마이그레이션
     private val MIGRATION_5_6 = object : Migration(5, 6) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("""
-                CREATE TABLE IF NOT EXISTS disaster_tips (
-                    id TEXT PRIMARY KEY NOT NULL,
-                    title TEXT NOT NULL,
-                    subtitle TEXT NOT NULL,
-                    category TEXT NOT NULL,
-                    riskLevel TEXT NOT NULL,
-                    detailedSteps TEXT NOT NULL,
-                    createdAt INTEGER NOT NULL,
-                    type TEXT NOT NULL
-                )
-            """)
+            database.execSQL(
+                """
+            CREATE TABLE IF NOT EXISTS disaster_tips (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                title TEXT NOT NULL,
+                subtitle TEXT NOT NULL,
+                category TEXT NOT NULL,
+                riskLevel TEXT NOT NULL,
+                detailedSteps TEXT NOT NULL,
+                createdAt INTEGER NOT NULL,
+                type TEXT NOT NULL
+            )
+            """
+            )
         }
     }
 
