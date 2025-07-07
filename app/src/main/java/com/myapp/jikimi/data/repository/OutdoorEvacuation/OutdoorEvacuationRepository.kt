@@ -3,7 +3,6 @@ package com.myapp.jikimi.data.repository.OutdoorEvacuation
 import com.myapp.jikimi.data.model.dto.EarthquakeOutdoorsShelterResponse
 
 interface OutdoorEvacuationRepository {
-    suspend fun requestOutdoorEvacuation() : EarthquakeOutdoorsShelterResponse
 
     // 특정 페이지 요청
     suspend fun requestOutdoorEvacuationByPage(pageNo: Int): EarthquakeOutdoorsShelterResponse

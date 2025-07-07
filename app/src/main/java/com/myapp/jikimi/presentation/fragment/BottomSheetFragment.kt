@@ -62,7 +62,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
             fragment.arguments = outdoorArgs
             return fragment
         }
-
         fun indoorNewInstance(indoorShelterData : EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row, distance: Double) : BottomSheetFragment{
             val fragment = BottomSheetFragment()
             val indoorArgs = Bundle().apply {
@@ -79,8 +78,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
     private fun getOutdoorShelterData(){
 
         val outdoorShelter = arguments?.getParcelable<EarthquakeOutdoorsShelterResponse.Shelter>(Constant.OUTDOOR_SHELTER_DATA)
-        Log.d("BottomSheetFragment", "Shelter Name: ${outdoorShelter}")
-
         val distance = arguments?.getDouble(Constant.OUTDOOR_DISTANCE_DATA)
 
         if (outdoorShelter != null) {
@@ -107,8 +104,6 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 !outdoorShelter.rnDtlAdres.isNullOrEmpty() -> outdoorShelter.rnDtlAdres
                 else -> outdoorShelter.dtlAdres ?: ""
             }
-
-
             likeEntity = LikeEntity(
                 vtAcmdfcltyNm = outdoorShelter.vtAcmdfcltyNm ?: "",
                 rnAdres = primaryAddress,
@@ -124,10 +119,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
 
     //실내대피소 데이터 받아오기
     private fun getIndoorShelterData(){
-
         val indoorShelter = arguments?.getParcelable<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>(Constant.INDOOR_SHELTER_DATA)
-        Log.d("BottomSheetFragment", "Shelter Name: ${indoorShelter}")
-
         val distance = arguments?.getDouble(Constant.INDOOR_DISTANCE_DATA)
 
         with(binding){
@@ -215,11 +207,7 @@ class BottomSheetFragment : BottomSheetDialogFragment() {
                 val isLiked = like.any {it.vtAcmdfcltyNm == likeEntity?.vtAcmdfcltyNm}
 
                 binding.emptyHeartIv.setImageResource(
-                    if(isLiked){
-                        R.drawable.full_heart_img
-                    }else{
-                        R.drawable.empty_heart_img
-                    }
+                    if (isLiked) R.drawable.full_heart_img else R.drawable.empty_heart_img
                 )
                 likeClick = isLiked
             }

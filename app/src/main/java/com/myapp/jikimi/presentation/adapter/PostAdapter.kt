@@ -11,30 +11,36 @@ import com.bumptech.glide.Glide
 import com.myapp.jikimi.R
 import com.myapp.jikimi.data.model.dto.Post
 import com.myapp.jikimi.databinding.ItemPostBinding
+import com.myapp.jikimi.presentation.adapter.diffutil.PostDiffUtil
 
 class PostAdapter(
     private val onPostClick: (Post) -> Unit,
     private val currentUserId: String
-) : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback) {
+) : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffUtil()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = ItemPostBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return PostViewHolder(binding)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): PostViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
+        return PostViewHolder(ItemPostBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
+
+        holder.itemView.setOnClickListener {
+            onPostClick(post)
+        }
     }
 
-    inner class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class PostViewHolder(
+        private val binding: ItemPostBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(post: Post) {
-            binding.apply {
+            with(binding) {
                 tvNickname.text = post.nickname
                 tvContent.text = post.content
                 tvTimestamp.text = DateUtils.getRelativeTimeSpanString(
@@ -69,25 +75,7 @@ class PostAdapter(
                 } else {
                     ivPostImage.visibility = View.GONE
                 }
-
-                // 아이템 클릭시
-                root.setOnClickListener {
-                    onPostClick(post)
-                }
             }
-        }
-    }
-
-    // DiffUtil 구현
-    object PostDiffCallback : DiffUtil.ItemCallback<Post>() {
-        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-            // 포스트 ID를 사용하여 동일 아이템인지 확인
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-            // Post 클래스의 equals 메서드를 사용하거나, 필요한 필드 비교
-            return oldItem == newItem
         }
     }
 }

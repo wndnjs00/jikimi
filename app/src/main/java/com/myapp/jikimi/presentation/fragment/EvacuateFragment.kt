@@ -61,15 +61,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
+import com.myapp.jikimi.data.network.MIN_DISTANCE_FOR_UPDATE
+import com.myapp.jikimi.data.network.MIN_TIME_BETWEEN_UPDATES
+import com.myapp.jikimi.data.network.LOCATION_PERMISSION_REQUEST_CODE
+import com.myapp.jikimi.data.network.RECORD_AUDIO_PERMISSION_CODE
 
 @AndroidEntryPoint
 class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private val binding get() = _binding!!
     private var _binding: FragmentEvacuateBinding? = null
-
     private lateinit var locationSource: FusedLocationSource    //현재위치
     private lateinit var naverMap: NaverMap
-
     private val outdoorViewModel: OutdoorEvacuationViewModel by viewModels()
     private val indoorViewModel: IndoorEvacuationViewModel by viewModels()
     private val sharedViewModel : SharedViewModel by activityViewModels()
@@ -81,14 +83,12 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
     private val searchAdapter = ShelterSearchAdapter { shelter ->
         onShelterSearchItemClick(shelter)
     }
-
     // SpeechRecognizer(음성인식) 관련 변수
     private lateinit var speechRecognizer: SpeechRecognizer
 
     // Room DB 주입
     @Inject
     lateinit var shelterDao: ShelterDao
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,8 +108,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         setupSearchUI()
         setupVoiceRecognition()
     }
-
-
     // 지도 초기화
     private fun initializeMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as MapFragment?
@@ -118,12 +116,10 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
         mapFragment.getMapAsync(this)
     }
-
     // FusedLocationSource 초기화
     private fun initializeLocationSource() {
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
     }
-
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -137,7 +133,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
             return
         }
-
         // 음성인식 권한처리
         if (requestCode == RECORD_AUDIO_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -156,8 +151,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
-
     // ViewModel에서 위치 및 대피소 데이터 관찰
     private fun observeViewModels() {
 
@@ -222,8 +215,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
-
     @UiThread
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
@@ -297,7 +288,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-
     // Geocoder를 사용해 위경도 좌표를 주소로 변환 (백그라운드에서 처리)
     private suspend fun getCurrentAddress(latitude: Double, longitude: Double): String? {
         return withContext(Dispatchers.IO) {
@@ -328,7 +318,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
 
     // 야외대피소 데이터를 지도에 표시하고, 반경밖의 마커는 삭제
     private fun updateOutdoorSheltersOnMap(
@@ -369,8 +358,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
-
     // 실내대피소 데이터를 지도에 표시하고, 반경밖의 마커는 삭제
     private fun updateIndoorSheltersOnMap(
         shelters: List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>,
@@ -404,7 +391,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                         val bottomSheetFragment = BottomSheetFragment.indoorNewInstance(indoorShelter, distance)
 
                         bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
-//                        Toast.makeText(requireContext(), "${indoorShelter.vtAcmdfcltyNm} 클릭됨", Toast.LENGTH_SHORT).show()
                         true
                     }
                 }
@@ -419,7 +405,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             likeBottomSheetFragment.show(childFragmentManager, likeBottomSheetFragment.tag)
         }
     }
-
 
     // sharedViewModel로 데이터공유
     private fun observeSharedViewModel() {
@@ -451,7 +436,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-
     // 검색 UI 설정
     private fun setupSearchUI() {
         // RecyclerView 설정
@@ -476,7 +460,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 searchAdapter.submitList(emptyList())
             }
         }
-
         // 검색창 입력 이벤트
         binding.searchEt.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -496,7 +479,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         })
-
         // 검색 완료 이벤트
         binding.searchEt.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -505,19 +487,16 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             }
             false
         }
-
         // 오버레이 클릭하면 검색 UI 숨기기
         binding.searchOverlay.setOnClickListener {
             hideSearchUI()
         }
     }
-
     // 키보드 숨기기
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.searchEt.windowToken, 0)
     }
-
     // 검색 UI 숨기기
     private fun hideSearchUI() {
         binding.searchOverlay.visibility = View.GONE
@@ -525,7 +504,6 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         binding.searchEt.clearFocus()
         hideKeyboard()
     }
-
     // 검색 실행 (검색어가 있을 때만 검색)
     private fun searchShelters(query: String) {
         if (query.isEmpty()) {
@@ -535,14 +513,12 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             searchAdapter.submitList(emptyList())
             return
         }
-
         lifecycleScope.launch {
             shelterDao.searchShelters(query).collect { shelters ->
                 updateSearchResults(shelters)
             }
         }
     }
-
     // 검색 결과 업데이트
     private fun updateSearchResults(shelters: List<ShelterEntity>) {
         if (shelters.isEmpty()) {
@@ -555,15 +531,12 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             searchAdapter.submitList(shelters)
         }
     }
-
     // 검색 결과 아이템 클릭 처리
     private fun onShelterSearchItemClick(shelter: ShelterEntity) {
         // 검색 UI 숨기기
         hideSearchUI()
-
         // 선택한 대피소로 카메라 이동
         moveCameraToLocation(shelter.latitude, shelter.longitude, shelter.vtAcmdfcltyNm, shelter.shelterType)
-
         // 마커 추가
         val markerPosition = LatLng(shelter.latitude, shelter.longitude)
         val marker = Marker().apply {
@@ -575,14 +548,11 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             captionText = shelter.vtAcmdfcltyNm
             captionRequestedWidth = 150
         }
-
         // 줌 레벨 조정
         val cameraUpdate = CameraUpdate.scrollAndZoomTo(markerPosition, 15.0)
             .animate(CameraAnimation.Easing)
         naverMap.moveCamera(cameraUpdate)
     }
-
-
     // SpeechRecognizer(음성인식) 초기화 및 설정
     @SuppressLint("ClickableViewAccessibility")
     private fun setupVoiceRecognition() {
@@ -595,27 +565,22 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR") // 한국어 설정
             putExtra(RecognizerIntent.EXTRA_PROMPT, "음성으로 말해보세요")
         }
-
         // SpeechRecognizer 리스너 설정
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {
                 // 음성 인식 준비 완료
                 Toast.makeText(requireContext(), "음성 인식 준비 완료", Toast.LENGTH_SHORT).show()
             }
-
             override fun onBeginningOfSpeech() {
                 // 음성 인식 시작
                 Toast.makeText(requireContext(), "음성으로 말해보세요", Toast.LENGTH_SHORT).show()
             }
-
             override fun onRmsChanged(rmsdB: Float) {
                 // 소리 크기 변경 (진폭)
             }
-
             override fun onBufferReceived(buffer: ByteArray?) {
                 // 버퍼 수신
             }
-
             override fun onEndOfSpeech() {
                 // 음성 인식 종료
                 Toast.makeText(requireContext(), "음성 인식 종료", Toast.LENGTH_SHORT).show()
@@ -719,24 +684,9 @@ class EvacuateFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-
-
-    companion object {
-        // 위치 업데이트 관련 상수
-        private const val MIN_DISTANCE_FOR_UPDATE = 4000 // 4000m (4km-약1시간 걸었을때) 이상 이동 시 업데이트
-        private const val MIN_TIME_BETWEEN_UPDATES = 3600000L // 1시간
-
-        // 권한 요청 코드 (위치, 음성인식)
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
-        private const val RECORD_AUDIO_PERMISSION_CODE = 2000
-    }
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        // naverMap 관련 리소스를 해제
-//        naverMap.locationSource = null // LocationSource 해제
         val marker = Marker()
         marker.map = null
         currentCircleOverlay?.map = null // 서클 오버레이 해제

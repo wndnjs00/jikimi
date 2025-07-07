@@ -8,39 +8,20 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myapp.jikimi.databinding.ItemImageBinding
+import com.myapp.jikimi.data.network.VIEW_TYPE_LOCAL
+import com.myapp.jikimi.data.network.VIEW_TYPE_FIREBASE
+import com.myapp.jikimi.data.network.MAX_IMAGES
+import com.myapp.jikimi.presentation.adapter.diffutil.ImageDiffUtil
 
 // 이미지 업로드를 위한 어댑터 (DiffUtil 적용)
 class ImageAdapter(
     private val onDeleteClick: (Int) -> Unit
-) : ListAdapter<ImageAdapter.ImageItem, RecyclerView.ViewHolder>(ImageDiffUtil) {
+) : ListAdapter<ImageAdapter.ImageItem, RecyclerView.ViewHolder>(ImageDiffUtil()) {
 
     // 이미지 아이템을 나타내는 sealed class
     sealed class ImageItem {
         data class LocalImage(val uri: Uri) : ImageItem()
         data class FirebaseImage(val url: String) : ImageItem()
-    }
-
-    companion object {
-        private const val VIEW_TYPE_LOCAL = 0
-        private const val VIEW_TYPE_FIREBASE = 1
-        private const val MAX_IMAGES = 5
-
-        // DiffUtil 구현
-        object ImageDiffUtil : DiffUtil.ItemCallback<ImageItem>() {
-            override fun areItemsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean {
-                return when {
-                    oldItem is ImageItem.LocalImage && newItem is ImageItem.LocalImage ->
-                        oldItem.uri == newItem.uri
-                    oldItem is ImageItem.FirebaseImage && newItem is ImageItem.FirebaseImage ->
-                        oldItem.url == newItem.url
-                    else -> false
-                }
-            }
-
-            override fun areContentsTheSame(oldItem: ImageItem, newItem: ImageItem): Boolean {
-                return areItemsTheSame(oldItem, newItem)
-            }
-        }
     }
 
     fun addImage(uri: Uri) {

@@ -27,10 +27,6 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
 
     private val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
-    override suspend fun requestIndoorEvacuation(): EarthquakeIndoorsShelterResponse {
-        return indoorEvacuationService.getIndoorEvacuation(pageNo = "1")
-    }
-
     // 특정 페이지 요청 구현
     override suspend fun requestIndoorEvacuationByPage(pageNo: Int): EarthquakeIndoorsShelterResponse {
         return indoorEvacuationService.getIndoorEvacuation(pageNo = pageNo.toString())

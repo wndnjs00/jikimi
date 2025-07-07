@@ -9,15 +9,17 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myapp.jikimi.R
+import com.myapp.jikimi.presentation.adapter.diffutil.PostImageDiffUtil
 
 class PostImageAdapter(
     private val onClick: (String, Int) -> Unit = { _, _ -> },
-    private val onLongClick: (String, Int) -> Unit = { _, _ -> }
-) : ListAdapter<String, PostImageAdapter.ImageViewHolder>(ImageDiffCallback) {
+) : ListAdapter<String, PostImageAdapter.ImageViewHolder>(PostImageDiffUtil()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_post_image, parent, false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ImageViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_image, parent, false)
         return ImageViewHolder(view)
     }
 
@@ -27,11 +29,6 @@ class PostImageAdapter(
 
         holder.itemView.setOnClickListener {
             onClick(item, position)
-        }
-
-        holder.itemView.setOnLongClickListener {
-            onLongClick(item, position)
-            true
         }
     }
 
@@ -43,16 +40,6 @@ class PostImageAdapter(
                 .load(imageUrl)
                 .centerCrop()
                 .into(imageView)
-        }
-    }
-
-    object ImageDiffCallback : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
-        }
-
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
         }
     }
 }

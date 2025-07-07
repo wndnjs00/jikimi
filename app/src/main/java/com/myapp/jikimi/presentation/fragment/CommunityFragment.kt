@@ -34,13 +34,10 @@ import kotlinx.coroutines.launch
 class CommunityFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentCommunityBinding? = null
-
     private val postViewModel: PostViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
     private val evacuationMessageViewModel: EvacuationMessageViewModel by viewModels()
-
     private lateinit var postAdapter: PostAdapter
-
     // 카테고리 관련 변수
     private var allPosts = listOf<Post>()
     private var currentFilter = "전체"
@@ -60,15 +57,12 @@ class CommunityFragment : Fragment() {
         setupObservers()
         setupListeners()
         setupChipGroup()
-
         // 게시물 목록 불러오기
         postViewModel.getPosts()
         loadUserProfile()
-
         // 재난 안내문자 데이터 가져오기
         evacuationMessageViewModel.getLatestEvacuationMessage()
     }
-
 
     private fun setupRecyclerView() {
         // 로그인한 user의 uid를 가져옴
@@ -84,10 +78,9 @@ class CommunityFragment : Fragment() {
             },
             currentUserId = currentUserId
         )
-
-        binding.rvPosts.apply {
-            adapter = postAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+        with(binding) {
+            rvPosts.adapter = postAdapter
+            rvPosts.layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -110,12 +103,10 @@ class CommunityFragment : Fragment() {
                                 binding.progressBar.visibility = View.GONE
                                 (activity as MainActivity).showToast(resource.message ?: "게시물을 불러오는데 실패했습니다")
                             }
-
                             else -> {}
                         }
                     }
                 }
-
                 // 게시물 삭제 상태 관찰
                 launch {
                     postViewModel.deletePostStatus.collect { resource ->
@@ -135,13 +126,11 @@ class CommunityFragment : Fragment() {
                                     (activity as MainActivity).showToast(resource.message ?: "게시물 삭제에 실패했습니다")
                                     postViewModel.resetDeletePostStatus() // 상태 리셋
                                 }
-
                                 else -> {}
                             }
                         }
                     }
                 }
-
                 // 재난 안내문자 상태 관찰
                 launch {
                     evacuationMessageViewModel.evacuationMessage.collect { resource ->
@@ -165,7 +154,6 @@ class CommunityFragment : Fragment() {
                                 binding.dateContent.visibility = View.GONE
                                 binding.messageContent.text = "데이터 로드 실패"
                             }
-
                             else -> {}
                         }
                     }
@@ -175,7 +163,6 @@ class CommunityFragment : Fragment() {
     }
 
     private fun setupListeners() {
-
         with(binding){
             fabAddPost.setOnClickListener {
                 findNavController().navigate(R.id.createPostFragment)
@@ -187,8 +174,6 @@ class CommunityFragment : Fragment() {
             ivSetting.setOnClickListener {
                 findNavController().navigate(R.id.settingFragment)
             }
-
-            // 로딩아이콘 클릭 시 새로고침 기능 추가
             loadingIcon.setOnClickListener {
                 evacuationMessageViewModel.refreshEvacuationMessage()
             }
@@ -197,7 +182,6 @@ class CommunityFragment : Fragment() {
 
     private fun loadUserProfile() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-
         // Firestore에서 사용자 정보 로드
         FirebaseFirestore.getInstance().collection("users").document(userId)
             .get()
@@ -206,7 +190,6 @@ class CommunityFragment : Fragment() {
                 user?.let {
                     // 닉네임 설정
                     binding.tvNickname.text = it.nickname
-
                     // 프로필 이미지 설정
                     if (it.profileImageUrl.isNotEmpty()) {
                         Glide.with(this)
@@ -225,7 +208,6 @@ class CommunityFragment : Fragment() {
             }
     }
 
-
     private fun setupChipGroup() {
         binding.chipGroupCategory.setOnCheckedStateChangeListener { group, checkedIds ->
             if (checkedIds.isNotEmpty()) {
@@ -243,17 +225,14 @@ class CommunityFragment : Fragment() {
         }
     }
 
-
     private fun filterPosts() {
         val filteredPosts = if (currentFilter == "전체") {
             allPosts
         } else {
             allPosts.filter { it.category == currentFilter }
         }
-
         updateRecyclerView(filteredPosts)
     }
-
 
     private fun updateRecyclerView(posts: List<Post>) {
         if (posts.isEmpty()) {
@@ -270,7 +249,6 @@ class CommunityFragment : Fragment() {
             postAdapter.submitList(posts)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

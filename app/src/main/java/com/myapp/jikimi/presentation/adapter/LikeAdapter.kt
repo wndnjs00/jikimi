@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.myapp.jikimi.R
 import com.myapp.jikimi.data.model.entity.LikeEntity
 import com.myapp.jikimi.databinding.LikeItemBinding
+import com.myapp.jikimi.presentation.adapter.diffutil.LikeDiffUtil
 
 class LikeAdapter(
     private val onClick : (LikeEntity, Int) -> Unit,
     private val onLongClick : (LikeEntity, Int) -> Unit,
-) :ListAdapter<LikeEntity, LikeAdapter.LikeViewHolder>(LikeDiffUtil){
+) :ListAdapter<LikeEntity, LikeAdapter.LikeViewHolder>(LikeDiffUtil()){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -20,7 +21,6 @@ class LikeAdapter(
         val view = LayoutInflater.from(parent.context).inflate(R.layout.like_item, parent, false)
         return LikeViewHolder(LikeItemBinding.bind(view))
     }
-
 
     override fun onBindViewHolder(holder: LikeViewHolder, position: Int) {
         val item = getItem(position)
@@ -35,7 +35,6 @@ class LikeAdapter(
             true
         }
     }
-
 
     class LikeViewHolder(
         private var binding : LikeItemBinding
@@ -55,17 +54,6 @@ class LikeAdapter(
                     else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
                 }
             }
-        }
-    }
-
-
-    object LikeDiffUtil : DiffUtil.ItemCallback<LikeEntity>(){
-        override fun areItemsTheSame(oldItem: LikeEntity, newItem: LikeEntity): Boolean {
-            return oldItem.vtAcmdfcltyNm == newItem.vtAcmdfcltyNm
-        }
-
-        override fun areContentsTheSame(oldItem: LikeEntity, newItem: LikeEntity): Boolean {
-            return oldItem == newItem
         }
     }
 }

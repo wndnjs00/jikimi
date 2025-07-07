@@ -8,6 +8,8 @@ import com.myapp.jikimi.data.model.dto.chatgpt.ChatGPTRequest
 import com.myapp.jikimi.data.model.dto.chatgpt.DisasterResponse
 import com.myapp.jikimi.data.model.dto.chatgpt.Message
 import com.myapp.jikimi.data.network.CHATGPT_API_SERVICE_KEY
+import com.myapp.jikimi.data.network.CACHE_VALIDITY_DURATION
+import com.myapp.jikimi.data.network.CLEANUP_THRESHOLD
 import com.myapp.jikimi.data.network.service.ChatGPTApiService
 import com.myapp.jikimi.data.network.toDisasterResponse
 import com.myapp.jikimi.data.network.toEntity
@@ -22,18 +24,13 @@ class DisasterRepositoryImpl @Inject constructor(
 ) : DisasterRepository {
     private val gson = Gson()
 
-    companion object {
-        private const val CACHE_VALIDITY_DURATION = 7 * 24 * 60 * 60 * 1000L // 7일
-        private const val CLEANUP_THRESHOLD = 30 * 24 * 60 * 60 * 1000L // 30일
-    }
-
     override suspend fun getTodayDisasterTips(): Resource<List<DisasterResponse>> {
         return try {
             // 1. 먼저 로컬 DB에서 데이터 확인
             val lastUpdateTime = disasterDao.getLastUpdateTime()
             val currentTime = System.currentTimeMillis()
 
-            // 2. 캐시가 유효한지 확인 (7일 이내)
+            // 2. 캐시가 유효한지 확인
             val isCacheValid = lastUpdateTime?.let {
                 currentTime - it < CACHE_VALIDITY_DURATION
             } ?: false
@@ -242,7 +239,7 @@ class DisasterRepositoryImpl @Inject constructor(
 
     private fun createTodayDisasterPrompt(): String {
         return """
-        한국에서 발생할 수 있는 주요 재난 3가지에 대한 대처방법을 랜덤으로 제공해주세요.
+        주요 재난 3가지에 대한 대처방법을 랜덤으로 제공해주세요.
         각각 서로 다른 카테고리의 재난으로 구성해주세요.
         """.trimIndent()
     }

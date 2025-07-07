@@ -13,12 +13,15 @@ import com.myapp.jikimi.R
 import com.myapp.jikimi.data.model.dto.Comment
 import com.myapp.jikimi.databinding.ItemCommentBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import com.myapp.jikimi.data.network.VIEW_TYPE_MAIN_COMMENT
+import com.myapp.jikimi.data.network.VIEW_TYPE_REPLY_COMMENT
+import com.myapp.jikimi.presentation.adapter.diffutil.CommentDiffUtil
 
 class CommentAdapter(
     private val onOptionsClick: (Comment, Boolean, View) -> Unit,
     private val onReplyClick: (Comment) -> Unit,
     private val currentUserId: String
-) : ListAdapter<CommentAdapter.CommentItem, CommentAdapter.CommentViewHolder>(CommentDiffUtil) {
+) : ListAdapter<CommentAdapter.CommentItem, CommentAdapter.CommentViewHolder>(CommentDiffUtil()) {
 
     // 차단된 댓글 ID 목록
     private val blockedCommentIds = mutableSetOf<String>()
@@ -127,10 +130,12 @@ class CommentAdapter(
         holder.bind(comment, isReply)
     }
 
-    inner class CommentViewHolder(private val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CommentViewHolder(
+        private val binding: ItemCommentBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(comment: Comment, isReply: Boolean) {
-            binding.apply {
+            with(binding) {
                 // 답글 여부에 따라 왼쪽 여백 조정
                 val params = root.layoutParams as ViewGroup.MarginLayoutParams
                 if (isReply) {
@@ -175,34 +180,6 @@ class CommentAdapter(
                 tvReply.isVisible = !isReply
                 tvReply.setOnClickListener {
                     onReplyClick(comment)
-                }
-            }
-        }
-    }
-
-    // DiffUtil 구현
-    companion object {
-        private const val VIEW_TYPE_MAIN_COMMENT = 0
-        private const val VIEW_TYPE_REPLY_COMMENT = 1
-
-        object CommentDiffUtil : DiffUtil.ItemCallback<CommentItem>() {
-            override fun areItemsTheSame(oldItem: CommentItem, newItem: CommentItem): Boolean {
-                return when {
-                    oldItem is CommentItem.MainComment && newItem is CommentItem.MainComment ->
-                        oldItem.comment.id == newItem.comment.id
-                    oldItem is CommentItem.ReplyComment && newItem is CommentItem.ReplyComment ->
-                        oldItem.comment.id == newItem.comment.id
-                    else -> false
-                }
-            }
-
-            override fun areContentsTheSame(oldItem: CommentItem, newItem: CommentItem): Boolean {
-                return when {
-                    oldItem is CommentItem.MainComment && newItem is CommentItem.MainComment ->
-                        oldItem.comment == newItem.comment
-                    oldItem is CommentItem.ReplyComment && newItem is CommentItem.ReplyComment ->
-                        oldItem.comment == newItem.comment
-                    else -> false
                 }
             }
         }

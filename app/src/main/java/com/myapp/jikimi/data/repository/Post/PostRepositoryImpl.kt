@@ -90,7 +90,7 @@ class PostRepositoryImpl @Inject constructor(
                     val imageFileName = "${postId}_image_${index}"
                     val imageRef = storage.reference.child("post_images/$postId/$imageFileName")
 
-                    val uploadTask = imageRef.putFile(imageUri).await()
+                    imageRef.putFile(imageUri).await()
                     val downloadUrl = imageRef.downloadUrl.await().toString()
                     imageUrls.add(downloadUrl)
                 }
@@ -149,7 +149,7 @@ class PostRepositoryImpl @Inject constructor(
                     val imageFileName = "${postId}_image_${System.currentTimeMillis()}_${index}"
                     val imageRef = storage.reference.child("post_images/$postId/$imageFileName")
 
-                    val uploadTask = imageRef.putFile(imageUri).await()
+                    imageRef.putFile(imageUri).await()
                     val downloadUrl = imageRef.downloadUrl.await().toString()
                     imageUrls.add(downloadUrl)
                 }
