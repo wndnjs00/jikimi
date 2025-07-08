@@ -3,15 +3,15 @@
     <item
         android:id="@+id/evacuateFragment"
         android:icon="@drawable/ic_nav_evacuate"
-        android:title="대피"/>
+        android:title="@string/menu_disaster"/>
 
     <item
         android:id="@+id/disasterFragment"
         android:icon="@drawable/ic_nav_commonsense"
-        android:title="대처방법"/>
+        android:title="@string/menu_disaster_tip"/>
 
     <item
         android:id="@+id/communityFragment"
         android:icon="@drawable/community"
-        android:title="재난토크"/>
+        android:title="@string/menu_disaster_talk"/>
 </menu>

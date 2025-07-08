@@ -14,13 +14,13 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/ivImage"
+            android:id="@+id/image_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
         <ImageButton
-            android:id="@+id/btnDelete"
+            android:id="@+id/delete_btn"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:rotation="-45"
@@ -28,6 +28,6 @@
             android:layout_margin="4dp"
             android:background="@drawable/plus_img"
             android:backgroundTint="@color/main_red"
-            android:contentDescription="이미지 삭제" />
+            android:contentDescription="@string/item_image_delete_btn" />
     </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

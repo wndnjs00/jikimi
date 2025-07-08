@@ -12,5 +12,5 @@ abstract class OutdoorEvacuationRepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindOutdoorEvacuationRepository(outdoorEvacuationRepositoryImpl: OutdoorEvacuationRepositoryImpl) : OutdoorEvacuationRepository
+    abstract fun bindOutdoorEvacuationRepository(outdoorEvacuationRepositoryImpl: OutdoorEvacuationRepositoryImpl): OutdoorEvacuationRepository
 }

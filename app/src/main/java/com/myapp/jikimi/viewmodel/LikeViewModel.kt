@@ -17,15 +17,15 @@ import javax.inject.Inject
 @HiltViewModel
 class LikeViewModel @Inject constructor(
     private val shelterDao: ShelterDao
-) : ViewModel(){
+) : ViewModel() {
 
     // Room으로 모든 데이터 가져옴
     private val _likeEntity = MutableStateFlow<List<LikeEntity>>(emptyList())
-    val likeEntity : StateFlow<List<LikeEntity>> = _likeEntity.asStateFlow()
+    val likeEntity: StateFlow<List<LikeEntity>> = _likeEntity.asStateFlow()
 
     init {
         viewModelScope.launch {
-            shelterDao.getAllData().collect{
+            shelterDao.getAllData().collect {
                 _likeEntity.value = it
                 visibilityView()
             }
@@ -33,7 +33,7 @@ class LikeViewModel @Inject constructor(
     }
 
     fun saveData(likeEntity: LikeEntity) = viewModelScope.launch {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             shelterDao.insertData(likeEntity)
         }
     }
@@ -42,10 +42,10 @@ class LikeViewModel @Inject constructor(
     private val _visibilityView = MutableStateFlow<VisibilityView>(VisibilityView.EMPTYVIEW)
     val visibilityView: StateFlow<VisibilityView> = _visibilityView.asStateFlow()
 
-    fun visibilityView(){
-        if(likeEntity.value.isEmpty()){
+    fun visibilityView() {
+        if (likeEntity.value.isEmpty()) {
             _visibilityView.value = VisibilityView.EMPTYVIEW
-        }else{
+        } else {
             _visibilityView.value = VisibilityView.RECYCLERVIEW
         }
     }

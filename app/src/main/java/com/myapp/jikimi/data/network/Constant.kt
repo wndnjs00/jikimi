@@ -1,4 +1,5 @@
 package com.myapp.jikimi.data.network
+
 import com.myapp.jikimi.BuildConfig
 
 // 행정안전부_지진 옥외대피장소
@@ -23,8 +24,7 @@ const val CHATGPT_API = BuildConfig.CHATGPT_API
 const val CHATGPT_API_SERVICE_KEY = BuildConfig.CHATGPT_API_SERVICE_KEY
 
 
-
-object Constant{
+object Constant {
     // 공유되는 데이터
     const val OUTDOOR_SHELTER_DATA = "outdoor_shelter_data"
     const val OUTDOOR_DISTANCE_DATA = "outdoor_distance_data"
@@ -39,3 +39,21 @@ const val KEY_LAST_OUTDOOR_UPDATE = "last_outdoor_update"   // 마지막 업데�
 const val KEY_TOTAL_INDOOR_COUNT = "total_indoor_count"     // API를 통해 가져온 대피소 데이터의 총 개수
 const val KEY_TOTAL_OUTDOOR_COUNT = "total_outdoor_count"   // API를 통해 가져온 대피소 데이터의 총 개수
 const val UPDATE_INTERVAL = 90 * 24 * 60 * 60 * 1000L // 90일
+
+const val CACHE_VALIDITY_DURATION = 30 * 24 * 60 * 60 * 1000L // 30일
+const val CLEANUP_THRESHOLD = 30 * 24 * 60 * 60 * 1000L // 30일
+
+// 위치 업데이트 관련 상수
+const val MIN_DISTANCE_FOR_UPDATE = 4000 // 4000m (4km-약1시간 걸었을때) 이상 이동 시 업데이트
+const val MIN_TIME_BETWEEN_UPDATES = 3600000L // 1시간
+
+// 권한 요청 코드 (위치, 음성인식)
+const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+const val RECORD_AUDIO_PERMISSION_CODE = 2000
+
+const val VIEW_TYPE_MAIN_COMMENT = 0
+const val VIEW_TYPE_REPLY_COMMENT = 1
+
+const val VIEW_TYPE_LOCAL = 0
+const val VIEW_TYPE_FIREBASE = 1
+const val MAX_IMAGES = 5

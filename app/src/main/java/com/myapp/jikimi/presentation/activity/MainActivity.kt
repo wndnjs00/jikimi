@@ -2,16 +2,15 @@ package com.myapp.jikimi.presentation.activity
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.myapp.jikimi.R
 import com.myapp.jikimi.databinding.ActivityMainBinding
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,13 +40,14 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupNavigation(savedInstanceState: Bundle?) {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fcv_main) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fcv_main) as NavHostFragment
         navController = navHostFragment.navController
 
         // 시작 프래그먼트 설정 - 로그인 상태에 따라 다르게 설정
         if (savedInstanceState == null) {
             val startDestination = if (isUserLoggedIn()) {
-                R.id.evacuateFragment // 또는 로그인 후 보여줄 메인 프래그먼트 ID
+                R.id.evacuateFragment
             } else {
                 R.id.loginFragment
             }
@@ -69,34 +69,25 @@ class MainActivity : AppCompatActivity() {
         // Fragment 이동 시 BottomNavigationView 표시 여부 처리
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id in hideBottomNavFragments) {
-                // 관련 hideBottomNavFragments에서는 항상 BottomNavigationView 숨김
                 hideBottomNavigation()
             }
         }
     }
-
 
     private fun isUserLoggedIn(): Boolean {
         // Firebase Auth를 통해 로그인 상태 확인
         return FirebaseAuth.getInstance().currentUser != null
     }
 
-
     fun hideBottomNavigation() {
         binding.bottomNavBar.visibility = View.GONE
     }
 
     fun showBottomNavigation() {
-        // 현재 화면이 hideBottomNavFragments에 있는 프래그먼트가 아닐 때만 표시
         val currentDestination = navController.currentDestination?.id
 
         if (currentDestination !in hideBottomNavFragments) {
             binding.bottomNavBar.visibility = View.VISIBLE
         }
     }
-
-    fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
 }

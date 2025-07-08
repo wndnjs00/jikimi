@@ -5,24 +5,22 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.SearchView
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.myapp.jikimi.R
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.databinding.FragmentDisasterBinding
 import com.myapp.jikimi.presentation.adapter.DisasterAdapter
+import com.myapp.jikimi.presentation.utils.showToast
 import com.myapp.jikimi.viewmodel.DisasterViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -50,7 +48,6 @@ class DisasterFragment : Fragment() {
         setupSearchView()
     }
 
-
     private fun setupRecyclerView() {
         disasterAdapter = DisasterAdapter { disaster, position ->
             // 리사이클러뷰 아이템 클릭 시 상세 화면으로 이동
@@ -63,14 +60,13 @@ class DisasterFragment : Fragment() {
             }
             findNavController().navigate(R.id.disasterDetailFragment, bundle)
         }
-
         binding.recyclerView.apply {
             adapter = disasterAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
-        private fun observeViewModel() {
+    private fun observeViewModel() {
         // 오늘의 재난 정보 관찰
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.todayDisasters.collect { resource ->
@@ -89,12 +85,11 @@ class DisasterFragment : Fragment() {
                     is Resource.Error -> {
                         showLoading(false)
                         showEmptyResult(false)
-                        Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
+                        requireContext().showToast(resource.message ?: "알 수 없는 오류가 발생했습니다")
                     }
                 }
             }
         }
-
 
         // 검색 결과 관찰
         viewLifecycleOwner.lifecycleScope.launch {
@@ -104,16 +99,19 @@ class DisasterFragment : Fragment() {
                         showLoading(true)
                         showEmptyResult(false)
                     }
+
                     is Resource.Success -> {
                         showLoading(false)
                         showEmptyResult(false)
                         disasterAdapter.submitList(listOf(resource.data))
                     }
+
                     is Resource.Error -> {
                         showLoading(false)
                         showEmptyResult(false)
-                        Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
+                        requireContext().showToast(resource.message ?: "알 수 없는 오류가 발생했습니다")
                     }
+
                     null -> {
                         // 검색 결과가 클리어된 경우 - 오늘의 재난 목록 다시 로드
                         viewModel.todayDisasters.value.let { todayResource ->
@@ -126,19 +124,18 @@ class DisasterFragment : Fragment() {
                 }
             }
         }
-            // 검색 결과 없음 상태 관찰
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.isSearchEmpty.collect { isEmpty ->
-                    if (isEmpty) {
-                        showLoading(false)
-                        showEmptyResult(true)
-                    }else{
-                        showEmptyResult(false)
-                    }
+        // 검색 결과 없음 상태 관찰
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isSearchEmpty.collect { isEmpty ->
+                if (isEmpty) {
+                    showLoading(false)
+                    showEmptyResult(true)
+                } else {
+                    showEmptyResult(false)
                 }
             }
+        }
     }
-
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupSearchView() {
@@ -154,7 +151,6 @@ class DisasterFragment : Fragment() {
                 false
             }
         }
-
         // X 버튼 클릭 처리 (drawableEnd)
         binding.searchEt.setOnTouchListener { _, event ->
             val drawableEnd = 2 // RIGHT drawable index
@@ -162,7 +158,8 @@ class DisasterFragment : Fragment() {
                 val drawable = binding.searchEt.compoundDrawables[drawableEnd]
                 if (drawable != null) {
                     val drawableWidth = drawable.intrinsicWidth
-                    val clickAreaStart = binding.searchEt.right - binding.searchEt.paddingRight - drawableWidth
+                    val clickAreaStart =
+                        binding.searchEt.right - binding.searchEt.paddingRight - drawableWidth
 
                     if (event.rawX >= clickAreaStart) {
                         // X 버튼 클릭됨 - 검색 초기화
@@ -204,7 +201,8 @@ class DisasterFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.searchEt.windowToken, 0)
     }
 
@@ -212,28 +210,31 @@ class DisasterFragment : Fragment() {
         binding.titleTv.text = title
     }
 
-
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.loadingLayout.visibility = View.VISIBLE
-            binding.recyclerView.visibility = View.GONE
-        } else {
-            binding.loadingLayout.visibility = View.GONE
-            binding.recyclerView.visibility = View.VISIBLE
+        with(binding) {
+            if (isLoading) {
+                loadingLinear.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+            } else {
+                loadingLinear.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+            }
         }
     }
 
     private fun showEmptyResult(isEmpty: Boolean) {
-        if (isEmpty) {
-            binding.emptyResultLayout.visibility = View.VISIBLE
-            binding.recyclerView.visibility = View.GONE
-            binding.loadingLayout.visibility = View.GONE
-        } else {
-            binding.emptyResultLayout.visibility = View.GONE
+        with(binding) {
+            if (isEmpty) {
+                emptyResultLinear.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+                loadingLinear.visibility = View.GONE
+            } else {
+                emptyResultLinear.visibility = View.GONE
+            }
         }
     }
 
-        override fun onDestroyView() {
+    override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }

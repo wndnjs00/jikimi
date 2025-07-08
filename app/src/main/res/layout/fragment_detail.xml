@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,7 +11,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/layoutAddComment"
+        app:layout_constraintBottom_toTopOf="@+id/add_comment_constraint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,15 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- 상단 게시물 카드 -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardPost"
+                android:id="@+id/post_card_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:background="@color/white"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
-                android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -37,27 +35,25 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:background="@color/white_background">
+                    android:background="@color/white_background"
+                    android:padding="16dp">
 
-                    <!-- 카테고리 표시 (소통) -->
                     <TextView
-                        android:id="@+id/tvCategory"
+                        android:id="@+id/category_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="소통"
-                        android:textSize="12sp"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
                         android:background="@drawable/rounded_border"
+                        android:paddingStart="12dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/detail_category_tv"
+                        android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <!-- 더보기 버튼 (이미지의 ... 버튼) -->
                     <ImageButton
-                        android:id="@+id/btnOption"
+                        android:id="@+id/options_btn"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
@@ -66,81 +62,76 @@
                         android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:visibility="visible"/>
+                        tools:visibility="visible" />
 
-                    <!-- 프로필 이미지 -->
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/ivUserProfile"
+                        android:id="@+id/user_profile_circle_iv"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginTop="16dp"
                         android:src="@drawable/jikimi_img"
                         app:civ_border_width="0dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvCategory" />
+                        app:layout_constraintTop_toBottomOf="@+id/category_tv" />
 
-                    <!-- 닉네임 -->
                     <TextView
-                        android:id="@+id/tvNickname"
+                        android:id="@+id/nickname_tv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="닉네임"
-                        android:textSize="16sp"
+                        android:text="@string/detail_nickname_tv"
                         android:textColor="@color/black"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/ivUserProfile"
-                        app:layout_constraintTop_toTopOf="@+id/ivUserProfile" />
+                        app:layout_constraintStart_toEndOf="@+id/user_profile_circle_iv"
+                        app:layout_constraintTop_toTopOf="@+id/user_profile_circle_iv" />
 
-                    <!-- 시간 표시 -->
                     <TextView
-                        android:id="@+id/tvTimestamp"
+                        android:id="@+id/time_stamp_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="3dp"
-                        android:text="1시간 전"
+                        android:text="@string/detail_time_stamp_tv"
                         android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/ivUserProfile"
-                        app:layout_constraintStart_toEndOf="@+id/ivUserProfile"
-                        app:layout_constraintTop_toBottomOf="@+id/tvNickname" />
+                        app:layout_constraintBottom_toBottomOf="@+id/user_profile_circle_iv"
+                        app:layout_constraintStart_toEndOf="@+id/user_profile_circle_iv"
+                        app:layout_constraintTop_toBottomOf="@+id/nickname_tv" />
 
-                    <!-- 게시물 내용 -->
                     <TextView
-                        android:id="@+id/tvContent"
+                        android:id="@+id/post_content_tv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="게시물 내용"
-                        android:textSize="14sp"
+                        android:text="@string/detail_post_content_tv"
                         android:textColor="@color/black"
+                        android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/ivUserProfile" />
+                        app:layout_constraintTop_toBottomOf="@+id/user_profile_circle_iv" />
 
-                    <!-- 이미지 영역 -->
                     <LinearLayout
-                        android:id="@+id/layoutImages"
+                        android:id="@+id/image_linear"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:orientation="vertical"
-                        android:visibility="gone"
                         android:src="@drawable/ic_launcher_foreground"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvContent"
+                        app:layout_constraintTop_toBottomOf="@+id/post_content_tv"
                         tools:visibility="visible">
 
                         <androidx.viewpager2.widget.ViewPager2
-                            android:id="@+id/viewPagerImages"
+                            android:id="@+id/images_vp"
                             android:layout_width="match_parent"
-                            android:background="@drawable/ic_launcher_foreground"
-                            android:layout_height="250dp" />
+                            android:layout_height="250dp"
+                            android:background="@drawable/ic_launcher_foreground" />
 
                         <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-                            android:id="@+id/dotsIndicator"
+                            android:id="@+id/dots_indicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
@@ -156,53 +147,49 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 댓글 라벨 -->
             <TextView
-                android:id="@+id/tvCommentsLabel"
+                android:id="@+id/comments_label_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="댓글"
-                android:textSize="16sp"
+                android:text="@string/detail_comments_label_tv"
                 android:textColor="@color/black"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardPost" />
+                app:layout_constraintTop_toBottomOf="@+id/post_card_view" />
 
-            <!-- 댓글 리스트 -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvComments"
+                android:id="@+id/comments_rv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:minHeight="50dp"
                 android:nestedScrollingEnabled="true"
                 android:visibility="visible"
-                android:minHeight="50dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCommentsLabel"
-                tools:listitem="@layout/item_comment"
-                tools:itemCount="5"/>
+                app:layout_constraintTop_toBottomOf="@+id/comments_label_tv"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_comment" />
 
-            <!-- 댓글 없을 때 표시 -->
             <TextView
-                android:id="@+id/tvEmptyComments"
+                android:id="@+id/empty_comment_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="댓글이 없습니다"
+                android:text="@string/detail_empty_comment_tv"
                 android:textSize="14sp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCommentsLabel" />
+                app:layout_constraintTop_toBottomOf="@+id/comments_label_tv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- 댓글 입력 영역 -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutAddComment"
+        android:id="@+id/add_comment_constraint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -212,59 +199,57 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- 답글 모드 레이아웃 -->
         <LinearLayout
-            android:id="@+id/replyModeLayout"
+            android:id="@+id/reply_linear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:padding="8dp"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:padding="8dp">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/tvReplyingTo"
+                android:id="@+id/reply_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="답글 작성 중"
-                android:textSize="14sp"
-                android:textColor="@color/black"/>
+                android:text="@string/detail_reply_tv"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
             <ImageButton
-                android:id="@+id/btnCancelReply"
+                android:id="@+id/reply_cancle_btn"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:contentDescription="답글 취소"
                 android:background="@drawable/plus_img"
                 android:backgroundTint="@color/no_gray"
-                android:rotation="-45"/>
+                android:contentDescription="답글 취소"
+                android:rotation="-45" />
         </LinearLayout>
 
-        <!-- 댓글 입력란 및 전송 버튼 -->
         <EditText
-            android:id="@+id/etComment"
+            android:id="@+id/comment_et"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/corner_like"
+            android:backgroundTint="@color/background_pinks"
             android:gravity="center_vertical"
-            android:hint="댓글을 입력하세요..."
+            android:hint="@string/detail_comment_et"
             android:inputType="textMultiLine"
             android:maxLines="5"
             android:minHeight="48dp"
             android:padding="12dp"
             android:textSize="14sp"
-            android:background="@drawable/corner_like"
-            android:backgroundTint="@color/background_pinks"
-            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSendComment"
+            app:layout_constraintEnd_toStartOf="@+id/comment_send_btn"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/replyModeLayout" />
+            app:layout_constraintTop_toBottomOf="@id/reply_linear" />
 
         <ImageButton
-            android:id="@+id/btnSendComment"
+            android:id="@+id/comment_send_btn"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@drawable/corner_like"
@@ -272,13 +257,12 @@
             android:src="@drawable/send_img"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/etComment"
-            app:layout_constraintTop_toBottomOf="@id/replyModeLayout" />
+            app:layout_constraintStart_toEndOf="@+id/comment_et"
+            app:layout_constraintTop_toBottomOf="@id/reply_linear" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 로딩 프로그레스바 -->
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -287,7 +271,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

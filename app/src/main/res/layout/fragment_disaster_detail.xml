@@ -4,21 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/disaster_detail_background"
+    android:orientation="vertical"
     tools:context=".presentation.fragment.DisasterDetailFragment">
 
-    <!-- 상단 헤더 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/gradient_header_bg"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
         <ImageView
-            android:id="@+id/btn_back"
+            android:id="@+id/back_btn"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_arrow_back"
@@ -27,12 +26,12 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="재난대처방안"
+            android:text="@string/disaster_detail_solution"
             android:textColor="@color/white_only"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginStart="16dp" />
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -46,63 +45,62 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- 지진 발생 시 대처방법 카드 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
+                    android:padding="16dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/disaster_title_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="지진 발생 시 대처방법"
+                            android:text="@string/disaster_detail_title_tv"
+                            android:textColor="@color/black"
                             android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/black" />
+                            android:textStyle="bold" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="4dp">
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/disaster_category_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="자연재해"
-                                android:textSize="12sp"
-                                android:textColor="@color/dark_gray" />
+                                android:text="@string/disaster_detail_category_tv"
+                                android:textColor="@color/dark_gray"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:id="@+id/risk_level_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="높음"
-                                android:textSize="12sp"
-                                android:textColor="@color/white_only"
+                                android:layout_marginStart="8dp"
                                 android:background="@drawable/rounded_red_bg"
                                 android:paddingHorizontal="8dp"
                                 android:paddingVertical="2dp"
-                                android:layout_marginStart="8dp" />
+                                android:text="@string/disaster_detail_risk_level_tv"
+                                android:textColor="@color/white_only"
+                                android:textSize="12sp" />
 
                         </LinearLayout>
 
@@ -110,10 +108,10 @@
                             android:id="@+id/disaster_subtitle_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="갑작스런 지진 상황에서의 생존 가이드"
-                            android:textSize="14sp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/disaster_detail_subtitle_tv"
                             android:textColor="@color/dark_gray"
-                            android:layout_marginTop="8dp" />
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -121,56 +119,54 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- AI 생성 콘텐츠 알림 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_purple_bg"
-                android:padding="16dp"
                 android:layout_marginBottom="16dp"
-                android:orientation="horizontal">
+                android:background="@drawable/rounded_purple_bg"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="✨"
+                    android:text="@string/disaster_ai_icon"
                     android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="AI 생성 콘텐츠"
+                        android:text="@string/disaster_detail_ai_content_tv"
+                        android:textColor="@color/purple"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/purple" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="이 내용은 AI가 분석하여 생성한 맞춤형 대처방안입니다.실제 상황에서는 전문가의 조언을 우선시 바랍니다."
-                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/disaster_detail_ai_detail_tv"
                         android:textColor="@color/dark_gray"
-                        android:layout_marginTop="4dp" />
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <!-- 상세 대처방안 카드 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -178,13 +174,12 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- 상세 대처방안 헤더 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginBottom="16dp"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -195,163 +190,157 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="상세 대처방안"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/disaster_detail_solutions_tv"
                             android:textColor="@color/black"
-                            android:layout_marginStart="8dp" />
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
-                    <!-- 대처방안 리스트 -->
                     <LinearLayout
-                        android:id="@+id/linear_layoutSteps"
+                        android:id="@+id/layout_steps_linear"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <!-- 항목 1 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="12dp"
-                            android:gravity="center_vertical">
+                            android:padding="12dp">
 
                             <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:text="1"
-                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
-                                android:textStyle="bold"
-                                android:textSize="12sp" />
+                                android:text="@string/disaster_detail_1"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
                                 android:layout_weight="1"
-                                android:text="즉시 탁자나 책상 아래로 몸을 피하세요"
+                                android:text="@string/disaster_detail_1_tv"
                                 android:textColor="@color/black"
                                 android:textSize="16sp" />
 
                         </LinearLayout>
 
-                        <!-- 항목 2 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="12dp"
-                            android:gravity="center_vertical">
+                            android:padding="12dp">
 
                             <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:text="2"
-                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
-                                android:textStyle="bold"
-                                android:textSize="12sp" />
+                                android:text="@string/disaster_detail_2"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
                                 android:layout_weight="1"
-                                android:text="문을 열어 피난로를 확보하세요"
-                                android:textSize="16sp"
+                                android:text="@string/disaster_detail_2_tv"
                                 android:textColor="@color/black"
-                                android:layout_marginStart="16dp" />
+                                android:textSize="16sp" />
 
                         </LinearLayout>
 
-                        <!-- 항목 3 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="12dp"
-                            android:gravity="center_vertical">
+                            android:padding="12dp">
 
                             <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:text="3"
-                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
-                                android:textStyle="bold"
-                                android:textSize="12sp" />
+                                android:text="@string/disaster_detail_3"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
                                 android:layout_weight="1"
-                                android:text="가스와 전기를 차단하세요"
-                                android:textSize="16sp"
+                                android:text="@string/disaster_detail_3_tv"
                                 android:textColor="@color/black"
-                                android:layout_marginStart="16dp" />
+                                android:textSize="16sp" />
 
                         </LinearLayout>
 
-                        <!-- 항목 4 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="12dp"
-                            android:gravity="center_vertical">
+                            android:padding="12dp">
 
                             <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:text="4"
-                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
-                                android:textStyle="bold"
-                                android:textSize="12sp" />
+                                android:text="@string/disaster_detail_4"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
                                 android:layout_weight="1"
-                                android:text="엘리베이터 사용을 금지하세요"
-                                android:textSize="16sp"
+                                android:text="@string/disaster_detail_4_tv"
                                 android:textColor="@color/black"
-                                android:layout_marginStart="16dp" />
+                                android:textSize="16sp" />
 
                         </LinearLayout>
 
-                        <!-- 항목 5 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="12dp"
-                            android:gravity="center_vertical">
+                            android:padding="12dp">
 
                             <TextView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:text="5"
-                                android:textColor="@color/white"
                                 android:background="@drawable/circle_bg_red"
                                 android:gravity="center"
-                                android:textStyle="bold"
-                                android:textSize="12sp" />
+                                android:text="@string/disaster_detail_5"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
                                 android:layout_weight="1"
-                                android:text="건물 밖으로 대피할 때는 계단을 이용하세요"
-                                android:textSize="16sp"
+                                android:text="@string/disaster_detail_5_tv"
                                 android:textColor="@color/black"
-                                android:layout_marginStart="16dp" />
+                                android:textSize="16sp" />
 
                         </LinearLayout>
 
@@ -361,13 +350,12 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- 긴급 상황 시 연락처 카드 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -375,13 +363,12 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- 긴급 상황 시 연락처 헤더 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginBottom="16dp"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -392,110 +379,106 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="긴급 상황 시 연락처"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/disaster_detail_phone_title"
                             android:textColor="@color/black"
-                            android:layout_marginStart="8dp" />
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
-                    <!-- 연락처 리스트 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <!-- 종합상황실 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:gravity="center_vertical"
+                            android:orientation="horizontal"
                             android:paddingVertical="12dp">
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="긴급신고"
+                                android:text="@string/disaster_detail_phone_text"
+                                android:textColor="@color/black"
                                 android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/black" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="119"
+                                android:text="@string/disaster_detail_phone_119"
+                                android:textColor="@color/red"
                                 android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/red" />
+                                android:textStyle="bold" />
 
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="2dp"
-                            android:background="@color/line_grays"
-                            android:layout_marginVertical="4dp" />
+                            android:layout_marginVertical="4dp"
+                            android:background="@color/line_grays" />
 
-                        <!-- 경찰신고 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:gravity="center_vertical"
+                            android:orientation="horizontal"
                             android:paddingVertical="12dp">
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="경찰신고"
+                                android:text="@string/disaster_detail_phone_title_112"
+                                android:textColor="@color/black"
                                 android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/black" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="112"
+                                android:text="@string/disaster_detail_phone_112"
+                                android:textColor="@color/red"
                                 android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/red" />
+                                android:textStyle="bold" />
 
                         </LinearLayout>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="2dp"
-                            android:background="@color/line_grays"
-                            android:layout_marginVertical="4dp" />
+                            android:layout_marginVertical="4dp"
+                            android:background="@color/line_grays" />
 
-                        <!-- 민원상담 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:gravity="center_vertical"
+                            android:orientation="horizontal"
                             android:paddingVertical="12dp">
 
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="민원상담"
-                                android:textStyle="bold"
+                                android:text="@string/disaster_detail_phone_title_110"
+                                android:textColor="@color/black"
                                 android:textSize="16sp"
-                                android:textColor="@color/black" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="110"
+                                android:text="@string/disaster_detail_phone_110"
+                                android:textColor="@color/red"
                                 android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/red" />
+                                android:textStyle="bold" />
 
                         </LinearLayout>
 

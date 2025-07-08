@@ -34,11 +34,11 @@
             app:layout_constraintGuide_end="@dimen/fragment_margin_12" />
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="회원가입"
+            android:text="@string/register_title_tv"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/gl_end"
@@ -46,74 +46,74 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilEmail"
+            android:id="@+id/email_til"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:hint="이메일"
+            android:hint="@string/register_email_til"
             app:layout_constraintEnd_toEndOf="@+id/gl_end"
             app:layout_constraintStart_toStartOf="@+id/gl_start"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+            app:layout_constraintTop_toBottomOf="@+id/title_tv">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEmail"
+                android:id="@+id/email_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilNickname"
+            android:id="@+id/nickname_til"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:hint="닉네임"
+            android:hint="@string/register_nickname_til"
             app:layout_constraintEnd_toEndOf="@+id/gl_end"
             app:layout_constraintStart_toStartOf="@+id/gl_start"
-            app:layout_constraintTop_toBottomOf="@+id/tilEmail">
+            app:layout_constraintTop_toBottomOf="@+id/email_til">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNickname"
+                android:id="@+id/nickname_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPassword"
+            android:id="@+id/password_til"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:hint="비밀번호"
+            android:hint="@string/register_password_til"
             app:layout_constraintEnd_toEndOf="@+id/gl_end"
             app:layout_constraintStart_toStartOf="@+id/gl_start"
-            app:layout_constraintTop_toBottomOf="@+id/tilNickname"
+            app:layout_constraintTop_toBottomOf="@+id/nickname_til"
             app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPassword"
+                android:id="@+id/password_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilConfirmPassword"
+            android:id="@+id/password_confirm_til"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:hint="비밀번호 확인"
+            android:hint="@string/register_password_confirm_til"
             app:layout_constraintEnd_toEndOf="@+id/gl_end"
             app:layout_constraintStart_toStartOf="@+id/gl_start"
-            app:layout_constraintTop_toBottomOf="@+id/tilPassword"
+            app:layout_constraintTop_toBottomOf="@+id/password_til"
             app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etConfirmPassword"
+                android:id="@+id/password_confirm_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
@@ -128,22 +128,22 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toStartOf="@+id/gl_end"
             app:layout_constraintStart_toStartOf="@+id/gl_start"
-            app:layout_constraintTop_toBottomOf="@+id/tilConfirmPassword">
+            app:layout_constraintTop_toBottomOf="@+id/password_confirm_til">
 
             <CheckBox
-                android:id="@+id/checkboxTerms"
+                android:id="@+id/checkbox_terms"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:background="@drawable/custom_checkbox"
                 android:button="@null" />
 
             <TextView
-                android:id="@+id/tvTerms"
+                android:id="@+id/terms_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
-                android:text="이용약관 동의 [필수]" />
+                android:text="@string/register_terms_tv" />
 
             <View
                 android:layout_width="0dp"
@@ -151,7 +151,7 @@
                 android:layout_weight="1" />
 
             <ImageView
-                android:id="@+id/ivArrow"
+                android:id="@+id/arrow_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:rotation="180"
@@ -172,18 +172,18 @@
             app:layout_constraintTop_toBottomOf="@+id/checkbox_all_linearLayout">
 
             <CheckBox
-                android:id="@+id/checkboxTerms2"
+                android:id="@+id/checkbox_terms2"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:background="@drawable/custom_checkbox"
                 android:button="@null" />
 
             <TextView
-                android:id="@+id/tvTerms2"
+                android:id="@+id/terms2_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="위치서비스 이용약관 동의 [필수]"
+                android:text="@string/register_terms2_tv"
                 android:textColor="@color/black" />
 
             <View
@@ -192,7 +192,7 @@
                 android:layout_weight="1" />
 
             <ImageView
-                android:id="@+id/ivArrow2"
+                android:id="@+id/arrow2_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:rotation="180"
@@ -202,34 +202,34 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnRegister"
+            android:id="@+id/register_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/grey_stroke_corner"
             android:backgroundTint="@color/red"
             android:padding="12dp"
-            android:text="회원가입"
+            android:text="@string/register_btn"
             android:textColor="@color/white_only"
             android:textStyle="bold"
             android:textSize="20sp"
             android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/tvLogin"
+            app:layout_constraintBottom_toTopOf="@+id/login_tv"
             app:layout_constraintEnd_toEndOf="@+id/gl_end"
             app:layout_constraintStart_toStartOf="@+id/gl_start" />
 
         <TextView
-            android:id="@+id/tvLogin"
+            android:id="@+id/login_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="이미 계정이 있으신가요? 로그인"
+            android:text="@string/register_login_tv"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/btnRegister"
-            app:layout_constraintStart_toStartOf="@+id/btnRegister" />
+            app:layout_constraintEnd_toEndOf="@+id/register_btn"
+            app:layout_constraintStart_toStartOf="@+id/register_btn" />
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/progress_bar"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -11,20 +11,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SharedViewModel @Inject constructor() : ViewModel(){
+class SharedViewModel @Inject constructor() : ViewModel() {
     // LikeBottomSheetFragment와 EvacuateFragment사이에서 데이터 공유하기위해
     private val _selectedLikeEntity = MutableStateFlow<LikeEntity?>(null)
-    val selectedLikeEntity : StateFlow<LikeEntity?> = _selectedLikeEntity.asStateFlow()
+    val selectedLikeEntity: StateFlow<LikeEntity?> = _selectedLikeEntity.asStateFlow()
 
     // userNickname데이터를 evacuateFragment와 commensenseFragment에서 공유하기 위해
     private val _userNickname = MutableStateFlow<String?>(null)
-    val userNickname : StateFlow<String?> = _userNickname.asStateFlow()
+    val userNickname: StateFlow<String?> = _userNickname.asStateFlow()
 
-    fun selectLikeEntity(likeEntity: LikeEntity){
+    fun selectLikeEntity(likeEntity: LikeEntity) {
         _selectedLikeEntity.value = likeEntity
     }
 
-    fun updateNickname(nickname: String){
+    fun updateNickname(nickname: String) {
         viewModelScope.launch {
             _userNickname.value = nickname
         }

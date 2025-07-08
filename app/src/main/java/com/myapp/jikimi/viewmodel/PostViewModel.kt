@@ -4,11 +4,11 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.Post
 import com.myapp.jikimi.data.repository.Post.PostRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -75,7 +75,8 @@ class PostViewModel @Inject constructor(
     ) {
         _updatePostStatus.value = Resource.Loading()
         viewModelScope.launch {
-            val result = postRepository.updatePost(postId, content, newImages, existingImages, category)
+            val result =
+                postRepository.updatePost(postId, content, newImages, existingImages, category)
             _updatePostStatus.value = result
         }
     }
@@ -119,7 +120,6 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    // Reset methods for one-time events
     fun resetCreatePostStatus() {
         _createPostStatus.value = null
     }

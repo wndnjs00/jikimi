@@ -4,13 +4,13 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.myapp.jikimi.R
 import com.myapp.jikimi.data.network.dpToPx
@@ -20,7 +20,6 @@ import com.myapp.jikimi.presentation.activity.MainActivity
 class DisasterDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentDisasterDetailBinding? = null
-
     private var disasterTitle: String? = null
     private var disasterSubTitle: String? = null
     private var disasterCategory: String? = null
@@ -49,32 +48,30 @@ class DisasterDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // BottomNavigationView 숨기기
         (activity as? MainActivity)?.hideBottomNavigation()
         setupUI()
         setupBackButton()
     }
 
     private fun setupUI() {
-        // 제목 설정
-        binding.disasterTitleTv.text = disasterTitle
-        binding.disasterSubtitleTv.text = disasterSubTitle
-
-        // 카테고리와 위험도 설정
-        binding.disasterCategoryTv.text = disasterCategory
-        binding.riskLevelTv.text = disasterRiskLevel
-
-        // 상세 대처방안 설정
-        setupDetailedSteps()
+        with(binding) {
+            // 제목 설정
+            disasterTitleTv.text = disasterTitle
+            disasterSubtitleTv.text = disasterSubTitle
+            // 카테고리와 위험도 설정
+            disasterCategoryTv.text = disasterCategory
+            riskLevelTv.text = disasterRiskLevel
+            // 상세 대처방안 설정
+            setupDetailedSteps()
+        }
     }
 
     private fun setupDetailedSteps() {
-        val container = binding.linearLayoutSteps
+        val container = binding.layoutStepsLinear
         container.removeAllViews() // 기존 뷰 제거
 
         disasterSteps?.forEachIndexed { index, stepText ->
             val context = requireContext()
-
             // 외부 LinearLayout 생성
             val stepLayout = LinearLayout(context).apply {
                 layoutParams = LinearLayout.LayoutParams(
@@ -84,7 +81,12 @@ class DisasterDetailFragment : Fragment() {
                     setMargins(0, 8, 0, 8)
                 }
                 orientation = LinearLayout.HORIZONTAL
-                setPadding(12.dpToPx(context), 12.dpToPx(context), 12.dpToPx(context), 12.dpToPx(context))
+                setPadding(
+                    12.dpToPx(context),
+                    12.dpToPx(context),
+                    12.dpToPx(context),
+                    12.dpToPx(context)
+                )
                 gravity = Gravity.CENTER_VERTICAL
             }
 
@@ -112,25 +114,21 @@ class DisasterDetailFragment : Fragment() {
                 setTextColor(ContextCompat.getColor(context, R.color.black))
                 textSize = 16f
             }
-
             stepLayout.addView(numberTextView)
             stepLayout.addView(stepTextView)
-
             container.addView(stepLayout)
         }
     }
 
     private fun setupBackButton() {
-        binding.btnBack.setOnClickListener {
+        binding.backBtn.setOnClickListener {
             findNavController().popBackStack()
         }
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
         (activity as MainActivity)?.showBottomNavigation()
     }
 }

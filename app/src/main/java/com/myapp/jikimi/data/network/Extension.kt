@@ -5,8 +5,12 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.myapp.jikimi.data.model.dto.chatgpt.DisasterResponse
 import com.myapp.jikimi.data.model.entity.DisasterEntity
-import kotlin.math.*
 import com.naver.maps.geometry.LatLng
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 // 하버사인 공식
 fun LatLng.haversineDistance(other: LatLng): Double {
@@ -30,8 +34,6 @@ fun Double.toRadians(): Double = Math.toRadians(this)
 // dp 단위를 픽셀로 변환하는 유틸 함수
 fun Int.dpToPx(context: Context): Int =
     (this * context.resources.displayMetrics.density).toInt()
-
-
 
 
 fun DisasterResponse.toEntity(type: String): DisasterEntity {

@@ -27,10 +27,6 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
 
     private val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
-    override suspend fun requestOutdoorEvacuation(): EarthquakeOutdoorsShelterResponse {
-        return outdoorEvacuationService.getOutdoorEvacuation(pageNo = "1")
-    }
-
     // 특정 페이지 요청 구현
     override suspend fun requestOutdoorEvacuationByPage(pageNo: Int): EarthquakeOutdoorsShelterResponse {
         return outdoorEvacuationService.getOutdoorEvacuation(pageNo = pageNo.toString())
@@ -45,8 +41,9 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
             val dbCount = shelterDao.getShelterCountByType("야외대피장소")    //"야외대피장소"의 대피소수
 
             val currentTime = System.currentTimeMillis()
-            // 마지막 업데이트 이후 30일이 지났는지 or DB에 저장된 데이터수가 API에서 가져온 전체데이터의 90% 이상인지
-            val needsUpdate = currentTime - lastUpdate > UPDATE_INTERVAL || dbCount < totalCachedCount * 0.9
+            // 마지막 업데이트 이후 90일이 지났는지 or DB에 저장된 데이터수가 API에서 가져온 전체데이터의 90% 이상인지
+            val needsUpdate =
+                currentTime - lastUpdate > UPDATE_INTERVAL || dbCount < totalCachedCount * 0.9
 
             // 만족하지않으면(갱신필요하지 않으면)
             if (!needsUpdate && dbCount > 0) {
@@ -113,19 +110,13 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
     private fun convertDbToApiFormat(entities: List<ShelterEntity>): List<EarthquakeOutdoorsShelterResponse.Shelter> {
         return entities.map { entity ->
             EarthquakeOutdoorsShelterResponse.Shelter(
-                vtAcmdfcltyNm = entity.vtAcmdfcltyNm,
-                la = entity.latitude.toString(),
-                lo = entity.longitude.toString(),
-                eqkAcmdfcltyAdres = entity.address,
-                dtlAdres = entity.detailAddress,
-                vtAcmdPsblNmpr = entity.vtAcmdPsblNmpr,
-                rnDtlAdres = entity.detailAddress,
-                useSeCd = "",
-                acmdBuldMngNo = "",
-                bdongCd = "",
-                arcd = "",
-                hdongCd = "",
-                acmdfcltySn = 0,
+                outdoorShelterName = entity.shelterName,
+                outdoorLongitude = entity.latitude.toString(),
+                outdoorLatitude = entity.longitude.toString(),
+                outoorAddress = entity.address,
+                outoorDetailAddress = entity.detailAddress,
+                outdoorcapacityNumber = entity.capacityNumber,
+                outdoorRoadAddress = entity.detailAddress,
             )
         }
     }
@@ -138,20 +129,20 @@ class OutdoorEvacuationRepositoryImpl @Inject constructor(
 
             // 새 데이터를 ShelterEntity형식으로 변환하여 저장
             val entities = shelters.mapNotNull { shelter ->
-                val latitude = shelter.la?.toDoubleOrNull() ?: return@mapNotNull null
-                val longitude = shelter.lo?.toDoubleOrNull() ?: return@mapNotNull null
+                val latitude = shelter.outdoorLongitude?.toDoubleOrNull() ?: return@mapNotNull null
+                val longitude = shelter.outdoorLatitude?.toDoubleOrNull() ?: return@mapNotNull null
 
                 ShelterEntity(
-                    vtAcmdfcltyNm = shelter.vtAcmdfcltyNm ?: "이름 없음",
-                    address = shelter.eqkAcmdfcltyAdres ?: "주소 없음",
-                    detailAddress = shelter.dtlAdres ?: "",
+                    shelterName = shelter.outdoorShelterName ?: "이름 없음",
+                    address = shelter.outoorAddress ?: "주소 없음",
+                    detailAddress = shelter.outoorDetailAddress ?: "",
                     latitude = latitude,
                     longitude = longitude,
                     shelterType = "야외대피장소",
-                    vtAcmdPsblNmpr = shelter.vtAcmdPsblNmpr ?: "알수없음",
+                    capacityNumber = shelter.outdoorcapacityNumber ?: "알수없음",
                     lastUpdated = System.currentTimeMillis(),
-                    acmdfcltyDtlCn = "",
-                    mngpsTelno = "",
+                    shelterDetailName = "",
+                    phoneNumber = "",
                 )
             }
 

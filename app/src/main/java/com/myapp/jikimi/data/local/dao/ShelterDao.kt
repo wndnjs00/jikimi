@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.Update
 import com.myapp.jikimi.data.model.entity.LikeEntity
 import kotlinx.coroutines.flow.Flow
 import androidx.room.Query
@@ -13,7 +12,7 @@ import com.myapp.jikimi.data.model.entity.ShelterEntity
 @Dao
 interface ShelterDao {
     @Query("SELECT * FROM LikeEntity")
-    fun getAllData() : Flow<List<LikeEntity>>
+    fun getAllData(): Flow<List<LikeEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(likeEntity: LikeEntity)
@@ -22,11 +21,11 @@ interface ShelterDao {
     suspend fun deleteData(likeEntity: LikeEntity)
 
     // vtAcmdfcltyNm(대피소명)을 기준으로 일치하는 첫번쨰값만 반환
-    @Query("SELECT * FROM LikeEntity WHERE vtAcmdfcltyNm = :shelterName LIMIT 1")
+    @Query("SELECT * FROM LikeEntity WHERE ShelterName = :shelterName LIMIT 1")
     suspend fun deleteDataFromShelterName(shelterName: String): LikeEntity?
 
     // 검색 (중복 제거를 위해 DISTINCT 추가)
-    @Query("SELECT DISTINCT * FROM ShelterEntity WHERE vtAcmdfcltyNm LIKE '%' || :query || '%'")
+    @Query("SELECT DISTINCT * FROM ShelterEntity WHERE shelterName LIKE '%' || :query || '%'")
     fun searchShelters(query: String): Flow<List<ShelterEntity>>
 
     // 대피소 검색기능

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.fragment.EvacuateFragment">
 
     <androidx.constraintlayout.widget.Guideline
@@ -11,21 +11,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/fragment_margin_30"/>
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_30" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/fragment_margin_20"/>
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_20" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/fragment_margin_20"/>
+        app:layout_constraintGuide_end="@dimen/fragment_margin_20" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
@@ -36,12 +36,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navermap_locationButtonEnabled="true"/>
+        app:navermap_locationButtonEnabled="true" />
 
     <EditText
         android:id="@+id/search_et"
         android:layout_width="0dp"
         android:layout_height="@dimen/fragment_margin_52"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/corner_search_edittext"
         android:drawableStart="@drawable/search_img"
         android:drawableEnd="@drawable/voice_img"
@@ -53,10 +54,9 @@
         android:padding="12dp"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_15"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toTopOf="@id/gl_top"
         app:layout_constraintEnd_toStartOf="@+id/like_constraint"
-        android:layout_marginEnd="20dp"/>
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@id/gl_top" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/like_constraint"
@@ -86,44 +86,44 @@
         android:layout_marginTop="16dp"
         android:background="#80000000"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/search_et"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_et" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/search_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white_background"
         android:layout_marginTop="16dp"
+        android:background="@color/white_background"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/search_et"
+        app:layout_constraintEnd_toEndOf="@id/gl_end"
         app:layout_constraintStart_toStartOf="@id/gl_start"
-        app:layout_constraintEnd_toEndOf="@id/gl_end">
+        app:layout_constraintTop_toBottomOf="@id/search_et">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/search_results_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxHeight="400dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/no_results_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/no_results_tv"
             android:gravity="center"
             android:padding="16dp"
+            android:text="@string/no_results_tv"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -134,7 +134,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/progressBar2"
+        android:id="@+id/progress_bar2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

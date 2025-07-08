@@ -1,17 +1,14 @@
 package com.myapp.jikimi.presentation.fragment
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,9 +18,10 @@ import com.bumptech.glide.Glide
 import com.myapp.jikimi.R
 import com.myapp.jikimi.Resource
 import com.myapp.jikimi.data.model.dto.User
-import com.myapp.jikimi.databinding.CustomDialogBinding
 import com.myapp.jikimi.databinding.FragmentProfileEditBinding
 import com.myapp.jikimi.presentation.activity.MainActivity
+import com.myapp.jikimi.presentation.utils.CustomDialogUtil
+import com.myapp.jikimi.presentation.utils.showToast
 import com.myapp.jikimi.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -33,7 +31,6 @@ class ProfileEditFragment : Fragment() {
 
     private var _binding: FragmentProfileEditBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel: AuthViewModel by viewModels()
     private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
@@ -50,12 +47,11 @@ class ProfileEditFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // BottomNavigationView 숨기기
         (activity as? MainActivity)?.hideBottomNavigation()
 
         // 로그인 상태 확인
         if (!viewModel.isLoggedIn()) {
-            (activity as MainActivity).showToast("로그인이 필요합니다")
+            requireContext().showToast("로그인이 필요합니다")
             findNavController().navigate(R.id.loginFragment)
             return
         }
@@ -76,32 +72,37 @@ class ProfileEditFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userProfile.collect { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
-                        is Resource.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            currentUser = resource.data
-                            currentUser?.let { user ->
-                                binding.etNickname.setText(user.nickname)
-                                if (user.profileImageUrl.isNotEmpty()) {
-                                    Glide.with(requireContext())
-                                        .load(user.profileImageUrl)
-                                        .placeholder(R.drawable.ic_launcher_foreground)
-                                        .error(R.drawable.ic_launcher_foreground)
-                                        .circleCrop()
-                                        .into(binding.cardProfileImage)
+                    with(binding) {
+                        when (resource) {
+                            is Resource.Loading -> {
+                                progressBar.visibility = View.VISIBLE
+                            }
+
+                            is Resource.Success -> {
+                                progressBar.visibility = View.GONE
+                                currentUser = resource.data
+                                currentUser?.let { user ->
+                                    nicknameEt.setText(user.nickname)
+                                    if (user.profileImageUrl.isNotEmpty()) {
+                                        Glide.with(requireContext())
+                                            .load(user.profileImageUrl)
+                                            .placeholder(R.drawable.ic_launcher_foreground)
+                                            .error(R.drawable.ic_launcher_foreground)
+                                            .circleCrop()
+                                            .into(profileCircleIv)
+                                    }
                                 }
                             }
-                        }
-                        is Resource.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            (activity as MainActivity).showToast(resource.message ?: "프로필을 불러오는데 실패했습니다")
-                        }
-                        null->{
-                            // 초기 상태
-                            binding.progressBar.visibility = View.GONE
+
+                            is Resource.Error -> {
+                                progressBar.visibility = View.GONE
+                                requireContext().showToast(resource.message ?: "프로필을 불러오는데 실패했습니다")
+                            }
+
+                            null -> {
+                                // 초기 상태
+                                progressBar.visibility = View.GONE
+                            }
                         }
                     }
                 }
@@ -112,28 +113,29 @@ class ProfileEditFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.updateProfileStatus.collect { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-//                            binding.btnSave.isEnabled = false
-                        }
-                        is Resource.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            resource.data?.let {
-                                (activity as MainActivity).showToast("프로필이 수정되었습니다")
-                                // CommnunityFragment의 프로필 정보 업데이트!!
-
-                                findNavController().navigateUp()
+                    with(binding) {
+                        when (resource) {
+                            is Resource.Loading -> {
+                                progressBar.visibility = View.VISIBLE
                             }
-                        }
-                        is Resource.Error -> {
-                            binding.progressBar.visibility = View.GONE
-//                            binding.btnSave.isEnabled = true
-                            (activity as MainActivity).showToast(resource.message ?: "프로필 수정에 실패했습니다")
-                        }
-                        null -> {
-                            // 초기 상태
-                            binding.progressBar.visibility = View.GONE
+
+                            is Resource.Success -> {
+                                progressBar.visibility = View.GONE
+                                resource.data?.let {
+                                    requireContext().showToast("프로필이 수정되었습니다")
+                                    findNavController().navigateUp()
+                                }
+                            }
+
+                            is Resource.Error -> {
+                                progressBar.visibility = View.GONE
+                                requireContext().showToast(resource.message ?: "프로필 수정에 실패했습니다")
+                            }
+
+                            null -> {
+                                // 초기 상태
+                                progressBar.visibility = View.GONE
+                            }
                         }
                     }
                 }
@@ -144,24 +146,29 @@ class ProfileEditFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.logoutStatus.collect { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
-                        is Resource.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            // 로그아웃 성공 시 즉시 BottomNavigationView 숨기기
-                            (activity as MainActivity).hideBottomNavigation()
-                            (activity as MainActivity).showToast("로그아웃 되었습니다")
-                            findNavController().navigate(R.id.loginFragment)
-                        }
-                        is Resource.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            (activity as MainActivity).showToast(resource.message ?: "로그아웃에 실패했습니다")
-                        }
-                        null -> {
-                            // 초기 상태
-                            binding.progressBar.visibility = View.GONE
+                    with(binding) {
+                        when (resource) {
+                            is Resource.Loading -> {
+                                progressBar.visibility = View.VISIBLE
+                            }
+
+                            is Resource.Success -> {
+                                progressBar.visibility = View.GONE
+                                // 로그아웃 성공 시 즉시 BottomNavigationView 숨기기
+                                (activity as MainActivity).hideBottomNavigation()
+                                requireContext().showToast("로그아웃 되었습니다")
+                                findNavController().navigate(R.id.loginFragment)
+                            }
+
+                            is Resource.Error -> {
+                                progressBar.visibility = View.GONE
+                                requireContext().showToast(resource.message ?: "로그아웃에 실패했습니다")
+                            }
+
+                            null -> {
+                                // 초기 상태
+                                progressBar.visibility = View.GONE
+                            }
                         }
                     }
                 }
@@ -172,115 +179,94 @@ class ProfileEditFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.deleteAccountStatus.collect { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                        }
-                        is Resource.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            // 회원탈퇴 성공 시 즉시 BottomNavigationView 숨기기
-                            (activity as MainActivity).hideBottomNavigation()
-                            (activity as MainActivity).showToast("회원탈퇴가 완료되었습니다")
-                            findNavController().navigate(R.id.registerFragment)
-                        }
-                        is Resource.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            (activity as MainActivity).showToast(resource.message ?: "회원탈퇴에 실패했습니다")
-                        }
-                        null->{
-                            // 초기 상태
-                            binding.progressBar.visibility = View.GONE
+                    with(binding) {
+                        when (resource) {
+                            is Resource.Loading -> {
+                                progressBar.visibility = View.VISIBLE
+                            }
+
+                            is Resource.Success -> {
+                                progressBar.visibility = View.GONE
+                                // 회원탈퇴 성공 시 즉시 BottomNavigationView 숨기기
+                                (activity as MainActivity).hideBottomNavigation()
+                                requireContext().showToast("회원탈퇴가 완료되었습니다")
+                                findNavController().navigate(R.id.registerFragment)
+                            }
+
+                            is Resource.Error -> {
+                                progressBar.visibility = View.GONE
+                                requireContext().showToast(resource.message ?: "회원탈퇴에 실패했습니다")
+                            }
+
+                            null -> {
+                                // 초기 상태
+                                progressBar.visibility = View.GONE
+                            }
                         }
                     }
                 }
             }
         }
-
     }
 
-
-
     private fun setupListeners() {
-        binding.cardProfileImage.setOnClickListener {
-            openGallery()
-        }
-
-        binding.btnChangeProfile.setOnClickListener {
-            openGallery()
-        }
-
-        binding.btnSave.setOnClickListener {
-            val nickname = binding.etNickname.text.toString().trim()
-
-            if (validateInputs(nickname)) {
-                Log.d("ProfileEditFragment", "프로필 업데이트 - 닉네임: $nickname, 이미지 URI: $imageUri")
-                viewModel.updateProfile(nickname, imageUri)
+        with(binding) {
+            profileCircleIv.setOnClickListener {
+                openGallery()
             }
-        }
+            changeProfileBtn.setOnClickListener {
+                openGallery()
+            }
+            saveBtn.setOnClickListener {
+                val nickname = nicknameEt.text.toString().trim()
 
-        // tvMenuLeft 클릭 시 로그아웃
-        binding.tvMenuLeft.setOnClickListener {
-            showLogoutConfirmDialog()
-        }
+                if (validateInputs(nickname)) {
+                    Log.d("ProfileEditFragment", "프로필 업데이트 - 닉네임: $nickname, 이미지 URI: $imageUri")
+                    viewModel.updateProfile(nickname, imageUri)
+                }
+            }
 
-        // tvMenuRight 클릭 시 회원탈퇴
-        binding.tvMenuRight.setOnClickListener {
-            showDeleteAccountConfirmDialog()
+            // tvMenuLeft 클릭 시 로그아웃
+            menuLeftTv.setOnClickListener {
+                showLogoutConfirmDialog()
+            }
+
+            // tvMenuRight 클릭 시 회원탈퇴
+            menuRightTv.setOnClickListener {
+                showDeleteAccountConfirmDialog()
+            }
         }
     }
 
     private fun showLogoutConfirmDialog() {
-        val dialog = Dialog(requireContext())
-        val dialogBinding = CustomDialogBinding.inflate(layoutInflater)
-        dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        // 다이얼로그 텍스트 설정
-        dialogBinding.dialogTv.text = "로그아웃 하시겠습니까?"
-        // 버튼 텍스트 변경
-        dialogBinding.dialogDeleteBtn.text = "로그아웃"
-
-        dialogBinding.dialogCancelBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialogBinding.dialogDeleteBtn.setOnClickListener {
-            viewModel.logout()
-            dialog.dismiss()
-        }
-        dialog.show()
+        CustomDialogUtil.showDialog(
+            context = requireContext(),
+            message = "로그아웃 하시겠습니까?",
+            positiveText = "로그아웃",
+            onConfirm = {
+                viewModel.logout()
+            }
+        )
     }
-
 
     private fun showDeleteAccountConfirmDialog() {
-        val dialog = Dialog(requireContext())
-        val dialogBinding = CustomDialogBinding.inflate(layoutInflater)
-        dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        // 다이얼로그 텍스트 설정
-        dialogBinding.dialogTv.text = "정말 탈퇴하시겠습니까?"
-        // 버튼 텍스트 변경
-        dialogBinding.dialogDeleteBtn.text = "탈퇴"
-
-        dialogBinding.dialogCancelBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialogBinding.dialogDeleteBtn.setOnClickListener {
-            viewModel.deleteAccount()
-            findNavController().navigate(R.id.registerFragment)
-            dialog.dismiss()
-        }
-
-        dialog.show()
+        CustomDialogUtil.showDialog(
+            context = requireContext(),
+            message = "정말 탈퇴하시겠습니까?",
+            positiveText = "탈퇴",
+            onConfirm = {
+                viewModel.deleteAccount()
+                findNavController().navigate(R.id.registerFragment)
+            }
+        )
     }
-
 
     private fun validateInputs(nickname: String): Boolean {
         if (nickname.isEmpty()) {
-            binding.etNickname.error = "닉네임을 입력하세요"
+            binding.nicknameEt.error = "닉네임을 입력하세요"
             return false
         }
-        binding.tilNickname.error = null
+        binding.nicknameTil.error = null
         return true
     }
 
@@ -306,22 +292,19 @@ class ProfileEditFragment : Fragment() {
                 .placeholder(R.drawable.jikimi_img)
                 .error(R.drawable.ic_launcher_foreground)
                 .circleCrop()
-                .into(binding.cardProfileImage)
+                .into(binding.profileCircleIv)
         }
     }
 
-
     private fun setupBackButton() {
-        binding.btnBack.setOnClickListener {
+        binding.backBtn.setOnClickListener {
             findNavController().popBackStack()
         }
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
         (activity as MainActivity)?.showBottomNavigation()
     }
 }

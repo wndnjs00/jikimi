@@ -1,7 +1,5 @@
 package com.myapp.jikimi.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myapp.jikimi.Resource
@@ -19,7 +17,8 @@ class DisasterViewModel @Inject constructor(
     private val repository: DisasterRepository
 ) : ViewModel() {
 
-    private val _todayDisasters = MutableStateFlow<Resource<List<DisasterResponse>>>(Resource.Loading())
+    private val _todayDisasters =
+        MutableStateFlow<Resource<List<DisasterResponse>>>(Resource.Loading())
     val todayDisasters: StateFlow<Resource<List<DisasterResponse>>> = _todayDisasters.asStateFlow()
 
     private val _searchResult = MutableStateFlow<Resource<DisasterResponse>?>(null)
