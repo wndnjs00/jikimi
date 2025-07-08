@@ -2,7 +2,6 @@ package com.myapp.jikimi.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.myapp.jikimi.R
@@ -18,7 +17,8 @@ class DisasterAdapter(
         parent: ViewGroup,
         viewType: Int
     ): DisasterViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_disaster, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_disaster, parent, false)
         return DisasterViewHolder(ItemDisasterBinding.bind(view))
     }
 
@@ -37,10 +37,10 @@ class DisasterAdapter(
 
         fun bind(disaster: DisasterResponse) {
             with(binding) {
-                tvDisasterTitle.text = disaster.title
-                tvDisasterCategory.text = disaster.category
+                disasterTitleTv.text = disaster.title
+                disasterCategoryTv.text = disaster.category
                 disasterSubtitleTv.text = disaster.subtitle
-                tvRiskLevel.text = "위험도 :${disaster.riskLevel}"
+                riskLevelTv.text = "위험도 :${disaster.riskLevel}"
 
                 // 위험도에 따른 색상 설정
                 val riskColor = when (disaster.riskLevel) {
@@ -49,7 +49,7 @@ class DisasterAdapter(
                     "높음" -> android.R.color.holo_red_light
                     else -> android.R.color.darker_gray
                 }
-                tvRiskLevel.setTextColor(itemView.context.getColor(riskColor))
+                riskLevelTv.setTextColor(itemView.context.getColor(riskColor))
             }
         }
     }

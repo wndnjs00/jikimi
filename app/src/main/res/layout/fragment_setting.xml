@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:background="@color/background_pink"
+    android:orientation="vertical"
     tools:context=".presentation.fragment.SettingFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="16dp">
 
         <ImageView
-            android:id="@+id/btn_back"
+            android:id="@+id/back_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_back" />
@@ -24,86 +24,84 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="설정"
-            android:textSize="20sp"
+            android:text="@string/setting_tv"
             android:textColor="@color/black"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
     </RelativeLayout>
 
-    <!-- 다크모드 설정 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
         android:layout_margin="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/corner_search_edittext"
         android:backgroundTint="@color/line_grays"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_dark_mode"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_dark_mode" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="다크모드"
+            android:text="@string/setting_dark_mode"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:textStyle="bold" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_dark_mode"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:checked="false"
+            android:thumb="@drawable/style_toggle_thumb"
             app:thumbTint="@color/white"
-            app:trackTint="@color/dark_blue2"
             app:track="@drawable/style_toggle_btn"
-            android:thumb="@drawable/style_toggle_thumb"/>
+            app:trackTint="@color/dark_blue2" />
 
     </LinearLayout>
 
-    <!-- 앱 버전 정보 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
         android:layout_margin="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/corner_search_edittext"
         android:backgroundTint="@color/line_grays"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_info"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_info" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="앱 버전"
+            android:text="@string/setting_app_version_tv"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/app_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4.41"
-            android:textSize="16sp"
-            android:textColor="@color/dark_gray" />
+            android:text="@string/setting_app_version"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp" />
 
     </LinearLayout>
 

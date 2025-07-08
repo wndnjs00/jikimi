@@ -19,7 +19,8 @@ class EvacuationMessageViewModel @Inject constructor(
     private val evacuationMessageRepository: EvacuationMessageRepository
 ) : ViewModel() {
 
-    private val _evacuationMessage = MutableStateFlow<Resource<EvacuationMessage>>(Resource.Loading())
+    private val _evacuationMessage =
+        MutableStateFlow<Resource<EvacuationMessage>>(Resource.Loading())
     val evacuationMessage: StateFlow<Resource<EvacuationMessage>> = _evacuationMessage
 
     init {

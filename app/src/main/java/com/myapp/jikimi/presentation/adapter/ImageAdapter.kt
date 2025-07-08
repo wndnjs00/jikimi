@@ -3,14 +3,13 @@ package com.myapp.jikimi.presentation.adapter
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.myapp.jikimi.databinding.ItemImageBinding
-import com.myapp.jikimi.data.network.VIEW_TYPE_LOCAL
-import com.myapp.jikimi.data.network.VIEW_TYPE_FIREBASE
 import com.myapp.jikimi.data.network.MAX_IMAGES
+import com.myapp.jikimi.data.network.VIEW_TYPE_FIREBASE
+import com.myapp.jikimi.data.network.VIEW_TYPE_LOCAL
+import com.myapp.jikimi.databinding.ItemImageBinding
 import com.myapp.jikimi.presentation.adapter.diffutil.ImageDiffUtil
 
 // 이미지 업로드를 위한 어댑터 (DiffUtil 적용)
@@ -53,7 +52,8 @@ class ImageAdapter(
 
     fun getImages(): List<Uri> = currentList.filterIsInstance<ImageItem.LocalImage>().map { it.uri }
 
-    fun getFirebaseImages(): List<String> = currentList.filterIsInstance<ImageItem.FirebaseImage>().map { it.url }
+    fun getFirebaseImages(): List<String> =
+        currentList.filterIsInstance<ImageItem.FirebaseImage>().map { it.url }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ItemImageBinding.inflate(
@@ -82,15 +82,17 @@ class ImageAdapter(
             is LocalImageViewHolder -> {
                 holder.bind(item as ImageItem.LocalImage)
             }
+
             is FirebaseImageViewHolder -> {
                 holder.bind(item as ImageItem.FirebaseImage)
             }
         }
     }
 
-    inner class LocalImageViewHolder(private val binding: ItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class LocalImageViewHolder(private val binding: ItemImageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.btnDelete.setOnClickListener {
+            binding.deleteBtn.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onDeleteClick(position)
@@ -102,13 +104,14 @@ class ImageAdapter(
             Glide.with(binding.root.context)
                 .load(item.uri)
                 .centerCrop()
-                .into(binding.ivImage)
+                .into(binding.imageIv)
         }
     }
 
-    inner class FirebaseImageViewHolder(private val binding: ItemImageBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class FirebaseImageViewHolder(private val binding: ItemImageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.btnDelete.setOnClickListener {
+            binding.deleteBtn.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onDeleteClick(position)
@@ -120,7 +123,7 @@ class ImageAdapter(
             Glide.with(binding.root.context)
                 .load(item.url)
                 .centerCrop()
-                .into(binding.ivImage)
+                .into(binding.imageIv)
         }
     }
 }

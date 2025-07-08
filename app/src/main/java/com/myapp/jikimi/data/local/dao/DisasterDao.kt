@@ -12,7 +12,7 @@ interface DisasterDao {
     suspend fun getTodayDisasters(): List<DisasterEntity>
 
     @Query("SELECT * FROM disaster_tips WHERE type = 'search' AND title LIKE '%' || :query || '%' OR category LIKE '%' || :query || '%' LIMIT 1")
-    suspend fun searchDisaster(query: String): DisasterEntity?
+    suspend fun searchDisaster(query: String): DisasterEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDisasters(disasters: List<DisasterEntity>)

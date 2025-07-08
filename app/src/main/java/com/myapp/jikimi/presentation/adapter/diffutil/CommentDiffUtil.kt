@@ -8,8 +8,10 @@ class CommentDiffUtil : DiffUtil.ItemCallback<CommentItem>() {
         return when {
             oldItem is CommentItem.MainComment && newItem is CommentItem.MainComment ->
                 oldItem.comment.id == newItem.comment.id
+
             oldItem is CommentItem.ReplyComment && newItem is CommentItem.ReplyComment ->
                 oldItem.comment.id == newItem.comment.id
+
             else -> false
         }
     }
@@ -18,8 +20,10 @@ class CommentDiffUtil : DiffUtil.ItemCallback<CommentItem>() {
         return when {
             oldItem is CommentItem.MainComment && newItem is CommentItem.MainComment ->
                 oldItem.comment == newItem.comment
+
             oldItem is CommentItem.ReplyComment && newItem is CommentItem.ReplyComment ->
                 oldItem.comment == newItem.comment
+
             else -> false
         }
     }

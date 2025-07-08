@@ -6,14 +6,14 @@ import androidx.room.PrimaryKey
 @Entity
 data class ShelterEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val vtAcmdfcltyNm: String,  // 대피시설명
+    val shelterName: String,  // 대피시설명
     val address: String?,       // 주소
-    val detailAddress: String?,      // 상세주소
+    val detailAddress: String?, // 상세주소
     val latitude: Double,       // 위도
     val longitude: Double,      // 경도
     val shelterType: String,    // "INDOOR" or "OUTDOOR"
-    val vtAcmdPsblNmpr: String,    //수용인원
-    val acmdfcltyDtlCn: String,  // 시설명,
-    val mngpsTelno: String,      // 전화번호,
+    val capacityNumber: String,    //수용인원
+    val shelterDetailName: String,  // 시설명,
+    val phoneNumber: String,      // 전화번호,
     val lastUpdated: Long = System.currentTimeMillis(), // 마지막 업데이트 시간
 )

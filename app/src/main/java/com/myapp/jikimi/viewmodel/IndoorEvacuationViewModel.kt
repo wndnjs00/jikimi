@@ -16,10 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 class IndoorEvacuationViewModel @Inject constructor(
     private val indoorEvacuationRepository: IndoorEvacuationRepository,
-) : ViewModel(){
+) : ViewModel() {
 
-    private val _shelter = MutableStateFlow<List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>>(emptyList())
-    val shelter : StateFlow<List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>> = _shelter
+    private val _shelter =
+        MutableStateFlow<List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>>(emptyList())
+    val shelter: StateFlow<List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row>> = _shelter
 
     private val _currentLocation = MutableStateFlow<LatLng?>(null)
     val currentLocation: StateFlow<LatLng?> = _currentLocation
@@ -54,8 +55,8 @@ class IndoorEvacuationViewModel @Inject constructor(
                 _currentLocation.value?.let { location ->
                     // 반경 5km 이내의 대피소만 필터링
                     val filteredShelters = allShelters.filter { shelter ->
-                        val latitude = shelter.ycord.toDoubleOrNull() ?: 0.0
-                        val longitude = shelter.xcord.toDoubleOrNull() ?: 0.0
+                        val latitude = shelter.indoorLongitude.toDoubleOrNull() ?: 0.0
+                        val longitude = shelter.indoorLatitude.toDoubleOrNull() ?: 0.0
 
                         if (latitude != 0.0 && longitude != 0.0) {
                             val shelterLocation = LatLng(latitude, longitude)
@@ -66,8 +67,8 @@ class IndoorEvacuationViewModel @Inject constructor(
                         }
                     }.sortedBy { shelter ->
                         // 가까운 대피소부터 정렬
-                        val latitude = shelter.ycord.toDoubleOrNull() ?: 0.0
-                        val longitude = shelter.xcord.toDoubleOrNull() ?: 0.0
+                        val latitude = shelter.indoorLongitude.toDoubleOrNull() ?: 0.0
+                        val longitude = shelter.indoorLatitude.toDoubleOrNull() ?: 0.0
                         val shelterLocation = LatLng(latitude, longitude)
                         location.haversineDistance(shelterLocation)
                     }
@@ -80,7 +81,7 @@ class IndoorEvacuationViewModel @Inject constructor(
                     val adminKeywords = currentAddress.split(" ").filter { it.length >= 2 }
                     val filteredByAddress = if (adminKeywords.isNotEmpty()) {
                         allShelters.filter { shelter ->
-                            val shelterAddress = shelter.rnAdres ?: ""
+                            val shelterAddress = shelter.indoorRoadAddress ?: ""
                             adminKeywords.any { keyword ->
                                 shelterAddress.contains(keyword)
                             }

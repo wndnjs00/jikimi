@@ -8,8 +8,10 @@ class ImageDiffUtil : DiffUtil.ItemCallback<ImageItem>() {
         return when {
             oldItem is ImageItem.LocalImage && newItem is ImageItem.LocalImage ->
                 oldItem.uri == newItem.uri
+
             oldItem is ImageItem.FirebaseImage && newItem is ImageItem.FirebaseImage ->
                 oldItem.url == newItem.url
+
             else -> false
         }
     }

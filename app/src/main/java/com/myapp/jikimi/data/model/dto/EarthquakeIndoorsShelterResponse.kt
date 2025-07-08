@@ -27,24 +27,14 @@ data class EarthquakeIndoorsShelterResponse(
 
         @Parcelize
         data class Row(
-            @SerializedName("arcd") val arcd: String?,
-            @SerializedName("acmdfclty_sn") val acmdfcltySn: String?,
-            @SerializedName("ctprvn_nm") val ctprvnNm: String?,
-            @SerializedName("sgg_nm") val sggNm: String?,
-            @SerializedName("vt_acmdfclty_nm") val vtAcmdfcltyNm: String?,
-            @SerializedName("rdnmadr_cd") val rdnmadrCd: String?,
-            @SerializedName("bdong_cd") val bdongCd: String?,
-            @SerializedName("hdong_cd") val hdongCd: String?,
-            @SerializedName("dtl_adres") val dtlAdres: String?,
-            @SerializedName("fclty_ar") val fcltyAr: String?,
-            @SerializedName("xcord") val xcord: String,
-            @SerializedName("ycord") val ycord: String,
-            @SerializedName("mngps_nm") val mngpsNm: String?,
-            @SerializedName("mngps_telno") val mngpsTelno: String?,
-            @SerializedName("acmdfclty_dtl_cn") val acmdfcltyDtlCn: String?,
-            @SerializedName("rn_adres") val rnAdres: String?,
-            @SerializedName("mngdpt_nm") val mngdptNm: String?,
-            @SerializedName("vt_acmd_psbl_nmpr") val vtAcmdPsblNmpr: String?
+            @SerializedName("vt_acmdfclty_nm") val indoorShelterName: String?,  // 임시주거시설명
+            @SerializedName("dtl_adres") val indoorAddress: String?,  //지번주소
+            @SerializedName("xcord") val indoorLatitude: String,     //경도
+            @SerializedName("ycord") val indoorLongitude: String,     //위도
+            @SerializedName("mngps_telno") val indoorPhoneNumber: String?,   //관리기관전화번호
+            @SerializedName("acmdfclty_dtl_cn") val indoorDetailAddress: String?,   // 지진겸용 임시주거시실 상세시설명
+            @SerializedName("rn_adres") val indoorRoadAddress: String?,             // 도로명주소
+            @SerializedName("vt_acmd_psbl_nmpr") val indoorcapacityNumber: String?  //최대수용인원수
         ) : Parcelable
     }
 }

@@ -3,15 +3,13 @@ package com.myapp.jikimi.presentation.fragment
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.myapp.jikimi.BuildConfig
-import com.myapp.jikimi.R
-import com.myapp.jikimi.databinding.FragmentLikeBottomSheetBinding
 import com.myapp.jikimi.databinding.FragmentSettingBinding
 import com.myapp.jikimi.presentation.activity.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,11 +32,10 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // SharedPreferences 초기화
-        sharedPreferences = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        sharedPreferences =
+            requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
 
-        // BottomNavigationView 숨기기
         (activity as? MainActivity)?.hideBottomNavigation()
         setupBackButton()
         setupDarkModeSwitch()
@@ -46,23 +43,25 @@ class SettingFragment : Fragment() {
     }
 
     private fun setupBackButton() {
-        binding.btnBack.setOnClickListener {
+        binding.backBtn.setOnClickListener {
             findNavController().popBackStack()
         }
     }
 
     private fun setupDarkModeSwitch() {
-        // 현재 다크모드 상태 불러오기
-        val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
-        binding.switchDarkMode.isChecked = isDarkMode
+        with(binding) {
+            // 현재 다크모드 상태 불러오기
+            val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
+            switchDarkMode.isChecked = isDarkMode
 
-        // 스위치 토글 리스너 설정
-        binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-            // SharedPreferences에 다크모드 상태 저장
-            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
+            // 스위치 토글 리스너 설정
+            switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
+                // SharedPreferences에 다크모드 상태 저장
+                sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
 
-            // 다크모드 적용
-            applyDarkMode(isChecked)
+                // 다크모드 적용
+                applyDarkMode(isChecked)
+            }
         }
     }
 
@@ -74,7 +73,6 @@ class SettingFragment : Fragment() {
             // 라이트모드 적용
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-
         // 액티비티 재생성하여 테마 적용
         activity?.recreate()
     }
@@ -87,7 +85,6 @@ class SettingFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
         (activity as MainActivity)?.showBottomNavigation()
     }
 }

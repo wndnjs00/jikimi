@@ -2,7 +2,6 @@ package com.myapp.jikimi.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.myapp.jikimi.R
@@ -11,9 +10,9 @@ import com.myapp.jikimi.databinding.LikeItemBinding
 import com.myapp.jikimi.presentation.adapter.diffutil.LikeDiffUtil
 
 class LikeAdapter(
-    private val onClick : (LikeEntity, Int) -> Unit,
-    private val onLongClick : (LikeEntity, Int) -> Unit,
-) :ListAdapter<LikeEntity, LikeAdapter.LikeViewHolder>(LikeDiffUtil()){
+    private val onClick: (LikeEntity, Int) -> Unit,
+    private val onLongClick: (LikeEntity, Int) -> Unit,
+) : ListAdapter<LikeEntity, LikeAdapter.LikeViewHolder>(LikeDiffUtil()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -26,7 +25,7 @@ class LikeAdapter(
         val item = getItem(position)
         holder.bind(item)
 
-        holder.itemView.setOnClickListener{
+        holder.itemView.setOnClickListener {
             onClick(item, position)
         }
 
@@ -37,20 +36,20 @@ class LikeAdapter(
     }
 
     class LikeViewHolder(
-        private var binding : LikeItemBinding
-    ): RecyclerView.ViewHolder(binding.root){
+        private var binding: LikeItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(likeEntity: LikeEntity){
+        fun bind(likeEntity: LikeEntity) {
 
-            with(binding){
-                likeShelterNameTv.text = likeEntity.vtAcmdfcltyNm
+            with(binding) {
+                likeShelterNameTv.text = likeEntity.shelterName
                 likeShelterTv.text = likeEntity.shelterType
                 likeDistanceTv.text = "${likeEntity.distanceData} m"
 
                 // 주소 데이터 설정
                 likeShelterAddressTv.text = when {
-                    !likeEntity?.rnAdres.isNullOrEmpty() -> likeEntity.rnAdres // rnAdres가 존재하면 사용
-                    !likeEntity?.dtlAdres.isNullOrEmpty() -> likeEntity.dtlAdres // rnAdres가 null이면 dtlAdres 사용
+                    !likeEntity?.roadAddress.isNullOrEmpty() -> likeEntity.roadAddress // rnAdres가 존재하면 사용
+                    !likeEntity?.detailAddress.isNullOrEmpty() -> likeEntity.detailAddress // rnAdres가 null이면 dtlAdres 사용
                     else -> "데이터가 없음" // 두 값이 모두 null이면 기본 텍스트
                 }
             }

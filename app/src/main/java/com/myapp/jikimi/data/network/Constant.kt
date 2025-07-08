@@ -1,4 +1,5 @@
 package com.myapp.jikimi.data.network
+
 import com.myapp.jikimi.BuildConfig
 
 // 행정안전부_지진 옥외대피장소
@@ -23,8 +24,7 @@ const val CHATGPT_API = BuildConfig.CHATGPT_API
 const val CHATGPT_API_SERVICE_KEY = BuildConfig.CHATGPT_API_SERVICE_KEY
 
 
-
-object Constant{
+object Constant {
     // 공유되는 데이터
     const val OUTDOOR_SHELTER_DATA = "outdoor_shelter_data"
     const val OUTDOOR_DISTANCE_DATA = "outdoor_distance_data"

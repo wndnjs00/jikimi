@@ -4,7 +4,6 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -41,17 +40,17 @@ class PostAdapter(
 
         fun bind(post: Post) {
             with(binding) {
-                tvNickname.text = post.nickname
-                tvContent.text = post.content
-                tvTimestamp.text = DateUtils.getRelativeTimeSpanString(
+                nicknameTv.text = post.nickname
+                contentTv.text = post.content
+                timestampTv.text = DateUtils.getRelativeTimeSpanString(
                     post.timestamp,
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS
                 )
-                tvCommentCount.text = "댓글 ${post.commentCount}개"
+                commentCountTv.text = "댓글 ${post.commentCount}개"
 
-                tvCategory.text = post.category
-                tvCategory.visibility = if (post.category.isNotEmpty()) View.VISIBLE else View.GONE
+                categoryTv.text = post.category
+                categoryTv.visibility = if (post.category.isNotEmpty()) View.VISIBLE else View.GONE
 
                 // 프로필 이미지 설정
                 if (post.profileImageUrl.isNotEmpty()) {
@@ -60,20 +59,20 @@ class PostAdapter(
                         .placeholder(R.drawable.jikimi_img)
                         .error(R.drawable.ic_launcher_foreground)
                         .circleCrop()
-                        .into(ivUserProfile)
+                        .into(userProfileIv)
                 } else {
-                    ivUserProfile.setImageResource(R.drawable.jikimi_img)
+                    userProfileIv.setImageResource(R.drawable.jikimi_img)
                 }
 
                 // 게시물 이미지가 있으면 첫 번째 이미지만 표시
                 if (post.imageUrls.isNotEmpty()) {
-                    ivPostImage.visibility = View.VISIBLE
+                    postImageIv.visibility = View.VISIBLE
                     Glide.with(itemView.context)
                         .load(post.imageUrls[0])
                         .centerCrop()
-                        .into(ivPostImage)
+                        .into(postImageIv)
                 } else {
-                    ivPostImage.visibility = View.GONE
+                    postImageIv.visibility = View.GONE
                 }
             }
         }

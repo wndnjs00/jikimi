@@ -1,14 +1,14 @@
 package com.myapp.jikimi.data.network.di
 
+import com.google.gson.GsonBuilder
+import com.myapp.jikimi.data.network.CHATGPT_API_BASE
 import com.myapp.jikimi.data.network.EVACUATION_MESSAGE_API_BASE
 import com.myapp.jikimi.data.network.INDOOR_EVACUATION_API_BASE
-import com.myapp.jikimi.data.network.service.IndoorEvacuationService
 import com.myapp.jikimi.data.network.OUTDOOR_EVACUATION_API_BASE
-import com.myapp.jikimi.data.network.CHATGPT_API_BASE
-import com.myapp.jikimi.data.network.service.EvacuationMessageService
-import com.myapp.jikimi.data.network.service.OutdoorEvacuationService
-import com.google.gson.GsonBuilder
 import com.myapp.jikimi.data.network.service.ChatGPTApiService
+import com.myapp.jikimi.data.network.service.EvacuationMessageService
+import com.myapp.jikimi.data.network.service.IndoorEvacuationService
+import com.myapp.jikimi.data.network.service.OutdoorEvacuationService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,7 +35,6 @@ object RetrofitModule {
             .build()
     }
 
-
     @Singleton
     @Provides
     @Named("OutdoorEvacuation")
@@ -49,7 +48,6 @@ object RetrofitModule {
             .build()
     }
 
-
     @Singleton
     @Provides
     @Named("OutdoorEvacuationService")
@@ -58,9 +56,6 @@ object RetrofitModule {
     ): OutdoorEvacuationService {
         return retrofit.create(OutdoorEvacuationService::class.java)
     }
-
-
-
 
     @Singleton
     @Provides
@@ -84,7 +79,6 @@ object RetrofitModule {
         return retrofit.create(IndoorEvacuationService::class.java)
     }
 
-
     @Singleton
     @Provides
     @Named("EvacuationMessage")
@@ -106,7 +100,6 @@ object RetrofitModule {
     ): EvacuationMessageService {
         return retrofit.create(EvacuationMessageService::class.java)
     }
-
 
     // ChatGPT API 관련 추가
     @Singleton

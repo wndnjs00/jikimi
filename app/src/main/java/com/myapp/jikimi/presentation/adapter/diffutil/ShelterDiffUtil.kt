@@ -9,6 +9,6 @@ class ShelterDiffUtil : DiffUtil.ItemCallback<ShelterEntity>() {
     }
 
     override fun areContentsTheSame(oldItem: ShelterEntity, newItem: ShelterEntity): Boolean {
-        return oldItem.vtAcmdfcltyNm == newItem.vtAcmdfcltyNm && oldItem.address == newItem.address && oldItem.shelterType == newItem.shelterType
+        return oldItem.shelterName == newItem.shelterName && oldItem.address == newItem.address && oldItem.shelterType == newItem.shelterType
     }
 }

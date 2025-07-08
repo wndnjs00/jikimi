@@ -15,106 +15,102 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tvCategory"
+            android:id="@+id/category_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="소통"
-            android:textSize="12sp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
             android:background="@drawable/rounded_border"
+            android:paddingStart="12dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="4dp"
+            android:text="@string/item_post_category_tv"
+            android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/btnDelete"
+            android:id="@+id/delete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="옵션 메뉴"
             android:src="@drawable/ic_more_vert"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/tvCategory"
+            app:layout_constraintBottom_toBottomOf="@+id/category_tv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvCategory"
+            app:layout_constraintTop_toTopOf="@+id/category_tv"
             tools:visibility="visible" />
 
-        <!-- User profile section -->
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivUserProfile"
+            android:id="@+id/user_profile_iv"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginTop="16dp"
             android:src="@drawable/jikimi_img"
             app:civ_border_width="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCategory" />
+            app:layout_constraintTop_toBottomOf="@+id/category_tv" />
 
         <TextView
-            android:id="@+id/tvNickname"
+            android:id="@+id/nickname_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="닉네임"
-            android:textSize="16sp"
+            android:text="@string/item_post_nickname_tv"
             android:textColor="@color/black"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivUserProfile"
-            app:layout_constraintTop_toTopOf="@+id/ivUserProfile" />
+            app:layout_constraintStart_toEndOf="@+id/user_profile_iv"
+            app:layout_constraintTop_toTopOf="@+id/user_profile_iv" />
 
         <TextView
-            android:id="@+id/tvTimestamp"
+            android:id="@+id/timestamp_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="3dp"
-            android:text="1시간 전"
+            android:text="@string/item_post_timestamp_tv"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/ivUserProfile"
-            app:layout_constraintStart_toEndOf="@+id/ivUserProfile"
-            app:layout_constraintTop_toBottomOf="@+id/tvNickname" />
+            app:layout_constraintBottom_toBottomOf="@+id/user_profile_iv"
+            app:layout_constraintStart_toEndOf="@+id/user_profile_iv"
+            app:layout_constraintTop_toBottomOf="@+id/nickname_tv" />
 
-        <!-- Post content -->
         <TextView
-            android:id="@+id/tvContent"
+            android:id="@+id/content_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="게시물 내용"
             android:ellipsize="end"
             android:maxLines="3"
+            android:text="@string/item_post_content_tv"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivUserProfile" />
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_iv" />
 
-        <!-- Post image -->
         <ImageView
-            android:id="@+id/ivPostImage"
+            android:id="@+id/post_image_iv"
             android:layout_width="0dp"
             android:layout_height="180dp"
             android:layout_marginTop="16dp"
             android:scaleType="centerCrop"
-            android:visibility="gone"
             android:src="@drawable/ic_launcher_foreground"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvContent"
-            tools:visibility="visible"/>
+            app:layout_constraintTop_toBottomOf="@+id/content_tv"
+            tools:visibility="visible" />
 
-        <!-- Comment count -->
         <TextView
-            android:id="@+id/tvCommentCount"
+            android:id="@+id/comment_count_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:text="@string/item_post_comment_count_tv"
             android:textSize="12sp"
-            android:text="댓글 0개"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivPostImage" />
+            app:layout_constraintTop_toBottomOf="@+id/post_image_iv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

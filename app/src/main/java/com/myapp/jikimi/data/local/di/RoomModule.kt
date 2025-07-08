@@ -35,14 +35,14 @@ object RoomModule {
         AppDatabase::class.java,
         "app.db"
     )
-        .addMigrations(MIFGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4,MIGRATION_4_5, MIGRATION_5_6)
+        .addMigrations(MIFGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
         .build()
 
     @Singleton
     @Provides
     fun provideShelterDao(
         appDatabase: AppDatabase
-    ) : ShelterDao = appDatabase.shelterDao()
+    ): ShelterDao = appDatabase.shelterDao()
 
     @Provides
     fun provideDisasterDao(
@@ -50,26 +50,26 @@ object RoomModule {
     ): DisasterDao = appDatabase.disasterDao()
 
 
-    private val MIFGRATION_1_2 = object : Migration(1, 2){
-        override fun migrate(database: SupportSQLiteDatabase){
+    private val MIFGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
         }
     }
 
-    private val MIGRATION_2_3 = object : Migration(2, 3){
-        override fun migrate(database: SupportSQLiteDatabase){
+    private val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
 
         }
     }
 
     // 3에서 4으로의 마이그레이션 추가
-    private val MIGRATION_3_4 = object : Migration(3, 4){
-        override fun migrate(database: SupportSQLiteDatabase){
+    private val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
 
         }
     }
 
-    private val MIGRATION_4_5 = object : Migration(4, 5){
-        override fun migrate(database: SupportSQLiteDatabase){
+    private val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(database: SupportSQLiteDatabase) {
 
         }
     }
@@ -104,8 +104,8 @@ object RoomModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance() // FirebaseStorage 추가
-
+    fun provideFirebaseStorage(): FirebaseStorage =
+        FirebaseStorage.getInstance() // FirebaseStorage 추가
 
 
     @Provides
@@ -114,7 +114,7 @@ object RoomModule {
         firebaseAuth: FirebaseAuth,
         firestore: FirebaseFirestore,
         storage: FirebaseStorage
-    ): AuthRepository = AuthRepositoryImpl(firebaseAuth,firestore, storage)
+    ): AuthRepository = AuthRepositoryImpl(firebaseAuth, firestore, storage)
 
 
     @Provides

@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.FirebaseFirestore
 import com.myapp.jikimi.R
 import com.myapp.jikimi.data.model.dto.Comment
-import com.myapp.jikimi.databinding.ItemCommentBinding
-import com.google.firebase.firestore.FirebaseFirestore
 import com.myapp.jikimi.data.network.VIEW_TYPE_MAIN_COMMENT
 import com.myapp.jikimi.data.network.VIEW_TYPE_REPLY_COMMENT
+import com.myapp.jikimi.databinding.ItemCommentBinding
 import com.myapp.jikimi.presentation.adapter.diffutil.CommentDiffUtil
 
 class CommentAdapter(
@@ -139,15 +138,16 @@ class CommentAdapter(
                 // 답글 여부에 따라 왼쪽 여백 조정
                 val params = root.layoutParams as ViewGroup.MarginLayoutParams
                 if (isReply) {
-                    params.marginStart = (40 * root.resources.displayMetrics.density).toInt() // 40dp
+                    params.marginStart =
+                        (40 * root.resources.displayMetrics.density).toInt() // 40dp
                 } else {
                     params.marginStart = 0
                 }
                 root.layoutParams = params
 
-                tvCommentNickname.text = comment.nickname
-                tvCommentContent.text = comment.content
-                tvCommentTime.text = DateUtils.getRelativeTimeSpanString(
+                commentNicknameTv.text = comment.nickname
+                commentContentTv.text = comment.content
+                commentTimeTv.text = DateUtils.getRelativeTimeSpanString(
                     comment.timestamp,
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS
@@ -160,25 +160,25 @@ class CommentAdapter(
                         .placeholder(R.drawable.jikimi_img)
                         .error(R.drawable.ic_launcher_foreground)
                         .circleCrop()
-                        .into(ivCommentUserProfile)
+                        .into(commentUserProfileIv)
                 } else {
-                    ivCommentUserProfile.setImageResource(R.drawable.jikimi_img)
+                    commentUserProfileIv.setImageResource(R.drawable.jikimi_img)
                 }
 
                 // 모든 댓글에 옵션 버튼 표시
-                btnCommentOptions.isVisible = true
+                commentOptionsBtn.isVisible = true
 
                 // 내 댓글인지 여부 확인
                 val isUserComment = comment.userId == currentUserId
 
                 // 버튼 클릭 시 해당 버튼(view)를 함께 전달
-                btnCommentOptions.setOnClickListener { view ->
+                commentOptionsBtn.setOnClickListener { view ->
                     onOptionsClick(comment, isUserComment, view)
                 }
 
                 // 답글 버튼은 대댓글에서는 숨김
-                tvReply.isVisible = !isReply
-                tvReply.setOnClickListener {
+                replyTv.isVisible = !isReply
+                replyTv.setOnClickListener {
                     onReplyClick(comment)
                 }
             }

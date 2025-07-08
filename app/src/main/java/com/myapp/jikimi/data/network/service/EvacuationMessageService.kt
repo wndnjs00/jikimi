@@ -11,10 +11,10 @@ interface EvacuationMessageService {
     @GET(EVACUATION_MESSAGE_API)
 
     suspend fun getEvacuationMessage(
-        @Query("serviceKey", encoded = true) serviceKey : String = EVACUATION_MESSAGE_SERVICE_KEY,
-        @Query("pageNo") pageNo : String = "1",             // 페이지번호
-        @Query("numOfRows") numOfRows : String = "1",       // 한페이지 결과수
+        @Query("serviceKey", encoded = true) serviceKey: String = EVACUATION_MESSAGE_SERVICE_KEY,
+        @Query("pageNo") pageNo: String = "1",             // 페이지번호
+        @Query("numOfRows") numOfRows: String = "1",       // 한페이지 결과수
         @Query("crtDt") crtDt: String,                      // 조회시작일자(YYYYMMDD)
-        @Query("returnType") returnType : String = "JSON",  // 호출문서형식
-    ) : EvacuationMessageResponse
+        @Query("returnType") returnType: String = "JSON",  // 호출문서형식
+    ): EvacuationMessageResponse
 }

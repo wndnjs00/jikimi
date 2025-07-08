@@ -2,13 +2,13 @@ package com.myapp.jikimi.data.repository.Post
 
 import android.net.Uri
 import android.util.Log
-import com.myapp.jikimi.Resource
-import com.myapp.jikimi.data.model.dto.Post
-import com.myapp.jikimi.data.model.dto.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
+import com.myapp.jikimi.Resource
+import com.myapp.jikimi.data.model.dto.Post
+import com.myapp.jikimi.data.model.dto.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -70,7 +70,11 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createPost(content: String, images: List<Uri>?, category: String): Resource<Post> = withContext(Dispatchers.IO) {
+    override suspend fun createPost(
+        content: String,
+        images: List<Uri>?,
+        category: String
+    ): Resource<Post> = withContext(Dispatchers.IO) {
         try {
             val currentUser = firebaseAuth.currentUser
                 ?: return@withContext Resource.Error("로그인이 필요합니다.")
@@ -184,52 +188,54 @@ class PostRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun deletePost(postId: String): Resource<Boolean> = withContext(Dispatchers.IO) {
-        try {
-            val currentUser = firebaseAuth.currentUser
-                ?: return@withContext Resource.Error("로그인이 필요합니다.")
+    override suspend fun deletePost(postId: String): Resource<Boolean> =
+        withContext(Dispatchers.IO) {
+            try {
+                val currentUser = firebaseAuth.currentUser
+                    ?: return@withContext Resource.Error("로그인이 필요합니다.")
 
-            val postDoc = firestore.collection("posts").document(postId).get().await()
-            val post = postDoc.toObject(Post::class.java)
-                ?: return@withContext Resource.Error("게시물을 찾을 수 없습니다.")
+                val postDoc = firestore.collection("posts").document(postId).get().await()
+                val post = postDoc.toObject(Post::class.java)
+                    ?: return@withContext Resource.Error("게시물을 찾을 수 없습니다.")
 
-            if (post.userId != currentUser.uid) {
-                return@withContext Resource.Error("본인이 작성한 게시물만 삭제할 수 있습니다.")
+                if (post.userId != currentUser.uid) {
+                    return@withContext Resource.Error("본인이 작성한 게시물만 삭제할 수 있습니다.")
+                }
+
+                // 게시물 삭제
+                firestore.collection("posts").document(postId).delete().await()
+
+                // 연관된 댓글들도 삭제
+                val commentSnapshots = firestore.collection("comments")
+                    .whereEqualTo("postId", postId)
+                    .get()
+                    .await()
+
+                val batch = firestore.batch()
+                for (document in commentSnapshots.documents) {
+                    batch.delete(document.reference)
+                }
+                batch.commit().await()
+
+                Resource.Success(true)
+            } catch (e: Exception) {
+                Resource.Error(e.message ?: "게시물 삭제 중 오류가 발생했습니다.")
             }
+        }
 
-            // 게시물 삭제
-            firestore.collection("posts").document(postId).delete().await()
+    override suspend fun getPostsByUser(userId: String): Resource<List<Post>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val querySnapshot = firestore.collection("posts")
+                    .whereEqualTo("userId", userId)
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
 
-            // 연관된 댓글들도 삭제
-            val commentSnapshots = firestore.collection("comments")
-                .whereEqualTo("postId", postId)
-                .get()
-                .await()
-
-            val batch = firestore.batch()
-            for (document in commentSnapshots.documents) {
-                batch.delete(document.reference)
+                val posts = querySnapshot.toObjects(Post::class.java)
+                Resource.Success(posts)
+            } catch (e: Exception) {
+                Resource.Error(e.message ?: "사용자 게시물을 불러오는 중 오류가 발생했습니다.")
             }
-            batch.commit().await()
-
-            Resource.Success(true)
-        } catch (e: Exception) {
-            Resource.Error(e.message ?: "게시물 삭제 중 오류가 발생했습니다.")
         }
-    }
-
-    override suspend fun getPostsByUser(userId: String): Resource<List<Post>> = withContext(Dispatchers.IO) {
-        try {
-            val querySnapshot = firestore.collection("posts")
-                .whereEqualTo("userId", userId)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .await()
-
-            val posts = querySnapshot.toObjects(Post::class.java)
-            Resource.Success(posts)
-        } catch (e: Exception) {
-            Resource.Error(e.message ?: "사용자 게시물을 불러오는 중 오류가 발생했습니다.")
-        }
-    }
 }

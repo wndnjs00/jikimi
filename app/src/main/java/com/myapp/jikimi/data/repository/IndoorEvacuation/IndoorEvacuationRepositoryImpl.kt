@@ -42,7 +42,8 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
 
             val currentTime = System.currentTimeMillis()
             // 마지막 업데이트 이후 90일이 지났는지 or DB에 저장된 데이터수가 API에서 가져온 전체데이터의 90% 이상인지
-            val needsUpdate = currentTime - lastUpdate > UPDATE_INTERVAL || dbCount < totalCachedCount * 0.9
+            val needsUpdate =
+                currentTime - lastUpdate > UPDATE_INTERVAL || dbCount < totalCachedCount * 0.9
 
             // 만족하지않으면(갱신필요하지 않으면)
             if (!needsUpdate && dbCount > 0) {
@@ -54,7 +55,8 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
             // API에서 첫 페이지 요청하여 총 데이터 개수 확인
             Log.d("IndoorEvacuationRepo", "실내 대피소 API 호출을 시작합니다")
             val firstPageResponse = requestIndoorEvacuationByPage(1)
-            val totalCount = firstPageResponse.earthquakeIndoors[0].head[0].totalCount?.toIntOrNull() ?: 0
+            val totalCount =
+                firstPageResponse.earthquakeIndoors[0].head[0].totalCount?.toIntOrNull() ?: 0
             Log.d("IndoorEvacuationRepo", "총 대피소 개수: $totalCount")
             val itemsPerPage = 100
 
@@ -120,24 +122,14 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
     private fun convertDbToApiFormat(entities: List<ShelterEntity>): List<EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row> {
         return entities.map { entity ->
             EarthquakeIndoorsShelterResponse.EarthquakeIndoor.Row(
-                vtAcmdfcltyNm = entity.vtAcmdfcltyNm,
-                xcord = entity.longitude.toString(),
-                ycord = entity.latitude.toString(),
-                rnAdres = entity.address ?: "",
-                dtlAdres = entity.detailAddress ?: "",
-                mngpsTelno = entity.mngpsTelno,
-                acmdfcltyDtlCn = entity.acmdfcltyDtlCn,
-                vtAcmdPsblNmpr = entity.vtAcmdPsblNmpr,
-                arcd = "",
-                acmdfcltySn = "",
-                ctprvnNm = "",
-                sggNm = "",
-                rdnmadrCd = "",
-                bdongCd = "",
-                fcltyAr = "",
-                hdongCd = "",
-                mngpsNm = "",
-                mngdptNm = "",
+                indoorShelterName = entity.shelterName,
+                indoorLatitude = entity.longitude.toString(),
+                indoorLongitude = entity.latitude.toString(),
+                indoorRoadAddress = entity.address ?: "",
+                indoorAddress = entity.detailAddress ?: "",
+                indoorPhoneNumber = entity.phoneNumber,
+                indoorDetailAddress = entity.shelterDetailName,
+                indoorcapacityNumber = entity.capacityNumber,
             )
         }
     }
@@ -150,19 +142,19 @@ class IndoorEvacuationRepositoryImpl @Inject constructor(
 
             // 새 데이터를 ShelterEntity형식으로 변환하여 저장
             val entities = shelters.mapNotNull { shelter ->
-                val latitude = shelter.ycord.toDoubleOrNull() ?: return@mapNotNull null
-                val longitude = shelter.xcord.toDoubleOrNull() ?: return@mapNotNull null
+                val latitude = shelter.indoorLongitude.toDoubleOrNull() ?: return@mapNotNull null
+                val longitude = shelter.indoorLatitude.toDoubleOrNull() ?: return@mapNotNull null
 
                 ShelterEntity(
-                    vtAcmdfcltyNm = shelter.vtAcmdfcltyNm ?: "이름 없음",
-                    address = shelter.rnAdres ?: "주소 없음",
-                    detailAddress = shelter.dtlAdres ?: "",
+                    shelterName = shelter.indoorShelterName ?: "이름 없음",
+                    address = shelter.indoorRoadAddress ?: "주소 없음",
+                    detailAddress = shelter.indoorAddress ?: "",
                     latitude = latitude,
                     longitude = longitude,
                     shelterType = "임시주거시설",
-                    vtAcmdPsblNmpr = shelter.vtAcmdPsblNmpr ?: "알수없음",
-                    acmdfcltyDtlCn = shelter.acmdfcltyDtlCn ?: "알수없음",
-                    mngpsTelno = shelter.mngpsTelno ?: "정보없음",
+                    capacityNumber = shelter.indoorcapacityNumber ?: "알수없음",
+                    shelterDetailName = shelter.indoorDetailAddress ?: "알수없음",
+                    phoneNumber = shelter.indoorPhoneNumber ?: "정보없음",
                     lastUpdated = System.currentTimeMillis()
                 )
             }

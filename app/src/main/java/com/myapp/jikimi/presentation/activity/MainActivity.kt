@@ -2,16 +2,15 @@ package com.myapp.jikimi.presentation.activity
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.myapp.jikimi.R
 import com.myapp.jikimi.databinding.ActivityMainBinding
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,7 +40,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupNavigation(savedInstanceState: Bundle?) {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fcv_main) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fcv_main) as NavHostFragment
         navController = navHostFragment.navController
 
         // 시작 프래그먼트 설정 - 로그인 상태에 따라 다르게 설정
@@ -90,9 +90,4 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavBar.visibility = View.VISIBLE
         }
     }
-
-    fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
 }

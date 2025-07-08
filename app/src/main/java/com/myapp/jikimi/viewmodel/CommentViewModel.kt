@@ -50,7 +50,6 @@ class CommentViewModel @Inject constructor(
         }
     }
 
-    // Reset status after handling events
     fun resetAddCommentStatus() {
         _addCommentStatus.value = null
     }

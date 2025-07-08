@@ -12,5 +12,5 @@ abstract class IndoorEvacuationRepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindIndoorEvacuationRepository(indoorEvacuationRepositoryImpl: IndoorEvacuationRepositoryImpl) : IndoorEvacuationRepository
+    abstract fun bindIndoorEvacuationRepository(indoorEvacuationRepositoryImpl: IndoorEvacuationRepositoryImpl): IndoorEvacuationRepository
 }

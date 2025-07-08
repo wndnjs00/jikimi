@@ -7,8 +7,8 @@ import com.myapp.jikimi.data.local.dao.DisasterDao
 import com.myapp.jikimi.data.model.dto.chatgpt.ChatGPTRequest
 import com.myapp.jikimi.data.model.dto.chatgpt.DisasterResponse
 import com.myapp.jikimi.data.model.dto.chatgpt.Message
-import com.myapp.jikimi.data.network.CHATGPT_API_SERVICE_KEY
 import com.myapp.jikimi.data.network.CACHE_VALIDITY_DURATION
+import com.myapp.jikimi.data.network.CHATGPT_API_SERVICE_KEY
 import com.myapp.jikimi.data.network.CLEANUP_THRESHOLD
 import com.myapp.jikimi.data.network.service.ChatGPTApiService
 import com.myapp.jikimi.data.network.toDisasterResponse
@@ -257,7 +257,10 @@ class DisasterRepositoryImpl @Inject constructor(
         """.trimIndent()
     }
 
-    private fun parseDisasterResponse(content: String, expectedCount: Int): List<DisasterResponse>? {
+    private fun parseDisasterResponse(
+        content: String,
+        expectedCount: Int
+    ): List<DisasterResponse>? {
         return try {
             val jsonContent = extractJsonFromContent(content)
             val responseData = gson.fromJson(jsonContent, DisasterApiResponse::class.java)

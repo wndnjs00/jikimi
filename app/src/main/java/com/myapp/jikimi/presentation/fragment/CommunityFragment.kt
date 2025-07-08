@@ -2,11 +2,10 @@ package com.myapp.jikimi.presentation.fragment
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,19 +13,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.myapp.jikimi.R
 import com.myapp.jikimi.Resource
+import com.myapp.jikimi.data.model.dto.Post
 import com.myapp.jikimi.data.model.dto.User
 import com.myapp.jikimi.databinding.FragmentCommunityBinding
-import com.myapp.jikimi.presentation.activity.MainActivity
 import com.myapp.jikimi.presentation.adapter.PostAdapter
+import com.myapp.jikimi.presentation.utils.showToast
 import com.myapp.jikimi.viewmodel.AuthViewModel
 import com.myapp.jikimi.viewmodel.EvacuationMessageViewModel
 import com.myapp.jikimi.viewmodel.PostViewModel
-import com.myapp.jikimi.viewmodel.SharedViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.myapp.jikimi.data.model.dto.Post
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -38,6 +36,7 @@ class CommunityFragment : Fragment() {
     private val authViewModel: AuthViewModel by viewModels()
     private val evacuationMessageViewModel: EvacuationMessageViewModel by viewModels()
     private lateinit var postAdapter: PostAdapter
+
     // 카테고리 관련 변수
     private var allPosts = listOf<Post>()
     private var currentFilter = "전체"
@@ -78,9 +77,9 @@ class CommunityFragment : Fragment() {
             },
             currentUserId = currentUserId
         )
-        with(binding) {
-            rvPosts.adapter = postAdapter
-            rvPosts.layoutManager = LinearLayoutManager(requireContext())
+        binding.postRv.apply {
+            adapter = postAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -90,43 +89,57 @@ class CommunityFragment : Fragment() {
                 // 게시물 목록 상태 관찰
                 launch {
                     postViewModel.posts.collect { resource ->
-                        when (resource) {
-                            is Resource.Loading -> {
-                                binding.progressBar.visibility = View.VISIBLE
+                        with(binding) {
+                            when (resource) {
+                                is Resource.Loading -> {
+                                    progressBar.visibility = View.VISIBLE
+                                }
+
+                                is Resource.Success -> {
+                                    progressBar.visibility = View.GONE
+                                    allPosts = resource.data ?: emptyList()
+                                    filterPosts() // 필터링 적용
+                                }
+
+                                is Resource.Error -> {
+                                    progressBar.visibility = View.GONE
+                                    requireContext().showToast(
+                                        resource.message ?: "게시물을 불러오는데 실패했습니다"
+                                    )
+                                }
+
+                                else -> {}
                             }
-                            is Resource.Success -> {
-                                binding.progressBar.visibility = View.GONE
-                                allPosts = resource.data ?: emptyList()
-                                filterPosts() // 필터링 적용
-                            }
-                            is Resource.Error -> {
-                                binding.progressBar.visibility = View.GONE
-                                (activity as MainActivity).showToast(resource.message ?: "게시물을 불러오는데 실패했습니다")
-                            }
-                            else -> {}
                         }
                     }
                 }
                 // 게시물 삭제 상태 관찰
                 launch {
                     postViewModel.deletePostStatus.collect { resource ->
-                        if (resource != null) {
-                            when (resource) {
-                                is Resource.Loading -> {
-                                    binding.progressBar.visibility = View.VISIBLE
+                        with(binding) {
+                            if (resource != null) {
+                                when (resource) {
+                                    is Resource.Loading -> {
+                                        progressBar.visibility = View.VISIBLE
+                                    }
+
+                                    is Resource.Success -> {
+                                        progressBar.visibility = View.GONE
+                                        requireContext().showToast("게시물이 삭제되었습니다")
+                                        postViewModel.getPosts() // 목록 새로고침
+                                        postViewModel.resetDeletePostStatus() // 상태 리셋
+                                    }
+
+                                    is Resource.Error -> {
+                                        progressBar.visibility = View.GONE
+                                        requireContext().showToast(
+                                            resource.message ?: "게시물 삭제에 실패했습니다"
+                                        )
+                                        postViewModel.resetDeletePostStatus() // 상태 리셋
+                                    }
+
+                                    else -> {}
                                 }
-                                is Resource.Success -> {
-                                    binding.progressBar.visibility = View.GONE
-                                    (activity as MainActivity).showToast("게시물이 삭제되었습니다")
-                                    postViewModel.getPosts() // 목록 새로고침
-                                    postViewModel.resetDeletePostStatus() // 상태 리셋
-                                }
-                                is Resource.Error -> {
-                                    binding.progressBar.visibility = View.GONE
-                                    (activity as MainActivity).showToast(resource.message ?: "게시물 삭제에 실패했습니다")
-                                    postViewModel.resetDeletePostStatus() // 상태 리셋
-                                }
-                                else -> {}
                             }
                         }
                     }
@@ -134,27 +147,32 @@ class CommunityFragment : Fragment() {
                 // 재난 안내문자 상태 관찰
                 launch {
                     evacuationMessageViewModel.evacuationMessage.collect { resource ->
-                        when (resource) {
-                            is Resource.Loading -> {
-                                binding.dateContent.visibility = View.GONE
-                                binding.messageContent.text = "로딩 중..."
-                            }
-                            is Resource.Success -> {
-                                val message = resource.data
-                                if (message != null) {
-                                    binding.dateContent.visibility = View.VISIBLE
-                                    binding.dateContent.text = message.createdDateTime
-                                    binding.messageContent.text = message.messageContent
-                                } else {
-                                    binding.dateContent.visibility = View.GONE
-                                    binding.messageContent.text = "최근 발령된 재난문자가 없습니다"
+                        with(binding) {
+                            when (resource) {
+                                is Resource.Loading -> {
+                                    dateContentTv.visibility = View.GONE
+                                    messageContentTv.text = "로딩 중..."
                                 }
+
+                                is Resource.Success -> {
+                                    val message = resource.data
+                                    if (message != null) {
+                                        dateContentTv.visibility = View.VISIBLE
+                                        dateContentTv.text = message.createdDateTime
+                                        messageContentTv.text = message.messageContent
+                                    } else {
+                                        dateContentTv.visibility = View.GONE
+                                        messageContentTv.text = "최근 발령된 재난문자가 없습니다"
+                                    }
+                                }
+
+                                is Resource.Error -> {
+                                    dateContentTv.visibility = View.GONE
+                                    messageContentTv.text = "데이터 로드 실패"
+                                }
+
+                                else -> {}
                             }
-                            is Resource.Error -> {
-                                binding.dateContent.visibility = View.GONE
-                                binding.messageContent.text = "데이터 로드 실패"
-                            }
-                            else -> {}
                         }
                     }
                 }
@@ -163,18 +181,17 @@ class CommunityFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        with(binding){
-            fabAddPost.setOnClickListener {
+        with(binding) {
+            addPostFab.setOnClickListener {
                 findNavController().navigate(R.id.createPostFragment)
             }
-            ivProfile.setOnClickListener {
+            circleProfileIv.setOnClickListener {
                 findNavController().navigate(R.id.profileEditFragment)
             }
-
-            ivSetting.setOnClickListener {
+            settingIv.setOnClickListener {
                 findNavController().navigate(R.id.settingFragment)
             }
-            loadingIcon.setOnClickListener {
+            loadingIconIv.setOnClickListener {
                 evacuationMessageViewModel.refreshEvacuationMessage()
             }
         }
@@ -188,18 +205,20 @@ class CommunityFragment : Fragment() {
             .addOnSuccessListener { document ->
                 val user = document.toObject(User::class.java)
                 user?.let {
-                    // 닉네임 설정
-                    binding.tvNickname.text = it.nickname
-                    // 프로필 이미지 설정
-                    if (it.profileImageUrl.isNotEmpty()) {
-                        Glide.with(this)
-                            .load(it.profileImageUrl)
-                            .placeholder(R.drawable.jikimi_img)
-                            .error(R.drawable.ic_launcher_foreground)
-                            .circleCrop()
-                            .into(binding.ivProfile)
-                    } else {
-                        binding.ivProfile.setImageResource(R.drawable.jikimi_img)
+                    with(binding) {
+                        // 닉네임 설정
+                        nicknameTv.text = it.nickname
+                        // 프로필 이미지 설정
+                        if (it.profileImageUrl.isNotEmpty()) {
+                            Glide.with(this@CommunityFragment)
+                                .load(it.profileImageUrl)
+                                .placeholder(R.drawable.jikimi_img)
+                                .error(R.drawable.ic_launcher_foreground)
+                                .circleCrop()
+                                .into(circleProfileIv)
+                        } else {
+                            circleProfileIv.setImageResource(R.drawable.jikimi_img)
+                        }
                     }
                 }
             }
@@ -213,11 +232,11 @@ class CommunityFragment : Fragment() {
             if (checkedIds.isNotEmpty()) {
                 val checkedChipId = checkedIds[0]
                 currentFilter = when (checkedChipId) {
-                    R.id.chipAll -> "전체"
-                    R.id.chipEmergency -> "긴급"
-                    R.id.chipInfo -> "정보"
-                    R.id.chipCommunication -> "소통"
-                    R.id.chipReport -> "제보"
+                    R.id.chip_all -> "전체"
+                    R.id.chip_emergency -> "긴급"
+                    R.id.chip_info -> "정보"
+                    R.id.chip_communication -> "소통"
+                    R.id.chip_report -> "제보"
                     else -> "전체"
                 }
                 filterPosts()
@@ -235,18 +254,20 @@ class CommunityFragment : Fragment() {
     }
 
     private fun updateRecyclerView(posts: List<Post>) {
-        if (posts.isEmpty()) {
-            binding.tvEmpty.visibility = View.VISIBLE
-            binding.rvPosts.visibility = View.GONE
-            binding.tvEmpty.text = if (currentFilter == "전체") {
-                "게시물이 없습니다"
+        with(binding) {
+            if (posts.isEmpty()) {
+                emptyTv.visibility = View.VISIBLE
+                postRv.visibility = View.GONE
+                emptyTv.text = if (currentFilter == "전체") {
+                    "게시물이 없습니다"
+                } else {
+                    "${currentFilter} 카테고리의 게시물이 없습니다"
+                }
             } else {
-                "${currentFilter} 카테고리의 게시물이 없습니다"
+                emptyTv.visibility = View.GONE
+                postRv.visibility = View.VISIBLE
+                postAdapter.submitList(posts)
             }
-        } else {
-            binding.tvEmpty.visibility = View.GONE
-            binding.rvPosts.visibility = View.VISIBLE
-            postAdapter.submitList(posts)
         }
     }
 
