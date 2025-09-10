@@ -2,7 +2,7 @@
 재난발생시 주변 대피소 정보를 한눈에 확인할 수 있는 안전지킴이앱!
 <br/>
 ## 개발 기간
-2024.08.16 ~ 10.04 / 2025.06
+2024.08.16 ~ 10.04 / 2025.04 ~ 06
 <br/>
 ## PlayStore 다운로드 링크 ⬇️
 [PalyStore 바로가기 [4.4버전]](https://play.google.com/store/apps/details?id=com.myapp.jikimi)
