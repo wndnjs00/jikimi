@@ -64,5 +64,13 @@
   <img src="https://github.com/user-attachments/assets/c2c8ecbf-a5c4-4b2a-b293-78668a5ac6eb" width="180" height="400" />
 </p>
 
+
+
+---
+
+### 서비스 구조 도식화
+
+<img src="https://github.com/user-attachments/assets/1abe7d76-a55b-4d4e-af8c-572be82f072a" />
+
  
 
